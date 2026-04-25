@@ -39,7 +39,7 @@ require_capability('mod/mootyper:view', $context);
 
 // Recovery is a Practice mode workflow only.
 if ((string)$mootyper->isexam !== '2') {
-    print_error('nopermissions', 'error');
+    throw new moodle_exception('nopermissions', 'error');
 }
 
 $params = ['mootyperid' => $mootyper->id, 'inprogress' => 1];
