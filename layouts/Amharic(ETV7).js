@@ -5,6 +5,8 @@
  * @since 20240930
  */
 
+/* exported isCombined, keyupCombined, keyupFirst, keyboardElement */
+
 /**
  * Check for combined character.
  * @param {string} chr The combined character.
@@ -16,10 +18,9 @@ function isCombined(chr) {
 
 /**
  * Process keyup for combined character.
- * @param {string} e The combined character.
  * @returns {bolean} The result.
  */
-function keyupCombined(e) {
+function keyupCombined() {
     return false;
 }
 
@@ -34,274 +35,272 @@ function isCharSequence(chr) {
 }
 
 /**
- * Returns an array of characters that will be output when entering 
+ * Returns an array of characters that will be output when entering
  * the keystrokes for the given character.
  * @param {string} chr The target character.
  * @returns {Array} The interim characters.
  */
 function getSequence(chr) {
-    console.log("Getting sequence for ", chr);
     const sequences = defineSequences();
     return sequences[chr];
 }
 
 function defineSequences() {
     const sequences = {
-    "ሀ": ["ህ", "ሀ"],    // key sequence: he
-    "ሁ": ["ህ", "ሁ"],   // key sequence: hu
-    "ሂ": ["ህ", "ሂ"],    // key sequence: hi
-    "ሃ": ["ህ", "ሃ"],    // key sequence: ha
-    "ሄ": ["ህ", "ሂ", "ሄ"],    // key sequence: hie
-    "ሆ": ["ህ", "ሆ"],    // key sequence: ho
-    "ለ": ["ል", "ለ"],    // key sequence: le
-    "ሉ": ["ል", "ሉ"],   // key sequence: lu
-    "ሊ": ["ል", "ሊ"],    // key sequence: li
-    "ላ": ["ል", "ላ"],    // key sequence: la
-    "ሌ": ["ል", "ሊ", "ሌ"],    // key sequence: lie
-    "ሎ": ["ል", "ሎ"],    // key sequence: lo
-    "ሐ": ["ህ", "ሕ", "ሐ"],    // key sequence: hhe
-    "ሑ": ["ህ", "ሕ", "ሑ"],   // key sequence: hhu
-    "ሒ": ["ህ", "ሕ", "ሒ"],    // key sequence: hhi
-    "ሓ": ["ህ", "ሕ", "ሓ"],    // key sequence: hha
-    "ሔ": ["ህ", "ሕ", "ሒ", "ሔ"],    // key sequence: hhie
-    "ሕ": ["ህ", "ሕ"],    // key sequence: hh
-    "ሖ": ["ህ", "ሕ", "ሖ"],    // key sequence: hho
-    "መ": ["ም", "መ"],    // key sequence: me
-    "ሙ": ["ም", "ሙ"],   // key sequence: mu
-    "ሚ": ["ም", "ሚ"],    // key sequence: mi
-    "ማ": ["ም", "ማ"],    // key sequence: ma
-    "ሜ": ["ም", "ሚ", "ሜ"],    // key sequence: mie
-    "ሞ": ["ም", "ሞ"],    // key sequence: mo
-    "ሠ": ["ስ", "ሥ", "ሠ"],    // key sequence: sse
-    "ሡ": ["ስ", "ሥ", "ሡ"],   // key sequence: ssu
-    "ሢ": ["ስ", "ሥ", "ሢ"],    // key sequence: ssi
-    "ሣ": ["ስ", "ሥ", "ሣ"],    // key sequence: ssa
-    "ሤ": ["ስ", "ሥ", "ሢ", "ሤ"],    // key sequence: ssie
-    "ሥ": ["ስ", "ሥ"],    // key sequence: ss
-    "ሦ": ["ስ", "ሥ", "ሦ"],    // key sequence: sso
-    "ረ": ["ር", "ረ"],    // key sequence: re
-    "ሩ": ["ር", "ሩ"],   // key sequence: ru
-    "ሪ": ["ር", "ሪ"],    // key sequence: ri
-    "ራ": ["ር", "ራ"],    // key sequence: ra
-    "ሬ": ["ር", "ሪ", "ሬ"],    // key sequence: rie
-    "ሮ": ["ር", "ሮ"],    // key sequence: ro
-    "ሰ": ["ስ", "ሰ"],    // key sequence: se
-    "ሱ": ["ስ", "ሱ"],   // key sequence: su
-    "ሲ": ["ስ", "ሲ"],    // key sequence: si
-    "ሳ": ["ስ", "ሳ"],    // key sequence: sa
-    "ሴ": ["ስ", "ሲ", "ሴ"],    // key sequence: sie
-    "ሶ": ["ስ", "ሶ"],    // key sequence: so
-    "ሸ": ["ሽ", "ሸ"],    // key sequence: xe
-    "ሹ": ["ሽ", "ሹ"],   // key sequence: xu
-    "ሺ": ["ሽ", "ሺ"],    // key sequence: xi
-    "ሻ": ["ሽ", "ሻ"],    // key sequence: xa
-    "ሼ": ["ሽ", "ሺ", "ሼ"],    // key sequence: xie
-    "ሾ": ["ሽ", "ሾ"],    // key sequence: xo
-    "ቀ": ["ቅ", "ቀ"],    // key sequence: qe
-    "ቁ": ["ቅ", "ቁ"],   // key sequence: qu
-    "ቂ": ["ቅ", "ቂ"],    // key sequence: qi
-    "ቃ": ["ቅ", "ቃ"],    // key sequence: qa
-    "ቄ": ["ቅ", "ቂ", "ቄ"],    // key sequence: qie
-    "ቆ": ["ቅ", "ቆ"],    // key sequence: qo
-    "በ": ["ብ", "በ"],    // key sequence: be
-    "ቡ": ["ብ", "ቡ"],   // key sequence: bu
-    "ቢ": ["ብ", "ቢ"],    // key sequence: bi
-    "ባ": ["ብ", "ባ"],    // key sequence: ba
-    "ቤ": ["ብ", "ቢ", "ቤ"],    // key sequence: bie
-    "ቦ": ["ብ", "ቦ"],    // key sequence: bo
-    "ተ": ["ት", "ተ"],    // key sequence: te
-    "ቱ": ["ት", "ቱ"],   // key sequence: tu
-    "ቲ": ["ት", "ቲ"],    // key sequence: ti
-    "ታ": ["ት", "ታ"],    // key sequence: ta
-    "ቴ": ["ት", "ቲ", "ቴ"],    // key sequence: tie
-    "ቶ": ["ት", "ቶ"],    // key sequence: to
-    "ቸ": ["ች", "ቸ"],    // key sequence: ce
-    "ቹ": ["ች", "ቹ"],   // key sequence: cu
-    "ቺ": ["ች", "ቺ"],    // key sequence: ci
-    "ቻ": ["ች", "ቻ"],    // key sequence: ca
-    "ቼ": ["ች", "ቺ", "ቼ"],    // key sequence: cie
-    "ቾ": ["ች", "ቾ"],    // key sequence: co
-    "ኀ": ["ህ", "ሕ", "ኅ", "ኀ"],    // key sequence: hhhe
-    "ኁ": ["ህ", "ሕ", "ኅ", "ኁ"],   // key sequence: hhhu
-    "ኂ": ["ህ", "ሕ", "ኅ", "ኂ"],    // key sequence: hhhi
-    "ኃ": ["ህ", "ሕ", "ኅ", "ኃ"],    // key sequence: hhha
-    "ኄ": ["ህ", "ሕ", "ኅ", "ኂ", "ኄ"],    // key sequence: hhhie
-    "ኅ": ["ህ", "ሕ", "ኅ"],    // key sequence: hhh
-    "ኆ": ["ህ", "ሕ", "ኅ", "ኆ"],    // key sequence: hhho
-    "ነ": ["ን", "ነ"],    // key sequence: ne
-    "ኑ": ["ን", "ኑ"],   // key sequence: nu
-    "ኒ": ["ን", "ኒ"],    // key sequence: ni
-    "ና": ["ን", "ና"],    // key sequence: na
-    "ኔ": ["ን", "ኒ", "ኔ"],    // key sequence: nie
-    "ኖ": ["ን", "ኖ"],    // key sequence: no
-    "ኘ": ["ኝ", "ኘ"],    // key sequence: Ne
-    "ኙ": ["ኝ", "ኙ"],   // key sequence: Nu
-    "ኚ": ["ኝ", "ኚ"],    // key sequence: Ni
-    "ኛ": ["ኝ", "ኛ"],    // key sequence: Na
-    "ኜ": ["ኝ", "ኚ", "ኜ"],    // key sequence: Nie
-    "ኞ": ["ኝ", "ኞ"],    // key sequence: No
-    "ኣ": ["አ", "ኣ"],    // key sequence: aa
-    "ኤ": ["ኢ", "ኤ"],   // key sequence: ie
-    "ከ": ["ክ", "ከ"],    // key sequence: ke
-    "ኩ": ["ክ", "ኩ"],   // key sequence: ku
-    "ኪ": ["ክ", "ኪ"],    // key sequence: ki
-    "ካ": ["ክ", "ካ"],    // key sequence: ka
-    "ኬ": ["ክ", "ኪ", "ኬ"],    // key sequence: kie
-    "ኮ": ["ክ", "ኮ"],    // key sequence: ko
-    "ኸ": ["ኽ", "ኸ"],    // key sequence: Ke
-    "ኹ": ["ኽ", "ኹ"],   // key sequence: Ku
-    "ኺ": ["ኽ", "ኺ"],    // key sequence: Ki
-    "ኻ": ["ኽ", "ኻ"],    // key sequence: Ka
-    "ኼ": ["ኽ", "ኺ", "ኼ"],    // key sequence: Kie
-    "ኾ": ["ኽ", "ኾ"],    // key sequence: Ko
-    "ወ": ["ው", "ወ"],    // key sequence: we
-    "ዉ": ["ው", "ዉ"],   // key sequence: wu
-    "ዊ": ["ው", "ዊ"],    // key sequence: wi
-    "ዋ": ["ው", "ዋ"],    // key sequence: wa
-    "ዌ": ["ው", "ዊ", "ዌ"],    // key sequence: wie
-    "ዎ": ["ው", "ዎ"],    // key sequence: wo
-    "ዐ": ["አ", "ኣ", "ዐ"],    // key sequence: aaa
-    "ዓ": ["አ", "ኣ", "ዐ", "ዓ"],   // key sequence: aaaa
-    "ዔ": ["ዒ", "ዔ"],    // key sequence: Ie
-    "ዕ": ["እ", "ኧ", "ዕ"],    // key sequence: eee
-    "ዘ": ["ዝ", "ዘ"],    // key sequence: ze
-    "ዙ": ["ዝ", "ዙ"],   // key sequence: zu
-    "ዚ": ["ዝ", "ዚ"],    // key sequence: zi
-    "ዛ": ["ዝ", "ዛ"],    // key sequence: za
-    "ዜ": ["ዝ", "ዚ", "ዜ"],    // key sequence: zie
-    "ዞ": ["ዝ", "ዞ"],    // key sequence: zo
-    "ዠ": ["ዥ", "ዠ"],    // key sequence: Ze
-    "ዡ": ["ዥ", "ዡ"],   // key sequence: Zu
-    "ዢ": ["ዥ", "ዢ"],    // key sequence: Zi
-    "ዣ": ["ዥ", "ዣ"],    // key sequence: Za
-    "ዤ": ["ዥ", "ዢ", "ዤ"],    // key sequence: Zie
-    "ዦ": ["ዥ", "ዦ"],    // key sequence: Zo
-    "የ": ["ይ", "የ"],    // key sequence: ye
-    "ዩ": ["ይ", "ዩ"],   // key sequence: yu
-    "ዪ": ["ይ", "ዪ"],    // key sequence: yi
-    "ያ": ["ይ", "ያ"],    // key sequence: ya
-    "ዬ": ["ይ", "ዪ", "ዬ"],    // key sequence: yie
-    "ዮ": ["ይ", "ዮ"],    // key sequence: yo
-    "ደ": ["ድ", "ደ"],    // key sequence: de
-    "ዱ": ["ድ", "ዱ"],   // key sequence: du
-    "ዲ": ["ድ", "ዲ"],    // key sequence: di
-    "ዳ": ["ድ", "ዳ"],    // key sequence: da
-    "ዴ": ["ድ", "ዲ", "ዴ"],    // key sequence: die
-    "ዶ": ["ድ", "ዶ"],    // key sequence: do
-    "ጀ": ["ጅ", "ጀ"],    // key sequence: je
-    "ጁ": ["ጅ", "ጁ"],   // key sequence: ju
-    "ጂ": ["ጅ", "ጂ"],    // key sequence: ji
-    "ጃ": ["ጅ", "ጃ"],    // key sequence: ja
-    "ጄ": ["ጅ", "ጂ", "ጄ"],    // key sequence: jie
-    "ጆ": ["ጅ", "ጆ"],    // key sequence: jo
-    "ገ": ["ግ", "ገ"],    // key sequence: ge
-    "ጉ": ["ግ", "ጉ"],   // key sequence: gu
-    "ጊ": ["ግ", "ጊ"],    // key sequence: gi
-    "ጋ": ["ግ", "ጋ"],    // key sequence: ga
-    "ጌ": ["ግ", "ጊ", "ጌ"],    // key sequence: gie
-    "ጎ": ["ግ", "ጎ"],    // key sequence: go
-    "ጠ": ["ጥ", "ጠ"],    // key sequence: Te
-    "ጡ": ["ጥ", "ጡ"],   // key sequence: Tu
-    "ጢ": ["ጥ", "ጢ"],    // key sequence: Ti
-    "ጣ": ["ጥ", "ጣ"],    // key sequence: Ta
-    "ጤ": ["ጥ", "ጢ", "ጤ"],    // key sequence: Tie
-    "ጦ": ["ጥ", "ጦ"],    // key sequence: To
-    "ጨ": ["ጭ", "ጨ"],    // key sequence: Ce
-    "ጩ": ["ጭ", "ጩ"],   // key sequence: Cu
-    "ጪ": ["ጭ", "ጪ"],    // key sequence: Ci
-    "ጫ": ["ጭ", "ጫ"],    // key sequence: Ca
-    "ጬ": ["ጭ", "ጪ", "ጬ"],    // key sequence: Cie
-    "ጮ": ["ጭ", "ጮ"],    // key sequence: Co
-    "ጰ": ["ጵ", "ጰ"],    // key sequence: Pe
-    "ጱ": ["ጵ", "ጱ"],   // key sequence: Pu
-    "ጲ": ["ጵ", "ጲ"],    // key sequence: Pi
-    "ጳ": ["ጵ", "ጳ"],    // key sequence: Pa
-    "ጴ": ["ጵ", "ጲ", "ጴ"],    // key sequence: Pie
-    "ጶ": ["ጵ", "ጶ"],    // key sequence: Po
-    "ጸ": ["ት", "ጽ", "ጸ"],    // key sequence: tse
-    "ጹ": ["ት", "ጽ", "ጹ"],    // key sequence: tsu
-    "ጺ": ["ት", "ጽ", "ጺ"],    // key sequence: tsi
-    "ጻ": ["ት", "ጽ", "ጻ"],    // key sequence: tsa
-    "ጼ": ["ት", "ጽ", "ጺ", "ጼ"],    // key sequence: tsie
-    "ጽ": ["ት", "ጽ"],    // key sequence: ts
-    "ጾ": ["ት", "ጽ", "ጾ"],    // key sequence: tso
-    "ፀ": ["ት", "ጽ", "ፅ", "ፀ"],    // key sequence: tsse
-    "ፁ": ["ት", "ጽ", "ፅ", "ፁ"],   // key sequence: tssu
-    "ፂ": ["ት", "ጽ", "ፅ", "ፂ"],    // key sequence: tssi
-    "ፃ": ["ት", "ጽ", "ፅ", "ፃ"],    // key sequence: tssa
-    "ፄ": ["ት", "ጽ", "ፅ", "ፂ", "ፄ"],    // key sequence: tssie
-    "ፅ": ["ት", "ጽ", "ፅ"],    // key sequence: tss
-    "ፆ": ["ት", "ጽ", "ፅ", "ፆ"],    // key sequence: tsso
-    "ፈ": ["ፍ", "ፈ"],    // key sequence: fe
-    "ፉ": ["ፍ", "ፉ"],   // key sequence: fu
-    "ፊ": ["ፍ", "ፊ"],    // key sequence: fi
-    "ፋ": ["ፍ", "ፋ"],    // key sequence: fa
-    "ፌ": ["ፍ", "ፊ", "ፌ"],    // key sequence: fie
-    "ፎ": ["ፍ", "ፎ"],    // key sequence: fo
-    "ፐ": ["ፕ", "ፐ"],    // key sequence: pe
-    "ፑ": ["ፕ", "ፑ"],   // key sequence: pu
-    "ፒ": ["ፕ", "ፒ"],    // key sequence: pi
-    "ፓ": ["ፕ", "ፓ"],    // key sequence: pa
-    "ፔ": ["ፕ", "ፒ", "ፔ"],    // key sequence: pie
-    "ፖ": ["ፕ", "ፖ"],    // key sequence: po
-    "ቨ": ["ቭ", "ቨ"],    // key sequence: ve
-    "ቩ": ["ቭ", "ቩ"],   // key sequence: vu
-    "ቪ": ["ቭ", "ቪ"],    // key sequence: vi
-    "ቫ": ["ቭ", "ቫ"],    // key sequence: va
-    "ቬ": ["ቭ", "ቪ", "ቬ"],    // key sequence: vie
-    "ቮ": ["ቭ", "ቮ"],    // key sequence: vo
-    "ሏ": ["ል", "ሉ", "ሏ"],    // key sequence: lua
-    "ሗ": ["ህ", "ሕ", "ሑ", "ሗ"],   // key sequence: hhua
-    "ሟ": ["ም", "ሙ", "ሟ"],    // key sequence: mua
-    "ሧ": ["ስ", "ሥ", "ሡ", "ሧ"],    // key sequence: ssua
-    "ሯ": ["ር", "ሩ", "ሯ"],    // key sequence: rua
-    "ሷ": ["ስ", "ሱ", "ሷ"],    // key sequence: sua
-    "ሿ": ["ሽ", "ሹ", "ሿ"],    // key sequence: xua
-    "ቈ": ["ቅ", "ቁ", "ቈ"],   // key sequence: que
-    "ቍ": ["ቅ", "ቁ", "ቍ"],    // key sequence: qu'
-    "ቊ": ["ቅ", "ቁ", "ቊ"],    // key sequence: qui
-    "ቋ": ["ቅ", "ቁ", "ቋ"],    // key sequence: qua
-    "ቌ": ["ቅ", "ቁ", "ቊ", "ቌ"],    // key sequence: quie
-    "ቧ": ["ብ", "ቡ", "ቧ"],    // key sequence: bua
-    "ቷ": ["ት", "ቱ", "ቷ"],   // key sequence: tua
-    "ቿ": ["ች", "ቹ", "ቿ"],    // key sequence: cua
-    "ኈ": ["ህ", "ሕ", "ኅ", "ኁ", "ኈ"],    // key sequence: hhhue
-    "ኍ": ["ህ", "ሕ", "ኅ", "ኁ", "ኍ"],    // key sequence: hhhu'
-    "ኊ": ["ህ", "ሕ", "ኅ", "ኁ", "ኊ"],    // key sequence: hhhui
-    "ኋ": ["ህ", "ሕ", "ኅ", "ኁ", "ኋ"],    // key sequence: hhhua
-    "ኌ": ["ህ", "ሕ", "ኅ", "ኁ", "ኊ", "ኌ"],   // key sequence: hhhuie
-    "ኗ": ["ን", "ኑ", "ኗ"],    // key sequence: nua
-    "ኟ": ["ኝ", "ኙ", "ኟ"],    // key sequence: Nua
-    "ኰ": ["ክ", "ኩ", "ኰ"],    // key sequence: kue
-    "ኵ": ["ክ", "ኩ", "ኵ"],    // key sequence: ku'
-    "ኲ": ["ክ", "ኩ", "ኲ"],    // key sequence: kui
-    "ኳ": ["ክ", "ኩ", "ኳ"],   // key sequence: kua
-    "ኴ": ["ክ", "ኩ", "ኲ", "ኴ"],    // key sequence: kuie
-    "ዟ": ["ዝ", "ዙ", "ዟ"],    // key sequence: zua
-    "ዧ": ["ዥ", "ዡ", "ዧ"],    // key sequence: Zua
-    "ጇ": ["ጅ", "ጁ", "ጇ"],    // key sequence: jua
-    "ጐ": ["ግ", "ጉ", "ጐ"],    // key sequence: gue
-    "ጕ": ["ግ", "ጉ", "ጕ"],   // key sequence: gu'
-    "ጒ": ["ግ", "ጉ", "ጒ"],    // key sequence: gui
-    "ጓ": ["ግ", "ጉ", "ጓ"],    // key sequence: gua
-    "ጔ": ["ግ", "ጉ", "ጒ", "ጔ"],    // key sequence: guie
-    "ጧ": ["ጥ", "ጡ", "ጧ"],    // key sequence: Tua
-    "ጯ": ["ጭ", "ጩ", "ጯ"],    // key sequence: Cua
-    "ጷ": ["ጵ", "ጱ", "ጷ"],   // key sequence: Pua
-    "ጿ": ["ት", "ጽ", "ጹ", "ጿ"],    // key sequence: tsua
-    "ፏ": ["ፍ", "ፉ", "ፏ"],    // key sequence: fua
-    "ፗ": ["ፕ", "ፑ", "ፗ"],    // key sequence: pua
-    "ቯ": ["ቭ", "ቩ", "ቯ"],    // key sequence: vua
+    "ሀ": ["ህ", "ሀ"], // Key sequence: he
+    "ሁ": ["ህ", "ሁ"], // Key sequence: hu
+    "ሂ": ["ህ", "ሂ"], // Key sequence: hi
+    "ሃ": ["ህ", "ሃ"], // Key sequence: ha
+    "ሄ": ["ህ", "ሂ", "ሄ"], // Key sequence: hie
+    "ሆ": ["ህ", "ሆ"], // Key sequence: ho
+    "ለ": ["ል", "ለ"], // Key sequence: le
+    "ሉ": ["ል", "ሉ"], // Key sequence: lu
+    "ሊ": ["ል", "ሊ"], // Key sequence: li
+    "ላ": ["ል", "ላ"], // Key sequence: la
+    "ሌ": ["ል", "ሊ", "ሌ"], // Key sequence: lie
+    "ሎ": ["ል", "ሎ"], // Key sequence: lo
+    "ሐ": ["ህ", "ሕ", "ሐ"], // Key sequence: hhe
+    "ሑ": ["ህ", "ሕ", "ሑ"], // Key sequence: hhu
+    "ሒ": ["ህ", "ሕ", "ሒ"], // Key sequence: hhi
+    "ሓ": ["ህ", "ሕ", "ሓ"], // Key sequence: hha
+    "ሔ": ["ህ", "ሕ", "ሒ", "ሔ"], // Key sequence: hhie
+    "ሕ": ["ህ", "ሕ"], // Key sequence: hh
+    "ሖ": ["ህ", "ሕ", "ሖ"], // Key sequence: hho
+    "መ": ["ም", "መ"], // Key sequence: me
+    "ሙ": ["ም", "ሙ"], // Key sequence: mu
+    "ሚ": ["ም", "ሚ"], // Key sequence: mi
+    "ማ": ["ም", "ማ"], // Key sequence: ma
+    "ሜ": ["ም", "ሚ", "ሜ"], // Key sequence: mie
+    "ሞ": ["ም", "ሞ"], // Key sequence: mo
+    "ሠ": ["ስ", "ሥ", "ሠ"], // Key sequence: sse
+    "ሡ": ["ስ", "ሥ", "ሡ"], // Key sequence: ssu
+    "ሢ": ["ስ", "ሥ", "ሢ"], // Key sequence: ssi
+    "ሣ": ["ስ", "ሥ", "ሣ"], // Key sequence: ssa
+    "ሤ": ["ስ", "ሥ", "ሢ", "ሤ"], // Key sequence: ssie
+    "ሥ": ["ስ", "ሥ"], // Key sequence: ss
+    "ሦ": ["ስ", "ሥ", "ሦ"], // Key sequence: sso
+    "ረ": ["ር", "ረ"], // Key sequence: re
+    "ሩ": ["ር", "ሩ"], // Key sequence: ru
+    "ሪ": ["ር", "ሪ"], // Key sequence: ri
+    "ራ": ["ር", "ራ"], // Key sequence: ra
+    "ሬ": ["ር", "ሪ", "ሬ"], // Key sequence: rie
+    "ሮ": ["ር", "ሮ"], // Key sequence: ro
+    "ሰ": ["ስ", "ሰ"], // Key sequence: se
+    "ሱ": ["ስ", "ሱ"], // Key sequence: su
+    "ሲ": ["ስ", "ሲ"], // Key sequence: si
+    "ሳ": ["ስ", "ሳ"], // Key sequence: sa
+    "ሴ": ["ስ", "ሲ", "ሴ"], // Key sequence: sie
+    "ሶ": ["ስ", "ሶ"], // Key sequence: so
+    "ሸ": ["ሽ", "ሸ"], // Key sequence: xe
+    "ሹ": ["ሽ", "ሹ"], // Key sequence: xu
+    "ሺ": ["ሽ", "ሺ"], // Key sequence: xi
+    "ሻ": ["ሽ", "ሻ"], // Key sequence: xa
+    "ሼ": ["ሽ", "ሺ", "ሼ"], // Key sequence: xie
+    "ሾ": ["ሽ", "ሾ"], // Key sequence: xo
+    "ቀ": ["ቅ", "ቀ"], // Key sequence: qe
+    "ቁ": ["ቅ", "ቁ"], // Key sequence: qu
+    "ቂ": ["ቅ", "ቂ"], // Key sequence: qi
+    "ቃ": ["ቅ", "ቃ"], // Key sequence: qa
+    "ቄ": ["ቅ", "ቂ", "ቄ"], // Key sequence: qie
+    "ቆ": ["ቅ", "ቆ"], // Key sequence: qo
+    "በ": ["ብ", "በ"], // Key sequence: be
+    "ቡ": ["ብ", "ቡ"], // Key sequence: bu
+    "ቢ": ["ብ", "ቢ"], // Key sequence: bi
+    "ባ": ["ብ", "ባ"], // Key sequence: ba
+    "ቤ": ["ብ", "ቢ", "ቤ"], // Key sequence: bie
+    "ቦ": ["ብ", "ቦ"], // Key sequence: bo
+    "ተ": ["ት", "ተ"], // Key sequence: te
+    "ቱ": ["ት", "ቱ"], // Key sequence: tu
+    "ቲ": ["ት", "ቲ"], // Key sequence: ti
+    "ታ": ["ት", "ታ"], // Key sequence: ta
+    "ቴ": ["ት", "ቲ", "ቴ"], // Key sequence: tie
+    "ቶ": ["ት", "ቶ"], // Key sequence: to
+    "ቸ": ["ች", "ቸ"], // Key sequence: ce
+    "ቹ": ["ች", "ቹ"], // Key sequence: cu
+    "ቺ": ["ች", "ቺ"], // Key sequence: ci
+    "ቻ": ["ች", "ቻ"], // Key sequence: ca
+    "ቼ": ["ች", "ቺ", "ቼ"], // Key sequence: cie
+    "ቾ": ["ች", "ቾ"], // Key sequence: co
+    "ኀ": ["ህ", "ሕ", "ኅ", "ኀ"], // Key sequence: hhhe
+    "ኁ": ["ህ", "ሕ", "ኅ", "ኁ"], // Key sequence: hhhu
+    "ኂ": ["ህ", "ሕ", "ኅ", "ኂ"], // Key sequence: hhhi
+    "ኃ": ["ህ", "ሕ", "ኅ", "ኃ"], // Key sequence: hhha
+    "ኄ": ["ህ", "ሕ", "ኅ", "ኂ", "ኄ"], // Key sequence: hhhie
+    "ኅ": ["ህ", "ሕ", "ኅ"], // Key sequence: hhh
+    "ኆ": ["ህ", "ሕ", "ኅ", "ኆ"], // Key sequence: hhho
+    "ነ": ["ን", "ነ"], // Key sequence: ne
+    "ኑ": ["ን", "ኑ"], // Key sequence: nu
+    "ኒ": ["ን", "ኒ"], // Key sequence: ni
+    "ና": ["ን", "ና"], // Key sequence: na
+    "ኔ": ["ን", "ኒ", "ኔ"], // Key sequence: nie
+    "ኖ": ["ን", "ኖ"], // Key sequence: no
+    "ኘ": ["ኝ", "ኘ"], // Key sequence: Ne
+    "ኙ": ["ኝ", "ኙ"], // Key sequence: Nu
+    "ኚ": ["ኝ", "ኚ"], // Key sequence: Ni
+    "ኛ": ["ኝ", "ኛ"], // Key sequence: Na
+    "ኜ": ["ኝ", "ኚ", "ኜ"], // Key sequence: Nie
+    "ኞ": ["ኝ", "ኞ"], // Key sequence: No
+    "ኣ": ["አ", "ኣ"], // Key sequence: aa
+    "ኤ": ["ኢ", "ኤ"], // Key sequence: ie
+    "ከ": ["ክ", "ከ"], // Key sequence: ke
+    "ኩ": ["ክ", "ኩ"], // Key sequence: ku
+    "ኪ": ["ክ", "ኪ"], // Key sequence: ki
+    "ካ": ["ክ", "ካ"], // Key sequence: ka
+    "ኬ": ["ክ", "ኪ", "ኬ"], // Key sequence: kie
+    "ኮ": ["ክ", "ኮ"], // Key sequence: ko
+    "ኸ": ["ኽ", "ኸ"], // Key sequence: Ke
+    "ኹ": ["ኽ", "ኹ"], // Key sequence: Ku
+    "ኺ": ["ኽ", "ኺ"], // Key sequence: Ki
+    "ኻ": ["ኽ", "ኻ"], // Key sequence: Ka
+    "ኼ": ["ኽ", "ኺ", "ኼ"], // Key sequence: Kie
+    "ኾ": ["ኽ", "ኾ"], // Key sequence: Ko
+    "ወ": ["ው", "ወ"], // Key sequence: we
+    "ዉ": ["ው", "ዉ"], // Key sequence: wu
+    "ዊ": ["ው", "ዊ"], // Key sequence: wi
+    "ዋ": ["ው", "ዋ"], // Key sequence: wa
+    "ዌ": ["ው", "ዊ", "ዌ"], // Key sequence: wie
+    "ዎ": ["ው", "ዎ"], // Key sequence: wo
+    "ዐ": ["አ", "ኣ", "ዐ"], // Key sequence: aaa
+    "ዓ": ["አ", "ኣ", "ዐ", "ዓ"], // Key sequence: aaaa
+    "ዔ": ["ዒ", "ዔ"], // Key sequence: Ie
+    "ዕ": ["እ", "ኧ", "ዕ"], // Key sequence: eee
+    "ዘ": ["ዝ", "ዘ"], // Key sequence: ze
+    "ዙ": ["ዝ", "ዙ"], // Key sequence: zu
+    "ዚ": ["ዝ", "ዚ"], // Key sequence: zi
+    "ዛ": ["ዝ", "ዛ"], // Key sequence: za
+    "ዜ": ["ዝ", "ዚ", "ዜ"], // Key sequence: zie
+    "ዞ": ["ዝ", "ዞ"], // Key sequence: zo
+    "ዠ": ["ዥ", "ዠ"], // Key sequence: Ze
+    "ዡ": ["ዥ", "ዡ"], // Key sequence: Zu
+    "ዢ": ["ዥ", "ዢ"], // Key sequence: Zi
+    "ዣ": ["ዥ", "ዣ"], // Key sequence: Za
+    "ዤ": ["ዥ", "ዢ", "ዤ"], // Key sequence: Zie
+    "ዦ": ["ዥ", "ዦ"], // Key sequence: Zo
+    "የ": ["ይ", "የ"], // Key sequence: ye
+    "ዩ": ["ይ", "ዩ"], // Key sequence: yu
+    "ዪ": ["ይ", "ዪ"], // Key sequence: yi
+    "ያ": ["ይ", "ያ"], // Key sequence: ya
+    "ዬ": ["ይ", "ዪ", "ዬ"], // Key sequence: yie
+    "ዮ": ["ይ", "ዮ"], // Key sequence: yo
+    "ደ": ["ድ", "ደ"], // Key sequence: de
+    "ዱ": ["ድ", "ዱ"], // Key sequence: du
+    "ዲ": ["ድ", "ዲ"], // Key sequence: di
+    "ዳ": ["ድ", "ዳ"], // Key sequence: da
+    "ዴ": ["ድ", "ዲ", "ዴ"], // Key sequence: die
+    "ዶ": ["ድ", "ዶ"], // Key sequence: do
+    "ጀ": ["ጅ", "ጀ"], // Key sequence: je
+    "ጁ": ["ጅ", "ጁ"], // Key sequence: ju
+    "ጂ": ["ጅ", "ጂ"], // Key sequence: ji
+    "ጃ": ["ጅ", "ጃ"], // Key sequence: ja
+    "ጄ": ["ጅ", "ጂ", "ጄ"], // Key sequence: jie
+    "ጆ": ["ጅ", "ጆ"], // Key sequence: jo
+    "ገ": ["ግ", "ገ"], // Key sequence: ge
+    "ጉ": ["ግ", "ጉ"], // Key sequence: gu
+    "ጊ": ["ግ", "ጊ"], // Key sequence: gi
+    "ጋ": ["ግ", "ጋ"], // Key sequence: ga
+    "ጌ": ["ግ", "ጊ", "ጌ"], // Key sequence: gie
+    "ጎ": ["ግ", "ጎ"], // Key sequence: go
+    "ጠ": ["ጥ", "ጠ"], // Key sequence: Te
+    "ጡ": ["ጥ", "ጡ"], // Key sequence: Tu
+    "ጢ": ["ጥ", "ጢ"], // Key sequence: Ti
+    "ጣ": ["ጥ", "ጣ"], // Key sequence: Ta
+    "ጤ": ["ጥ", "ጢ", "ጤ"], // Key sequence: Tie
+    "ጦ": ["ጥ", "ጦ"], // Key sequence: To
+    "ጨ": ["ጭ", "ጨ"], // Key sequence: Ce
+    "ጩ": ["ጭ", "ጩ"], // Key sequence: Cu
+    "ጪ": ["ጭ", "ጪ"], // Key sequence: Ci
+    "ጫ": ["ጭ", "ጫ"], // Key sequence: Ca
+    "ጬ": ["ጭ", "ጪ", "ጬ"], // Key sequence: Cie
+    "ጮ": ["ጭ", "ጮ"], // Key sequence: Co
+    "ጰ": ["ጵ", "ጰ"], // Key sequence: Pe
+    "ጱ": ["ጵ", "ጱ"], // Key sequence: Pu
+    "ጲ": ["ጵ", "ጲ"], // Key sequence: Pi
+    "ጳ": ["ጵ", "ጳ"], // Key sequence: Pa
+    "ጴ": ["ጵ", "ጲ", "ጴ"], // Key sequence: Pie
+    "ጶ": ["ጵ", "ጶ"], // Key sequence: Po
+    "ጸ": ["ት", "ጽ", "ጸ"], // Key sequence: tse
+    "ጹ": ["ት", "ጽ", "ጹ"], // Key sequence: tsu
+    "ጺ": ["ት", "ጽ", "ጺ"], // Key sequence: tsi
+    "ጻ": ["ት", "ጽ", "ጻ"], // Key sequence: tsa
+    "ጼ": ["ት", "ጽ", "ጺ", "ጼ"], // Key sequence: tsie
+    "ጽ": ["ት", "ጽ"], // Key sequence: ts
+    "ጾ": ["ት", "ጽ", "ጾ"], // Key sequence: tso
+    "ፀ": ["ት", "ጽ", "ፅ", "ፀ"], // Key sequence: tsse
+    "ፁ": ["ት", "ጽ", "ፅ", "ፁ"], // Key sequence: tssu
+    "ፂ": ["ት", "ጽ", "ፅ", "ፂ"], // Key sequence: tssi
+    "ፃ": ["ት", "ጽ", "ፅ", "ፃ"], // Key sequence: tssa
+    "ፄ": ["ት", "ጽ", "ፅ", "ፂ", "ፄ"], // Key sequence: tssie
+    "ፅ": ["ት", "ጽ", "ፅ"], // Key sequence: tss
+    "ፆ": ["ት", "ጽ", "ፅ", "ፆ"], // Key sequence: tsso
+    "ፈ": ["ፍ", "ፈ"], // Key sequence: fe
+    "ፉ": ["ፍ", "ፉ"], // Key sequence: fu
+    "ፊ": ["ፍ", "ፊ"], // Key sequence: fi
+    "ፋ": ["ፍ", "ፋ"], // Key sequence: fa
+    "ፌ": ["ፍ", "ፊ", "ፌ"], // Key sequence: fie
+    "ፎ": ["ፍ", "ፎ"], // Key sequence: fo
+    "ፐ": ["ፕ", "ፐ"], // Key sequence: pe
+    "ፑ": ["ፕ", "ፑ"], // Key sequence: pu
+    "ፒ": ["ፕ", "ፒ"], // Key sequence: pi
+    "ፓ": ["ፕ", "ፓ"], // Key sequence: pa
+    "ፔ": ["ፕ", "ፒ", "ፔ"], // Key sequence: pie
+    "ፖ": ["ፕ", "ፖ"], // Key sequence: po
+    "ቨ": ["ቭ", "ቨ"], // Key sequence: ve
+    "ቩ": ["ቭ", "ቩ"], // Key sequence: vu
+    "ቪ": ["ቭ", "ቪ"], // Key sequence: vi
+    "ቫ": ["ቭ", "ቫ"], // Key sequence: va
+    "ቬ": ["ቭ", "ቪ", "ቬ"], // Key sequence: vie
+    "ቮ": ["ቭ", "ቮ"], // Key sequence: vo
+    "ሏ": ["ል", "ሉ", "ሏ"], // Key sequence: lua
+    "ሗ": ["ህ", "ሕ", "ሑ", "ሗ"], // Key sequence: hhua
+    "ሟ": ["ም", "ሙ", "ሟ"], // Key sequence: mua
+    "ሧ": ["ስ", "ሥ", "ሡ", "ሧ"], // Key sequence: ssua
+    "ሯ": ["ር", "ሩ", "ሯ"], // Key sequence: rua
+    "ሷ": ["ስ", "ሱ", "ሷ"], // Key sequence: sua
+    "ሿ": ["ሽ", "ሹ", "ሿ"], // Key sequence: xua
+    "ቈ": ["ቅ", "ቁ", "ቈ"], // Key sequence: que
+    "ቍ": ["ቅ", "ቁ", "ቍ"], // Key sequence: qu'
+    "ቊ": ["ቅ", "ቁ", "ቊ"], // Key sequence: qui
+    "ቋ": ["ቅ", "ቁ", "ቋ"], // Key sequence: qua
+    "ቌ": ["ቅ", "ቁ", "ቊ", "ቌ"], // Key sequence: quie
+    "ቧ": ["ብ", "ቡ", "ቧ"], // Key sequence: bua
+    "ቷ": ["ት", "ቱ", "ቷ"], // Key sequence: tua
+    "ቿ": ["ች", "ቹ", "ቿ"], // Key sequence: cua
+    "ኈ": ["ህ", "ሕ", "ኅ", "ኁ", "ኈ"], // Key sequence: hhhue
+    "ኍ": ["ህ", "ሕ", "ኅ", "ኁ", "ኍ"], // Key sequence: hhhu'
+    "ኊ": ["ህ", "ሕ", "ኅ", "ኁ", "ኊ"], // Key sequence: hhhui
+    "ኋ": ["ህ", "ሕ", "ኅ", "ኁ", "ኋ"], // Key sequence: hhhua
+    "ኌ": ["ህ", "ሕ", "ኅ", "ኁ", "ኊ", "ኌ"], // Key sequence: hhhuie
+    "ኗ": ["ን", "ኑ", "ኗ"], // Key sequence: nua
+    "ኟ": ["ኝ", "ኙ", "ኟ"], // Key sequence: Nua
+    "ኰ": ["ክ", "ኩ", "ኰ"], // Key sequence: kue
+    "ኵ": ["ክ", "ኩ", "ኵ"], // Key sequence: ku'
+    "ኲ": ["ክ", "ኩ", "ኲ"], // Key sequence: kui
+    "ኳ": ["ክ", "ኩ", "ኳ"], // Key sequence: kua
+    "ኴ": ["ክ", "ኩ", "ኲ", "ኴ"], // Key sequence: kuie
+    "ዟ": ["ዝ", "ዙ", "ዟ"], // Key sequence: zua
+    "ዧ": ["ዥ", "ዡ", "ዧ"], // Key sequence: Zua
+    "ጇ": ["ጅ", "ጁ", "ጇ"], // Key sequence: jua
+    "ጐ": ["ግ", "ጉ", "ጐ"], // Key sequence: gue
+    "ጕ": ["ግ", "ጉ", "ጕ"], // Key sequence: gu'
+    "ጒ": ["ግ", "ጉ", "ጒ"], // Key sequence: gui
+    "ጓ": ["ግ", "ጉ", "ጓ"], // Key sequence: gua
+    "ጔ": ["ግ", "ጉ", "ጒ", "ጔ"], // Key sequence: guie
+    "ጧ": ["ጥ", "ጡ", "ጧ"], // Key sequence: Tua
+    "ጯ": ["ጭ", "ጩ", "ጯ"], // Key sequence: Cua
+    "ጷ": ["ጵ", "ጱ", "ጷ"], // Key sequence: Pua
+    "ጿ": ["ት", "ጽ", "ጹ", "ጿ"], // Key sequence: tsua
+    "ፏ": ["ፍ", "ፉ", "ፏ"], // Key sequence: fua
+    "ፗ": ["ፕ", "ፑ", "ፗ"], // Key sequence: pua
+    "ቯ": ["ቭ", "ቩ", "ቯ"], // Key sequence: vua
     };
     return sequences;
 }
 
 /**
  * Process keyupFirst.
- * @param {string} event Type of event.
  * @returns {bolean} The event.
  */
-function keyupFirst(event) {
+function keyupFirst() {
     return false;
 }
 
@@ -319,18 +318,18 @@ function keyboardElement(ltr) {
         // AZERTQSDFGWXCVB~!@#$%>
         if (ltr.match(/[~ዠዡዢዣዤዥዦዧጠጡጢጣጤጥጦጧጨጩጪጫጬጭጮጯ!@#$%]/)) {
             this.shiftright = true;
-        // phpcs:ignore
+        // Phpcs:ignore
         // YUIOPHJKLMN67890_+
         } else if (ltr.match(/[ዑጰጱጲጳጴጵጶጷኸኹኺኻኼኽኾኘኙኚኛኜኝኞኟዒዔዖ^&*()_+]/)) {
             this.shiftleft = true;
         }
     }
 
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[\\|@#€{}[\]~´`ñ]/i)) {
         this.alt = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ëïöü]/i)) {
         this.shiftleft = true;
         this.caret = true;
@@ -378,13 +377,10 @@ function keyboardElement(ltr) {
         }
     };
     this.turnOn = function(currSeqIndex) {
-	console.log("Turning on: ", this.chr);
         var nextChar = this.chr;
         if (isCharSequence(nextChar)) {
             const seq = getSequence(nextChar);
             nextChar = seq[currSeqIndex];
-	    console.log("Given index is: ", currSeqIndex);
-	    console.log("New char is: ", nextChar);
         }
         if (isLetter(nextChar)) {
             document.getElementById(getKeyID(nextChar)).className = "next" + thenFinger(nextChar);
@@ -417,16 +413,16 @@ function keyboardElement(ltr) {
         }
     };
     this.turnOff = function() {
-	var seq;
-	if (isCharSequence(this.chr)) {
+    var seq;
+    if (isCharSequence(this.chr)) {
             seq = getSequence(this.chr);
-	} else {
-	    seq = [this.chr];
-	}
+    } else {
+        seq = [this.chr];
+    }
 
-	for (const char of seq) {
+    for (const char of seq) {
             if (isLetter(char)) {
-                // phpcs:ignore
+                // Phpcs:ignore
                 const endsWithA = (char === "ሃ" || char === "ላ" ||
                     char === "ሓ" || char === "ማ" || char === "ሣ" || char === "ራ" ||
                     char === "ሳ" || char === "ሻ" || char === "ቃ" || char === "ባ" ||
@@ -448,16 +444,16 @@ function keyboardElement(ltr) {
                 if (char.match(/[አስድፍጅክል፤;ኽ]/i)) {
                     document.getElementById(getKeyID(char)).className = "finger" + thenFinger(char.toLowerCase());
                 } else if (endsWithA) {
-		    document.getElementById(getKeyID("አ")).className = "finger" + thenFinger("አ");
-		} else if (char.match(/[ሥጽፅ]/i)) {
-		    document.getElementById(getKeyID("ስ")).className = "finger" + thenFinger("ስ");
-		} else {
+            document.getElementById(getKeyID("አ")).className = "finger" + thenFinger("አ");
+        } else if (char.match(/[ሥጽፅ]/i)) {
+            document.getElementById(getKeyID("ስ")).className = "finger" + thenFinger("ስ");
+        } else {
                     document.getElementById(getKeyID(char)).className = "normal";
                 }
             } else {
                 document.getElementById(getKeyID(char)).className = "normal";
             }
-	}
+    }
 
         if (this.chr === '\n' || this.chr === '\r\n' || this.chr === '\n\r' || this.chr === '\r') {
             document.getElementById('jkeyenter').classname = "normal";
@@ -492,19 +488,21 @@ function thenFinger(tCrka) {
     if (tCrka === ' ') {
         return 5; // Highlight the spacebar.
         // phpcs:ignore
-    //} else if (tCrka.match(/[²³&1|aáqw<>\\à0}pm)°^¨[ù%´=+~\-_$*\]µ£`]/i)) {
-    } else if (tCrka.match(/[`~1!ቅአዝ0)ፕ፤፡/?\'"[{}\]|\\ ፟_ሃላሓማሣራሳሻቃባቫታቻኃናኛኣካኻዋዓዛዣያዳጃጋጣጫጳጻፃፋፓሏሗሟሧሯሷሿቋቧቯቷቿኋኗኟኳዟዧጇጓጧጯጷጿፏፗቍኍኵጕዥጵኣዐዓ]/i)) {
+    // } else if (tCrka.match(/[²³&1|aáqw<>\\à0}pm)°^¨[ù%´=+~\-_$*\]µ£`]/i)) {
+    // eslint-disable-next-line no-misleading-character-class
+    } else if (tCrka.match(/[`~1!ቅአዝ0)ፕ፤፡/?'"[{}\]|\\ ፟_ሃላሓማሣራሳሻቃባቫታቻኃናኛኣካኻዋዓዛዣያዳጃጋጣጫጳጻፃፋፓሏሗሟሧሯሷሿቋቧቯቷቿኋኗኟኳዟዧጇጓጧጯጷጿፏፗቍኍኵጕዥጵኣዐዓ]/i)) {
         return 2; // Highlight the correct key above in red.
         // phpcs:ignore
-    //} else if (tCrka.match(/[é2@zsxç9{oóöl:/]/i)) { Ends with 
-    } else if (tCrka.match(/[2@ውስሽ9\(ኦል።>ሥሆሎሖሞሦሮሶሾቆቦቮቶቾኆኖኞኦኮኾዎዖዞዦዮዶጆጎጦጮጶጾፆፎፖጽፅዖ]/i)) {
+    // } else if (tCrka.match(/[é2@zsxç9{oóöl:/]/i)) { Ends with
+    } else if (tCrka.match(/[2@ውስሽ9(ኦል።>ሥሆሎሖሞሦሮሶሾቆቦቮቶቾኆኖኞኦኮኾዎዖዞዦዮዶጆጎጦጮጶጾፆፎፖጽፅዖ]/i)) {
         return 1; // Highlight the correct key above in green.
         // phpcs:ignore
-    //} else if (tCrka.match(/["3#eéë€êdc!8iíïk;.]/i)) {
+    // } else if (tCrka.match(/["3#eéë€êdc!8iíïk;.]/i)) {
+    // eslint-disable-next-line max-len
     } else if (tCrka.match(/[.3#እድች8*ኢክ፣<ሀለሐመሠረሰሸቀበቨተቸኀነኘአከኸወኧዘዠየደጀገጠጨጰጸፀፈፐሂሊሒሚሢሪሲሺቂቢቪቲቺኂኒኚኽኪኺዊዒዚዢዪዲጂጊጢጪጲጺፂፊፒሄሌሔሜሤሬሴሼቄቤቬቴቼኄኔኜኤኬኼዌዔዜዤዬዴጄጌጤጬጴጼፄፌፔቈኈኰጐቌኌኴጔቊኊኲጒጭኤዒዔዕ]/i)) {
         return 4; // Highlight the correct key above in yellow.
         // phpcs:ignore
-    //} else if (tCrka.match(/[\'4rf(5tgbv§6yhnñè7uúüj,?]/i)) {
+    // } else if (tCrka.match(/[\'4rf(5tgbv§6yhnñè7uúüj,?]/i)) {
     } else if (tCrka.match(/[4$ርፍቭ5%ትግብ6^ይህን7&ኡጅምሁሉሑሙሡሩሱሹቁቡቩቱቹኁኑኙኡኩኹዉዑዙዡዩዱጁጉጡጩጱጹፁፉፑሕኅኝጥዑ]/i)) {
         return 3; // Highlight the correct key above in blue.
     } else {
@@ -519,174 +517,174 @@ function thenFinger(tCrka) {
  */
 function getKeyID(tCrka) {
     const endsWithE = (tCrka === "ሀ" || tCrka === "ለ" ||
-	tCrka === "ሐ" || tCrka === "መ" || tCrka === "ሠ" || tCrka === "ረ" ||
-	tCrka === "ሰ" || tCrka === "ሸ" || tCrka === "ቀ" || tCrka === "በ" ||
-	tCrka === "ቨ" || tCrka === "ተ" || tCrka === "ቸ" || tCrka === "ኀ" ||
-	tCrka === "ነ" || tCrka === "ኘ" || tCrka === "እ" || tCrka === "ከ" ||
-	tCrka === "ኸ" || tCrka === "ወ" || tCrka === "ዘ" ||
-	tCrka === "ዠ" || tCrka === "የ" || tCrka === "ደ" || tCrka === "ጀ" ||
-	tCrka === "ገ" || tCrka === "ጠ" || tCrka === "ጨ" || tCrka === "ጰ" || 
-	tCrka === "ጸ" || tCrka === "ፀ" || tCrka === "ፈ" || tCrka === "ፐ" ||
-	tCrka === "ሄ" || tCrka === "ሌ" || tCrka === "ሔ" || tCrka === "ሜ" ||
-	tCrka === "ሤ" || tCrka === "ሬ" || tCrka === "ሴ" || tCrka === "ሼ" ||
-	tCrka === "ቄ" || tCrka === "ቤ" || tCrka === "ቬ" || tCrka === "ቴ" ||
-	tCrka === "ቼ" || tCrka === "ኄ" || tCrka === "ኔ" || tCrka === "ኜ" ||
-	tCrka === "ኤ" || tCrka === "ኬ" || tCrka === "ኼ" || tCrka === "ዌ" ||
-	tCrka === "ዔ" || tCrka === "ዜ" || tCrka === "ዤ" || tCrka === "ዬ" ||
-	tCrka === "ዴ" || tCrka === "ጄ" || tCrka === "ጌ" || tCrka === "ጤ" ||
-	tCrka === "ጬ" || tCrka === "ጴ" || tCrka === "ጼ" || tCrka === "ፄ" ||
-	tCrka === "ፌ" || tCrka === "ፔ" || tCrka === "ቈ" || tCrka === "ኈ" ||
-	tCrka === "ኰ" || tCrka === "ጐ" || tCrka === "ቌ" || tCrka === "ኌ" ||
-	tCrka === "ኴ" || tCrka === "ጔ" || tCrka === "ዕ" || tCrka === "ኧ");
+    tCrka === "ሐ" || tCrka === "መ" || tCrka === "ሠ" || tCrka === "ረ" ||
+    tCrka === "ሰ" || tCrka === "ሸ" || tCrka === "ቀ" || tCrka === "በ" ||
+    tCrka === "ቨ" || tCrka === "ተ" || tCrka === "ቸ" || tCrka === "ኀ" ||
+    tCrka === "ነ" || tCrka === "ኘ" || tCrka === "እ" || tCrka === "ከ" ||
+    tCrka === "ኸ" || tCrka === "ወ" || tCrka === "ዘ" ||
+    tCrka === "ዠ" || tCrka === "የ" || tCrka === "ደ" || tCrka === "ጀ" ||
+    tCrka === "ገ" || tCrka === "ጠ" || tCrka === "ጨ" || tCrka === "ጰ" ||
+    tCrka === "ጸ" || tCrka === "ፀ" || tCrka === "ፈ" || tCrka === "ፐ" ||
+    tCrka === "ሄ" || tCrka === "ሌ" || tCrka === "ሔ" || tCrka === "ሜ" ||
+    tCrka === "ሤ" || tCrka === "ሬ" || tCrka === "ሴ" || tCrka === "ሼ" ||
+    tCrka === "ቄ" || tCrka === "ቤ" || tCrka === "ቬ" || tCrka === "ቴ" ||
+    tCrka === "ቼ" || tCrka === "ኄ" || tCrka === "ኔ" || tCrka === "ኜ" ||
+    tCrka === "ኤ" || tCrka === "ኬ" || tCrka === "ኼ" || tCrka === "ዌ" ||
+    tCrka === "ዔ" || tCrka === "ዜ" || tCrka === "ዤ" || tCrka === "ዬ" ||
+    tCrka === "ዴ" || tCrka === "ጄ" || tCrka === "ጌ" || tCrka === "ጤ" ||
+    tCrka === "ጬ" || tCrka === "ጴ" || tCrka === "ጼ" || tCrka === "ፄ" ||
+    tCrka === "ፌ" || tCrka === "ፔ" || tCrka === "ቈ" || tCrka === "ኈ" ||
+    tCrka === "ኰ" || tCrka === "ጐ" || tCrka === "ቌ" || tCrka === "ኌ" ||
+    tCrka === "ኴ" || tCrka === "ጔ" || tCrka === "ዕ" || tCrka === "ኧ");
 
     const endsWithA = (tCrka === "ሃ" || tCrka === "ላ" ||
-	tCrka === "ሓ" || tCrka === "ማ" || tCrka === "ሣ" || tCrka === "ራ" ||
-	tCrka === "ሳ" || tCrka === "ሻ" || tCrka === "ቃ" || tCrka === "ባ" ||
-	tCrka === "ቫ" || tCrka === "ታ" || tCrka === "ቻ" || tCrka === "ኃ" ||
-	tCrka === "ና" || tCrka === "ኛ" || tCrka === "ኣ" || tCrka === "ካ" ||
-	tCrka === "ኻ" || tCrka === "ዋ" || tCrka === "ዓ" || tCrka === "ዛ" ||
-	tCrka === "ዣ" || tCrka === "ያ" || tCrka === "ዳ" || tCrka === "ጃ" ||
-	tCrka === "ጋ" || tCrka === "ጣ" || tCrka === "ጫ" || tCrka === "ጳ" ||
-	tCrka === "ጻ" || tCrka === "ፃ" || tCrka === "ፋ" || tCrka === "ፓ" ||
-	tCrka === "ሏ" || tCrka === "ሗ" || tCrka === "ሟ" || tCrka === "ሧ" ||
-	tCrka === "ሯ" || tCrka === "ሷ" || tCrka === "ሿ" || tCrka === "ቋ" ||
-	tCrka === "ቧ" || tCrka === "ቯ" || tCrka === "ቷ" || tCrka === "ቿ" ||
-	tCrka === "ኋ" || tCrka === "ኗ" || tCrka === "ኟ" || tCrka === "ኳ" ||
-	tCrka === "ዓ" || tCrka === "ዟ" || tCrka === "ዧ" || tCrka === "ኣ" ||
-	tCrka === "ዐ" || tCrka === "ጇ" || tCrka === "ጓ" || tCrka === "ጧ" ||
-	tCrka === "ጯ" || tCrka === "ጷ" || tCrka === "ጿ" || tCrka === "አ" ||
-	tCrka === "ፏ" || tCrka === "ፗ");
+    tCrka === "ሓ" || tCrka === "ማ" || tCrka === "ሣ" || tCrka === "ራ" ||
+    tCrka === "ሳ" || tCrka === "ሻ" || tCrka === "ቃ" || tCrka === "ባ" ||
+    tCrka === "ቫ" || tCrka === "ታ" || tCrka === "ቻ" || tCrka === "ኃ" ||
+    tCrka === "ና" || tCrka === "ኛ" || tCrka === "ኣ" || tCrka === "ካ" ||
+    tCrka === "ኻ" || tCrka === "ዋ" || tCrka === "ዓ" || tCrka === "ዛ" ||
+    tCrka === "ዣ" || tCrka === "ያ" || tCrka === "ዳ" || tCrka === "ጃ" ||
+    tCrka === "ጋ" || tCrka === "ጣ" || tCrka === "ጫ" || tCrka === "ጳ" ||
+    tCrka === "ጻ" || tCrka === "ፃ" || tCrka === "ፋ" || tCrka === "ፓ" ||
+    tCrka === "ሏ" || tCrka === "ሗ" || tCrka === "ሟ" || tCrka === "ሧ" ||
+    tCrka === "ሯ" || tCrka === "ሷ" || tCrka === "ሿ" || tCrka === "ቋ" ||
+    tCrka === "ቧ" || tCrka === "ቯ" || tCrka === "ቷ" || tCrka === "ቿ" ||
+    tCrka === "ኋ" || tCrka === "ኗ" || tCrka === "ኟ" || tCrka === "ኳ" ||
+    tCrka === "ዓ" || tCrka === "ዟ" || tCrka === "ዧ" || tCrka === "ኣ" ||
+    tCrka === "ዐ" || tCrka === "ጇ" || tCrka === "ጓ" || tCrka === "ጧ" ||
+    tCrka === "ጯ" || tCrka === "ጷ" || tCrka === "ጿ" || tCrka === "አ" ||
+    tCrka === "ፏ" || tCrka === "ፗ");
 
     const endsWithU = (tCrka === "ኡ" || tCrka === "ዑ" ||
-	tCrka === "ሁ" || tCrka === "ሉ" || tCrka === "ሑ" || tCrka === "ሙ" ||
-	tCrka === "ሡ" || tCrka === "ሩ" || tCrka === "ሱ" || tCrka === "ሹ" ||
-	tCrka === "ቁ" || tCrka === "ቡ" || tCrka === "ቩ" || tCrka === "ቱ" ||
-	tCrka === "ቹ" || tCrka === "ኁ" || tCrka === "ኑ" || tCrka === "ኙ" ||
-	tCrka === "ኡ" || tCrka === "ኩ" || tCrka === "ኹ" || tCrka === "ዉ" ||
-	tCrka === "ዑ" || tCrka === "ዙ" || tCrka === "ዡ" || tCrka === "ዩ" ||
-	tCrka === "ዱ" || tCrka === "ጁ" || tCrka === "ጉ" || tCrka === "ጡ" ||
-	tCrka === "ጩ" || tCrka === "ጱ" || tCrka === "ጹ" || tCrka === "ፁ" ||
-	tCrka === "ፉ" || tCrka === "ፑ");
+    tCrka === "ሁ" || tCrka === "ሉ" || tCrka === "ሑ" || tCrka === "ሙ" ||
+    tCrka === "ሡ" || tCrka === "ሩ" || tCrka === "ሱ" || tCrka === "ሹ" ||
+    tCrka === "ቁ" || tCrka === "ቡ" || tCrka === "ቩ" || tCrka === "ቱ" ||
+    tCrka === "ቹ" || tCrka === "ኁ" || tCrka === "ኑ" || tCrka === "ኙ" ||
+    tCrka === "ኡ" || tCrka === "ኩ" || tCrka === "ኹ" || tCrka === "ዉ" ||
+    tCrka === "ዑ" || tCrka === "ዙ" || tCrka === "ዡ" || tCrka === "ዩ" ||
+    tCrka === "ዱ" || tCrka === "ጁ" || tCrka === "ጉ" || tCrka === "ጡ" ||
+    tCrka === "ጩ" || tCrka === "ጱ" || tCrka === "ጹ" || tCrka === "ፁ" ||
+    tCrka === "ፉ" || tCrka === "ፑ");
 
     const endsWithI = (tCrka === "ሂ" || tCrka === "ሊ" ||
-	tCrka === "ሒ" || tCrka === "ሚ" || tCrka === "ሢ" || tCrka === "ሪ" ||
-	tCrka === "ሲ" || tCrka === "ሺ" || tCrka === "ቂ" || tCrka === "ቢ" ||
-	tCrka === "ቪ" || tCrka === "ቲ" || tCrka === "ቺ" || tCrka === "ኂ" ||
-	tCrka === "ኒ" || tCrka === "ኚ" || tCrka === "ኢ" || tCrka === "ኪ" ||
-	tCrka === "ኺ" || tCrka === "ዊ" || tCrka === "ዒ" || tCrka === "ዚ" ||
-	tCrka === "ዢ" || tCrka === "ዪ" || tCrka === "ዲ" || tCrka === "ጂ" ||
-	tCrka === "ጊ" || tCrka === "ጢ" || tCrka === "ጪ" || tCrka === "ጲ" ||
-	tCrka === "ጺ" || tCrka === "ፂ" || tCrka === "ፊ" || tCrka === "ፒ" ||
-	tCrka === "ቊ" || tCrka === "ኊ" || tCrka === "ኲ" || tCrka === "ጒ");
+    tCrka === "ሒ" || tCrka === "ሚ" || tCrka === "ሢ" || tCrka === "ሪ" ||
+    tCrka === "ሲ" || tCrka === "ሺ" || tCrka === "ቂ" || tCrka === "ቢ" ||
+    tCrka === "ቪ" || tCrka === "ቲ" || tCrka === "ቺ" || tCrka === "ኂ" ||
+    tCrka === "ኒ" || tCrka === "ኚ" || tCrka === "ኢ" || tCrka === "ኪ" ||
+    tCrka === "ኺ" || tCrka === "ዊ" || tCrka === "ዒ" || tCrka === "ዚ" ||
+    tCrka === "ዢ" || tCrka === "ዪ" || tCrka === "ዲ" || tCrka === "ጂ" ||
+    tCrka === "ጊ" || tCrka === "ጢ" || tCrka === "ጪ" || tCrka === "ጲ" ||
+    tCrka === "ጺ" || tCrka === "ፂ" || tCrka === "ፊ" || tCrka === "ፒ" ||
+    tCrka === "ቊ" || tCrka === "ኊ" || tCrka === "ኲ" || tCrka === "ጒ");
 
-    const endsWithO = (tCrka === "ሆ" || tCrka === "ሎ" || 
-	tCrka === "ሖ" || tCrka === "ሞ" || tCrka === "ሦ" || tCrka === "ሮ" ||
-	tCrka === "ሶ" || tCrka === "ሾ" || tCrka === "ቆ" || tCrka === "ቦ" ||
-	tCrka === "ቮ" || tCrka === "ቶ" || tCrka === "ቾ" || tCrka === "ኆ" ||
-	tCrka === "ኖ" || tCrka === "ኞ" || tCrka === "ኦ" || tCrka === "ኮ" ||
-	tCrka === "ኾ" || tCrka === "ዎ" || tCrka === "ዖ" || tCrka === "ዞ" ||
-	tCrka === "ዦ" || tCrka === "ዮ" || tCrka === "ዶ" || tCrka === "ጆ" ||
-	tCrka === "ጎ" || tCrka === "ጦ" || tCrka === "ጮ" || tCrka === "ጶ" ||
-	tCrka === "ጾ" || tCrka === "ፆ" || tCrka === "ፎ" || tCrka === "ፖ");
+    const endsWithO = (tCrka === "ሆ" || tCrka === "ሎ" ||
+    tCrka === "ሖ" || tCrka === "ሞ" || tCrka === "ሦ" || tCrka === "ሮ" ||
+    tCrka === "ሶ" || tCrka === "ሾ" || tCrka === "ቆ" || tCrka === "ቦ" ||
+    tCrka === "ቮ" || tCrka === "ቶ" || tCrka === "ቾ" || tCrka === "ኆ" ||
+    tCrka === "ኖ" || tCrka === "ኞ" || tCrka === "ኦ" || tCrka === "ኮ" ||
+    tCrka === "ኾ" || tCrka === "ዎ" || tCrka === "ዖ" || tCrka === "ዞ" ||
+    tCrka === "ዦ" || tCrka === "ዮ" || tCrka === "ዶ" || tCrka === "ጆ" ||
+    tCrka === "ጎ" || tCrka === "ጦ" || tCrka === "ጮ" || tCrka === "ጶ" ||
+    tCrka === "ጾ" || tCrka === "ፆ" || tCrka === "ፎ" || tCrka === "ፖ");
 
     if (tCrka === ' ') {
         return "jkeyspace";
     } else if (tCrka === '\n') {
         return "jkeyenter";
     } else if (tCrka === '`' || tCrka === '~') {
-        return "jkeycaret`" ;//`~
+        return "jkeycaret`";// `~
     } else if (tCrka === '1' || tCrka === '!') {
-        return "jkey1" ;//!1
+        return "jkey1";// !1
     } else if (tCrka === '2' || tCrka === '@') {
-        return "jkey2" ;//@2
+        return "jkey2";// @2
     } else if (tCrka === '3' || tCrka === '#') {
-        return "jkey3" ;//#3
+        return "jkey3";// #3
     } else if (tCrka === '4' || tCrka === '$') {
-        return "jkey4" ;//$4
+        return "jkey4";// $4
     } else if (tCrka === '5' || tCrka === '%') {
-        return "jkey5" ;//%5
+        return "jkey5";// %5
     } else if (tCrka === '6' || tCrka === '^') {
-        return "jkey6" ;//^6
+        return "jkey6";// ^6
     } else if (tCrka === '7' || tCrka === '&') {
-        return "jkey7" ;//&7
+        return "jkey7";// &7
     } else if (tCrka === '8' || tCrka === '*') {
-        return "jkey8" ;//*8
+        return "jkey8";//* 8
     } else if (tCrka === '9' || tCrka === '(') {
-        return "jkey9" ;//(9
+        return "jkey9";// (9
     } else if (tCrka === '0' || tCrka === ')') {
-        return "jkey0" ;//)0
+        return "jkey0";// )0
     } else if (tCrka === '፟' || tCrka === '_') {
-        return "jkeyminus" ;//_-
+        return "jkeyminus";// _-
     } else if (tCrka === '=' || tCrka === '+') {
-        return "jkey=" ;//+=
+        return "jkey=";// +=
     } else if (tCrka === 'ቅ' || tCrka === 'q') {
-        return "jkeyq" ;//Qቅ
+        return "jkeyq";// Qቅ
     } else if (tCrka === 'ው' || tCrka === 'w') {
-        return "jkeyw" ;//Wው
+        return "jkeyw";// Wው
     } else if (tCrka === 'እ' || tCrka === 'ዕ' || tCrka === 'e' || endsWithE) {
-        return "jkeye" ;//Eእ
+        return "jkeye";// Eእ
     } else if (tCrka === 'ር' || tCrka === 'r') {
-        return "jkeyr" ;//Rር
+        return "jkeyr";// Rር
     } else if (tCrka === 'ት' || tCrka === 'ጥ' || tCrka === 't') {
-        return "jkeyt" ;//Tት
+        return "jkeyt";// Tት
     } else if (tCrka === 'ይ' || tCrka === 'y') {
-        return "jkeyy" ;//Yይ
+        return "jkeyy";// Yይ
     } else if (tCrka === 'ኡ' || tCrka === 'ዑ' || endsWithU || tCrka === 'u') {
-        return "jkeyu" ;//Uኡ
+        return "jkeyu";// Uኡ
     } else if (tCrka === 'ኢ' || tCrka === 'ዒ' || endsWithI || tCrka === 'i') {
-        return "jkeyi" ;//Iኢ
+        return "jkeyi";// Iኢ
     } else if (tCrka === 'ኦ' || tCrka === 'ዖ' || endsWithO || tCrka === 'o') {
-        return "jkeyo" ;//Oኦ
+        return "jkeyo";// Oኦ
     } else if (tCrka === 'ፕ' || tCrka === 'ጵ' || tCrka === 'p') {
-        return "jkeyp" ;//Pፕ
+        return "jkeyp";// Pፕ
     } else if (tCrka === '[' || tCrka === '{') {
-        return "jkey["; //{[
+        return "jkey["; // {[
     } else if (tCrka === ']' || tCrka === '}') {
-        return "jkey]";//}]
+        return "jkey]";// }]
     } else if (tCrka === 'አ' || tCrka === 'ኣ' || endsWithA || tCrka === 'a') {
-        return "jkeya";//Aአ
+        return "jkeya";// Aአ
     } else if (tCrka === 'ስ' || tCrka === 'ጽ' || tCrka === 'ፅ' || tCrka === 'ሥ' || tCrka === 's') {
-        return "jkeys";//Sስ
+        return "jkeys";// Sስ
     } else if (tCrka === 'ድ' || tCrka === 'd') {
-        return "jkeyd";//Dድ
+        return "jkeyd";// Dድ
     } else if (tCrka === 'ፍ' || tCrka === 'f') {
-        return "jkeyf";//Fፍ
+        return "jkeyf";// Fፍ
     } else if (tCrka === 'ግ' || tCrka === 'g') {
-        return "jkeyg" ;//Gግ
+        return "jkeyg";// Gግ
     } else if (tCrka === 'ህ' || tCrka === 'ሕ' || tCrka === 'ኅ' || tCrka === 'h') {
-        return "jkeyh" ;//Hህ
+        return "jkeyh";// Hህ
     } else if (tCrka === 'ጅ' || tCrka === 'j') {
-        return "jkeyj";//Jጅ
+        return "jkeyj";// Jጅ
     } else if (tCrka === 'ክ' || tCrka === 'ኽ' || tCrka === 'k') {
-        return "jkeyk";//Kክ
+        return "jkeyk";// Kክ
     } else if (tCrka === 'ል' || tCrka === 'l') {
-        return "jkeyl";//Lል
+        return "jkeyl";// Lል
     } else if (tCrka === '፤' || tCrka === '፡' || tCrka === ';') {
-        return "jkey፤";//፡፤
-    } else if (tCrka === '\'' || tCrka === '\"' || tCrka === "ቍ" || tCrka === "ኍ" || tCrka === "ኵ" || tCrka === "ጕ") {
-        return "jkey'" ;//"'
+        return "jkey፤";// ፡፤
+    } else if (tCrka === '\'' || tCrka === '"' || tCrka === "ቍ" || tCrka === "ኍ" || tCrka === "ኵ" || tCrka === "ጕ") {
+        return "jkey'";// "'
     } else if (tCrka === '\\' || tCrka === '|') {
-        return "jkey\\" ;//|\
+        return "jkey\\";// |\
     } else if (tCrka === 'ዝ' || tCrka === 'ዥ' || tCrka === 'z') {
-        return "jkeyz" ;//Zዝ
+        return "jkeyz";// Zዝ
     } else if (tCrka === 'ሽ' || tCrka === 'x') {
-        return "jkeyx" ;//Xሽ
+        return "jkeyx";// Xሽ
     } else if (tCrka === 'ች' || tCrka === 'ጭ' || tCrka === 'c') {
-        return "jkeyc" ;//Cች
+        return "jkeyc";// Cች
     } else if (tCrka === 'ቭ' || tCrka === 'v') {
-        return "jkeyv" ;//Vቭ
+        return "jkeyv";// Vቭ
     } else if (tCrka === 'ብ' || tCrka === 'b') {
-        return "jkeyb" ;//Bብ
+        return "jkeyb";// Bብ
     } else if (tCrka === 'ኝ' || tCrka === 'ን' || tCrka === 'n') {
-        return "jkeyn" ;//Nን
+        return "jkeyn";// Nን
     } else if (tCrka === 'ም' || tCrka === 'm') {
-        return "jkeym" ;//Mም
+        return "jkeym";// Mም
     } else if (tCrka === '፣' || tCrka === '<' || tCrka === ',') {
-        return "jkeycomma" ;//፣
+        return "jkeycomma";// ፣
     } else if (tCrka === '።' || tCrka === '>' || tCrka === '.') {
-        return "jkeyperiod" ;//።
+        return "jkeyperiod";// ።
     } else if (tCrka === '/' || tCrka === '?') {
-        return "jkey/" ;//?/
+        return "jkey/";// ?/
     } else {
         return "jkey" + tCrka;
     }
