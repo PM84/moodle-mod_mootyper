@@ -60,18 +60,18 @@ echo $OUTPUT->heading(get_string('loheading', 'mootyper'));
 $color3 = $mootyper->keybdbgc;
 
 echo '<div align="left" style="font-size:1em;
-     font-weight:bold;background: '.$color3.';
+     font-weight:bold;background: ' . $color3 . ';
      border:2px solid black;
      -webkit-border-radius:16px;
      -moz-border-radius:16px;border-radius:16px;"><table>';
 
 $layouts = keyboards::get_keyboard_layouts_db();
 // 20220126 Set up a return to page link to use after deleting a layout.
-$jlinkklrem = $CFG->wwwroot . '/mod/mootyper/klrem.php?id='.$id;
+$jlinkklrem = $CFG->wwwroot . '/mod/mootyper/klrem.php?id=' . $id;
 
 echo '<div class="container">';
 echo '<table class="table table-hover">';
-echo '<thead><tr><th>'.get_string('layout', 'mootyper').'</th><th>'.get_string('deletekb', 'mootyper').'</th>';
+echo '<thead><tr><th>' . get_string('layout', 'mootyper') . '</th><th>' . get_string('deletekb', 'mootyper') . '</th>';
 echo '</tr></thead>';
 echo '<tbody>';
 
@@ -85,27 +85,27 @@ for ($i = 0; $i < $layoutcount; $i++) {
     // Determine anchor for after delete: next layout, or previous if last.
     $nextanchor = '';
     if ($i < $layoutcount - 1) {
-        $nextanchor = 'layout-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $layoutnames[$i+1]);
+        $nextanchor = 'layout-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $layoutnames[$i + 1]);
     } else if ($i > 0) {
-        $nextanchor = 'layout-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $layoutnames[$i-1]);
+        $nextanchor = 'layout-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $layoutnames[$i - 1]);
     }
     $anchorparam = $nextanchor ? ('&anchor=' . $nextanchor) : '';
-    echo '<tr id="'.$anchorid.'"><td>'.$lo.'</td><td>'
-        .'<a onclick="return confirm(\''.get_string('deletelsnconfirm', 'mootyper').$lo
-        .'\')" href="'.$jlinkklrem.'&kb='.$lo.$anchorparam.'#'.$anchorid
-        .'" class="btn btn-warning" style="border-radius: 8px">'
-        .get_string('deletekblo', 'mootyper', $lo)
-        .'</a></td></tr>';
+    echo '<tr id="' . $anchorid . '"><td>' . $lo . '</td><td>'
+        . '<a onclick="return confirm(\'' . get_string('deletelsnconfirm', 'mootyper') . $lo
+        . '\')" href="' . $jlinkklrem . '&kb=' . $lo . $anchorparam . '#' . $anchorid
+        . '" class="btn btn-warning" style="border-radius: 8px">'
+        . get_string('deletekblo', 'mootyper', $lo)
+        . '</a></td></tr>';
 }
 echo '</tbody>';
 echo '</table>';
 echo '</div>';
 
 // 20200226 Added a continue button that takes you back to the MooTyper you came from.
-$url = $CFG->wwwroot . '/mod/mootyper/view.php?id='.$id;
-echo '<br><a href="'.$url
-    .'" class="btn btn-primary" style="border-radius: 8px">'
-    .get_string('returnto', 'mootyper', $mootyper->name)
-    .'</a><br><br>';
+$url = $CFG->wwwroot . '/mod/mootyper/view.php?id=' . $id;
+echo '<br><a href="' . $url
+    . '" class="btn btn-primary" style="border-radius: 8px">'
+    . get_string('returnto', 'mootyper', $mootyper->name)
+    . '</a><br><br>';
 
 echo $OUTPUT->footer();
