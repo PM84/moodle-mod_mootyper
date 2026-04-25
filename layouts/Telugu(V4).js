@@ -39,7 +39,7 @@ function keyupFirst(event) {
 function keyboardElement(ltr) {
     this.chr = ltr.toLowerCase();
     this.alt = false;
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ఒఔ()ఃఋఔఐఆఈఊభఙఘధఝఢఞఓఏఅఇఉఫఱఖథఛఠఎఁణళశష]/)) {
         this.shift = true;
     } else {
@@ -70,7 +70,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[ోే్ిరకతచ]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {
@@ -101,7 +101,7 @@ function thenFinger(tCrka) {
     if (tCrka === ' ') {
         return 5; // Highlight the spacebar.
     // phpcs:ignore
-    //} else if (tCrka.match(/[ొఒ1౧ౌఔోఓెఎ0)౦-ఃృఋౄజఝౙచఛౘయ]/i)) {
+    // } else if (tCrka.match(/[ొఒ1౧ౌఔోఓెఎ0)౦-ఃృఋౄజఝౙచఛౘయ]/i)) {
     } else if (tCrka.match(/[ొఒ1౧ౌఔఓెోఎ0)౦జఝడఢఞ\-ఃృఋౄయచఛటఠ]/i)) {
         return 4; // Highlight the correct key above in red.
     // phpcs:ignore

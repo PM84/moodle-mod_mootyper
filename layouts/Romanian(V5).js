@@ -70,7 +70,7 @@ function keyboardElement(ltr) {
         }
     };
     this.turnOff = function() {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[asdfjklș]/i)) {
             document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
         } else {
@@ -169,7 +169,7 @@ function getKeyID(tCrka) {
         return "jkeyc";
     } else if (tCrka === 'ţ') {
         return "jkeyt";
-    } else if (tCrka === 'ł' || tCrka ==='Ł') {
+    } else if (tCrka === 'ł' || tCrka === 'Ł') {
         return "jkeyl";
     } else if (tCrka === ',' || tCrka === ';' || tCrka === '<' || tCrka === '«') {
         return "jkeycomma";
@@ -177,7 +177,7 @@ function getKeyID(tCrka) {
         return "jkeyperiod";
     } else if (tCrka === '§') {
         return "jkeyp";
-    } else if (tCrka === 'ș' ||tCrka === ';' || tCrka === ':') {
+    } else if (tCrka === 'ș' || tCrka === ';' || tCrka === ':') {
         return "jkeyș";
     } else if (tCrka === '/' || tCrka === '?') {
         return "jkey/";

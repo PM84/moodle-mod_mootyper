@@ -39,13 +39,13 @@ function keyupFirst(event) {
 function keyboardElement(ltr) {
     this.chr = ltr.toLowerCase();
 
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[₴!"№;%]/i)) {
         this.shiftright = true;
-    // phpcs:ignore
+    // Phpcs:ignore
     } else if (ltr.match(/[:?*()_+/,]/i)) {
         this.shiftleft = true;
-    // phpcs:ignore
+    // Phpcs:ignore
     } else if (ltr.match(/['1234567890\-=\\.]/i)) {
         this.shift = false;
     } else if (isLetter(ltr)) { // Set specified shift key for right or left.
@@ -72,13 +72,13 @@ function keyboardElement(ltr) {
         if (this.shiftright) {
             document.getElementById('jkeyshiftr').className = "next4";
         }
-        if ( this.alt) {
+        if (this.alt) {
             document.getElementById('jkeyaltgr').className = "nextSpace";
         }
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[фываолдж]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {

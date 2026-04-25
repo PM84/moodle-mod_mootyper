@@ -51,11 +51,11 @@ function keyboardElement(ltr) {
             this.shiftleft = true;
         }
     } else {
-        // phpcs:ignore
+        // Phpcs:ignore
         if (ltr.match(/[ª>!"·$%]/i)) {
             this.shiftright = true;
             this.shiftleft = false;
-        // phpcs:ignore
+        // Phpcs:ignore
         } else if (ltr.match(/[&/()=?¿^*¨;:_]/i)) {
             this.shiftright = false;
             this.shiftleft = true;
@@ -64,11 +64,11 @@ function keyboardElement(ltr) {
             this.shiftleft = false;
         }
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[áéíóú]/)) {
         this.accent = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ÁÉÍÓÚ]/)) {
         this.accent = true;
     }
@@ -78,7 +78,7 @@ function keyboardElement(ltr) {
     if (ltr === 'Ü') {
         this.accent = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[\\|@#~€¬\[\]{}]/i)) {
         this.alt = true;
     }
@@ -108,7 +108,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[asdfjklñ]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {
@@ -181,7 +181,7 @@ function getKeyID(tCrka) {
         return "jkey2";
     } else if (tCrka === '·' || tCrka === '#') {
         return "jkey3";
-    } else if (tCrka === '$'|| tCrka === '~') {
+    } else if (tCrka === '$' || tCrka === '~') {
         return "jkey4";
     } else if (tCrka === '%') {
         return "jkey5";

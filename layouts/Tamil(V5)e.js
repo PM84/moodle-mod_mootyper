@@ -75,7 +75,7 @@ function keyboardElement(ltr, pos) {
         // phpcs:ignore
         if (keytoken.match(/[~!@#$%ஸஷஜஹ௹௺௸ஃ௳௴௵௶௷]/)) {
             this.shiftright = true;
-        // phpcs:ignore
+        // Phpcs:ignore
         } else if (keytoken.match(/[\^&*()_+\[\]{}\|:"';?<>ஶௐ\/]/)) {
             this.shiftleft = true;
         }
@@ -103,7 +103,7 @@ function keyboardElement(ltr, pos) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[asdfjkl;அ௹இ௺உ௸்ஃபம"த:ந]/)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {
@@ -269,7 +269,7 @@ function getKeyID(tCrka) {
  * @returns {(number|Array)}.
  */
 function isLetter(str) {
-    // return str.length === 1 && str.match(/[a-z]/i);
+    // Return str.length === 1 && str.match(/[a-z]/i);
     return str.length === 1 && str.match(/[!-ﻼ]/i);
-    // return str.length === 1 && str.match(/[`~1234567890அஇஉ்எ]/i);
+    // Return str.length === 1 && str.match(/[`~1234567890அஇஉ்எ]/i);
 }

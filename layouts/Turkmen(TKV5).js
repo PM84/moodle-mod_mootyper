@@ -45,7 +45,7 @@ function keyboardElement(ltr) {
         } else if (ltr.match(/[№&*()_+YUIOPŇÖŞHJKL:"NM<>?]/)) {
             this.shiftleft = true;
         }
-    } 
+    }
 
 
     this.turnOn = function() {
@@ -71,7 +71,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[asdfjkl;]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {
@@ -113,7 +113,7 @@ function thenFinger(tCrka) {
     } else if (tCrka.match(/[3#edç8*ik,<]/i)) {
         return 2; // Highlight the correct key above in yellow.
     // phpcs:ignore
-    //} else if (tCrka.match(/[4$€rfý5%tgb6№yhn7&uújm]/i)) {
+    // } else if (tCrka.match(/[4$€rfý5%tgb6№yhn7&uújm]/i)) {
     } else if (tCrka.match(/[4$rfý5%tgb6№yhn7&ujm]/i)) {
         return 1; // Highlight the correct key above in blue.
     } else {

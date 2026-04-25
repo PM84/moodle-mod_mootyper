@@ -46,11 +46,11 @@ function keyboardElement(ltr) {
             this.shiftleft = true;
         }
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[áéíóú]/)) {
         this.accent = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ÁÉÍÓÚ]/)) {
         this.accent = true;
     }
@@ -62,15 +62,15 @@ function keyboardElement(ltr) {
         this.shiftleft = true;
         this.accent = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ãõ]/)) {
         this.tilde = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ÃÕ]/)) {
         this.tilde = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[âê]/i)) {
         this.shiftright = true;
         this.tilde = true;
@@ -78,7 +78,7 @@ function keyboardElement(ltr) {
         this.shiftleft = true;
         this.tilde = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[¹²³£¢¬§°ªº₢]/i)) {
         this.alt = true;
     }
@@ -111,7 +111,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[asdfjklç]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {
@@ -138,7 +138,7 @@ function keyboardElement(ltr) {
         if (this.tilde) {
             document.getElementById('jkeytilde').className = "normal";
         }
-    }
+    };
 }
 
 /**

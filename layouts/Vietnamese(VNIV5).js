@@ -43,26 +43,26 @@ function keyboardElement(ltr) {
     this.alt = false;
     this.accent = false;
 
-        // phpcs:ignore
+        // Phpcs:ignore
     if (ltr.match(/[ƯƠÔYUIOP|HJKL:~_+"NM<>?]/)) {
         this.shiftleft = true;
         this.alt = false;
         this.accent = false;
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[ĂÂÊĐQWERTASDFGZXCVB]/)) {
         this.shiftright = true;
         this.alt = false;
         this.accent = false;
 
-    // phpcs:ignore
+    // Phpcs:ignore
     } else if (ltr.match(/[!@#$%]/i)) {
         this.shiftright = true;
         this.alt = true;
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[^&*(){}]/)) {
         this.shiftleft = true;
         this.alt = true;
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[`ăâêộ̀̉̃́đ-₫\\;',./]/)) {
         this.shiftleft = false;
         this.shiftright = false;
@@ -70,12 +70,12 @@ function keyboardElement(ltr) {
         this.accent = false;
 
 
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[1234567890=[\]]/i)) {
         this.shiftleft = false;
         this.shiftright = false;
         this.alt = true;
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[^&*()]/i)) {
         this.shiftleft = true;
         this.alt = true;
@@ -116,7 +116,7 @@ function keyboardElement(ltr) {
     // Reset the highlight of the just typed character.
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[asdfjkl;]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {

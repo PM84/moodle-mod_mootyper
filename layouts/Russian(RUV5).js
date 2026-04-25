@@ -46,10 +46,10 @@ function keyboardElement(ltr) {
             this.shiftleft = true;
         }
     } else {
-        // phpcs:ignore
+        // Phpcs:ignore
         if (ltr.match(/[!"№;%]/i)) {
             this.shiftright = true;
-        // phpcs:ignore
+        // Phpcs:ignore
         } else if (ltr.match(/[:?*()_+/,]/i)) {
             this.shiftleft = true;
         }
@@ -71,13 +71,13 @@ function keyboardElement(ltr) {
         if (this.shiftright) {
             document.getElementById('jkeyshiftr').className = "next4";
         }
-        if ( this.alt) {
+        if (this.alt) {
             document.getElementById('jkeyaltgr').className = "nextSpace";
         }
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[фываолдж]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {

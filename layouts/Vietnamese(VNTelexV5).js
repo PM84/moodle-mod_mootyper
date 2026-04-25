@@ -180,10 +180,12 @@ function isCompositionInProgress(typedChar, targetChar) {
  * @returns {bolean} The result.
  */
 function keyupCombined(e) {
-	if(ended)
-		return false;
-	if(!started)
-		doStart();
+	if (ended) {
+ return false;
+}
+	if (!started) {
+ doStart();
+}
     var rawkeychar = getPressedChar(e);
     if (typeof rawkeychar === 'string' && rawkeychar.length === 1) {
         rawkeychar = rawkeychar.toLowerCase();
@@ -250,11 +252,11 @@ function keyupCombined(e) {
         }
         telexProgress = "";
     }
-    if(rawkeychar == '[not_yet_defined]') {
+    if (rawkeychar == '[not_yet_defined]') {
 		combinedChar = true;
 		return true;
 	}
-	if(combinedCharWait) {
+	if (combinedCharWait) {
 		combinedCharWait = false;
 		return true;
 	}
@@ -263,48 +265,68 @@ function keyupCombined(e) {
         // IME is still composing; no new character committed yet.
         return true;
     }
-	var lastChar = currentText.substring(currentText.length-1);
+	var lastChar = currentText.substring(currentText.length - 1);
     if (isCompositionInProgress(lastChar, currentChar)) {
         return true;
     }
-    if(lastChar == currentChar)
-	// && ((currentChar.toUpperCase() == currentChar && e.shiftKey) || (currentChar.toUpperCase() != currentChar))) 
+    if (lastChar == currentChar)
+	// && ((currentChar.toUpperCase() == currentChar && e.shiftKey) || (currentChar.toUpperCase() != currentChar)))
 	{
         if (showKeyboard) {
 			var thisE = new keyboardElement(currentChar);
 			thisE.turnOff();
 		}
-		if(currentPos == fullText.length-1) { // END. 
+		if (currentPos == fullText.length - 1) { // END.
             doTheEnd();
 			return true;
 		}
-		if(currentPos < fullText.length-1){
-			var nextChar = fullText[currentPos+1];
+		if (currentPos < fullText.length - 1) {
+			var nextChar = fullText[currentPos + 1];
             if (showKeyboard) {
 				var nextE = new keyboardElement(nextChar);
 				nextE.turnOn();
 			}
-			if(!isCombined(nextChar)) { // If next char is not combined char.
+			if (!isCombined(nextChar)) { // If next char is not combined char.
 				$("#form1").off("keyup", "#tb1");
 				$("#form1").on("keypress", "#tb1", keyPressed);
 			}
 		}
         combinedChar = false;
         telexProgress = "";
-		moveCursor(currentPos+1);
-		currentChar = fullText[currentPos+1];
+		moveCursor(currentPos + 1);
+		currentChar = fullText[currentPos + 1];
 		currentPos++;
 		return true;
-	}
-	else
-	{
+	} else {
         combinedChar = false;
         telexProgress = "";
         mistakes++;
 		var tbval = $('#tb1').val();
 		$('#tb1').val(tbval.substring(0, currentPos));
-		return false;
-	}	
+        if (!continuousType) {
+            return false;
+        }
+        // Continuous typing: advance past wrong combined character.
+        if (currentPos === fullText.length - 1) {
+            doTheEnd();
+            return true;
+        }
+        var nextCharCT = fullText[currentPos + 1];
+        if (showKeyboard) {
+            var curElemCT = new keyboardElement(currentChar);
+            curElemCT.turnOff();
+            var nextElemCT = new keyboardElement(nextCharCT);
+            nextElemCT.turnOn();
+        }
+        if (!isCombined(nextCharCT)) {
+            $("#form1").off("keyup", "#tb1");
+            $("#form1").on("keypress", "#tb1", keyPressed);
+        }
+        moveCursor(currentPos + 1);
+        currentChar = fullText[currentPos + 1];
+        currentPos++;
+        return true;
+	}
 }
 
 /**
@@ -328,7 +350,7 @@ function keyboardElement(ltr) {
     this.shiftright = false;
     this.alt = false;
     this.accent = false;
-    // phpcs:ignore
+    // Phpcs:ignore
     if (isLetter(ltr)) { // Set specified shift key for right or left.
         if (ltr.match(/[ĂÂÊÔĐQWERTASDFGZXCVB]/)) {
             this.shiftright = true;
@@ -363,7 +385,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[asdfjkl;]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {

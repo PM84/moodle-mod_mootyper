@@ -43,19 +43,19 @@ function keyboardElement(ltr) {
         this.chr = ltr.toUpperCase();
     }
 
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[é!'^+%]/i)) {
         this.shiftright = true;
         this.alt = false;
-    // phpcs:ignore
+    // Phpcs:ignore
     } else if (ltr.match(/[&/()=?:;_]/)) {
         this.shiftleft = true;
         this.alt = false;
-    // phpcs:ignore
+    // Phpcs:ignore
     } else if (ltr.match(/["1234567890*.,\-]/)) {
         this.shift = false;
         this.alt = false;
-    // phpcs:ignore
+    // Phpcs:ignore
     } else if (ltr.match(/[<>£#$½{[\]}\\|@€¨~`æß´]/)) {
         this.shift = false;
         this.alt = true;
@@ -84,7 +84,7 @@ function keyboardElement(ltr) {
         }
     };
     this.turnOff = function() {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[asdfjklş]/i)) {
             document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
         } else {

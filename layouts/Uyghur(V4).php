@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+ require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
  require_login($course, true, $cm);
 ?>
 <div id="innerKeyboard" style="margin: 0px auto;display: inline-block;
@@ -31,7 +31,7 @@
 // This upper part of the layout is used when using a RTL language.
 echo (isset($displaynone) && ($displaynone == true)) ? 'display:none;' : '';
 if ($directionality === 'rtl') {
-?>
+    ?>
 ">
 <div id="keyboard" class="keyboardback">Uygher(V4)Dual Keyboard Layout<br>
     <section>
@@ -111,7 +111,7 @@ if ($directionality === 'rtl') {
     <?php // phpcs:ignore
     // This part of the layout is used when using LTR language.
 } else {
-?>
+    ?>
 ">
 <div id="keyboard" class="keyboardback">Uygher(V4)Dual Keyboard Layout<br>
     <section>
