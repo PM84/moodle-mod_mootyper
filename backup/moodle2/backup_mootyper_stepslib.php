@@ -33,7 +33,6 @@ defined('MOODLE_INTERNAL') || die(); // @codingStandardsIgnoreLine
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_mootyper_activity_structure_step extends backup_activity_structure_step {
-
     /**
      * Define the structure for the MooTyper activity.
      * @return void
@@ -44,7 +43,8 @@ class backup_mootyper_activity_structure_step extends backup_activity_structure_
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated.
-        $mootyper = new backup_nested_element('mootyper',
+        $mootyper = new backup_nested_element(
+            'mootyper',
             ['id'],
             ['name',
             'intro',
@@ -88,58 +88,64 @@ class backup_mootyper_activity_structure_step extends backup_activity_structure_
 
         $attempts = new backup_nested_element('attempts');
 
-        $attempt = new backup_nested_element('attempt',
-                                                ['id'],
-                                                ['mootyperid',
+        $attempt = new backup_nested_element(
+            'attempt',
+            ['id'],
+            ['mootyperid',
                                                 'userid',
                                                 'timetaken',
                                                 'inprogress',
                                                 'suspicion', ]
-                                            );
+        );
 
         $checks = new backup_nested_element('checks');
 
-        $check = new backup_nested_element('check',
-                                          ['id'],
-                                          ['attemptid',
+        $check = new backup_nested_element(
+            'check',
+            ['id'],
+            ['attemptid',
                                            'mistakes',
                                            'hits',
                                            'checktime', ]
-                                           );
+        );
 
         $exercises = new backup_nested_element('exercises');
 
-        $exercise = new backup_nested_element('exercise',
-                                                 ['id'],
-                                                 ['texttotype',
+        $exercise = new backup_nested_element(
+            'exercise',
+            ['id'],
+            ['texttotype',
                                                  'exercisename',
                                                  'lesson',
                                                  'snumber', ]
-                                             );
+        );
 
         $layouts = new backup_nested_element('layouts');
 
-        $layout = new backup_nested_element('layout',
-                                               ['id'],
-                                               ['name']
-                                            );
+        $layout = new backup_nested_element(
+            'layout',
+            ['id'],
+            ['name']
+        );
 
         $lessons = new backup_nested_element('lessons');
 
-        $lesson = new backup_nested_element('lesson',
-                                               ['id'],
-                                               ['lessonname',
+        $lesson = new backup_nested_element(
+            'lesson',
+            ['id'],
+            ['lessonname',
                                                'authorid',
                                                'visible',
                                                'editable',
                                                'courseid', ]
-                                            );
+        );
 
         $grades = new backup_nested_element('grades');
 
-        $grade = new backup_nested_element('grade',
-                                              ['id'],
-                                              ['mootyper',
+        $grade = new backup_nested_element(
+            'grade',
+            ['id'],
+            ['mootyper',
                                               'userid',
                                               'grade',
                                               'mistakes',
@@ -153,7 +159,7 @@ class backup_mootyper_activity_structure_step extends backup_activity_structure_
                                               'attemptid',
                                               'wpm',
                                               'mistakedetails', ]
-                                          );
+        );
 
         // Build the tree.
         $mootyper->add_child($attempts);
@@ -180,29 +186,38 @@ class backup_mootyper_activity_structure_step extends backup_activity_structure_
         $check->set_source_table('mootyper_checks', ['attemptid' => backup::VAR_PARENTID], 'id ASC');
 
         // 20230709 Retrieve the layout data used in this MooTyper activity.
-        $layout->set_source_sql('
+        $layout->set_source_sql(
+            '
             SELECT m.id, m.layout, mlay.*
               FROM {mootyper} m
               JOIN {mootyper_layouts} mlay ON m.layout = mlay.id
              WHERE m.layout = mlay.id AND m.id = ?',
-                   [backup::VAR_PARENTID], 'layout');
+            [backup::VAR_PARENTID],
+            'layout'
+        );
 
         // 20230709 Retrieve lesson data used in this MooTyper activity.
-        $lesson->set_source_sql('
+        $lesson->set_source_sql(
+            '
             SELECT m.id, m.lesson, mles.*
               FROM {mootyper} m
               JOIN {mootyper_lessons} mles ON m.lesson = mles.id
              WHERE m.lesson = mles.id AND m.id = ?',
-                   [backup::VAR_PARENTID], 'lesson');
+            [backup::VAR_PARENTID],
+            'lesson'
+        );
 
         // 20230709 Retrieve all the exercises data that belongs to the lesson used in this MooTyper activity.
-        $exercise->set_source_sql('
+        $exercise->set_source_sql(
+            '
             SELECT m.id, m.lesson, m.exercise, mles.id, me.*
               FROM {mootyper} m
               JOIN {mootyper_lessons} mles ON m.lesson = mles.id
               JOIN {mootyper_exercises} me ON mles.id = me.lesson
              WHERE m.lesson = mles.id AND me.lesson = mles.id AND m.id = ?',
-                   [backup::VAR_PARENTID], 'exercise');
+            [backup::VAR_PARENTID],
+            'exercise'
+        );
 
         // All the rest of elements only happen if we are including user info.
         if ($userinfo) {
