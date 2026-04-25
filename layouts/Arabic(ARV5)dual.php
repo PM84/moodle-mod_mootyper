@@ -23,7 +23,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+ require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
  require_login($course, true, $cm);
 // First section is for right-to-left (Arabic). Second section is for left-to-right.
 ?>
@@ -32,7 +32,7 @@
 
 echo (isset($displaynone) && ($displaynone == true)) ? 'display:none;' : '';
 if ($directionality === 'rtl') {
-?>
+    ?>
 ">
     <div id="keyboard" class="keyboardback">Arabic(V5.0) Keyboard Layout<br>
         <section>
@@ -111,7 +111,7 @@ if ($directionality === 'rtl') {
 </div>
 <?php // phpcs:ignore
 } else {
-?>
+    ?>
 ">
 <div id="keyboard" class="keyboardback">Arabic(V5.0) Keyboard Layout<br>
     <section>
