@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/mod/mootyper/backup/moodle2/backup_mootyper_stepslib.php'); // Because it exists (must).
+require_once($CFG->dirroot . '/mod/mootyper/backup/moodle2/backup_mootyper_stepslib.php'); // Because it exists (must).
 
 /**
  * Mootyper backup task that provides all the settings and steps to perform one complete backup of the activity.
@@ -34,7 +34,6 @@ require_once($CFG->dirroot.'/mod/mootyper/backup/moodle2/backup_mootyper_stepsli
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class backup_mootyper_activity_task extends backup_activity_task {
-
     /**
      * Define (add) particular settings this activity can have.
      */
@@ -62,11 +61,11 @@ class backup_mootyper_activity_task extends backup_activity_task {
         $base = preg_quote($CFG->wwwroot, "/");
 
         // Link to the list of mootypers.
-        $search = "/(".$base."\/mod\/mootyper\/index.php\?id\=)([0-9]+)/";
+        $search = "/(" . $base . "\/mod\/mootyper\/index.php\?id\=)([0-9]+)/";
         $content = preg_replace($search, '$@MOOTYPERINDEX*$2@$', $content);
 
         // Link to mootyper view by moduleid.
-        $search = "/(".$base."\/mod\/mootyper\/view.php\?id\=)([0-9]+)/";
+        $search = "/(" . $base . "\/mod\/mootyper\/view.php\?id\=)([0-9]+)/";
         $content = preg_replace($search, '$@MOOTYPERVIEWBYID*$2@$', $content);
 
         return $content;
