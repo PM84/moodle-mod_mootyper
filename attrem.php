@@ -72,10 +72,10 @@ if (isset($gradeid)) {
         $event->trigger();
 
         $target = ($mtmode == 2)
-            ? ($CFG->wwwroot . '/mod/mootyper/owngrades.php?id='.$cid.'&n='.$mid)
-            : ($CFG->wwwroot . '/mod/mootyper/gview.php?id='.$cid.'&n='.$mid);
+            ? ($CFG->wwwroot . '/mod/mootyper/owngrades.php?id=' . $cid . '&n=' . $mid)
+            : ($CFG->wwwroot . '/mod/mootyper/gview.php?id=' . $cid . '&n=' . $mid);
         if ($returnanchor !== '') {
-            $target .= '#'.$returnanchor;
+            $target .= '#' . $returnanchor;
         }
         redirect($target, get_string('invalidaccess', 'mootyper'));
     }
@@ -96,9 +96,9 @@ if (isset($gradeid)) {
         $event = grade_delete_blocked::create($params);
         $event->trigger();
 
-        $target = $CFG->wwwroot . '/mod/mootyper/owngrades.php?id='.$cid.'&n='.$mid;
+        $target = $CFG->wwwroot . '/mod/mootyper/owngrades.php?id=' . $cid . '&n=' . $mid;
         if ($returnanchor !== '') {
-            $target .= '#'.$returnanchor;
+            $target .= '#' . $returnanchor;
         }
         redirect($target, get_string('invalidaccess', 'mootyper'));
     }
@@ -129,10 +129,10 @@ if (isset($gradeid)) {
         $event->trigger();
 
         $target = ($mtmode == 2)
-            ? ($CFG->wwwroot . '/mod/mootyper/owngrades.php?id='.$cid.'&n='.$mid)
-            : ($CFG->wwwroot . '/mod/mootyper/gview.php?id='.$cid.'&n='.$mid);
+            ? ($CFG->wwwroot . '/mod/mootyper/owngrades.php?id=' . $cid . '&n=' . $mid)
+            : ($CFG->wwwroot . '/mod/mootyper/gview.php?id=' . $cid . '&n=' . $mid);
         if ($returnanchor !== '') {
-            $target .= '#'.$returnanchor;
+            $target .= '#' . $returnanchor;
         }
         redirect($target, get_string('attemptdeleteonlylast', 'mootyper'));
     }
@@ -142,8 +142,8 @@ if (isset($gradeid)) {
     $DB->delete_records('mootyper_grades', ['id' => $dbgrade->id]);
 
     // 20200808 Delete ratings too.
-    require_once($CFG->dirroot.'/rating/lib.php');
-    $delopt = new stdClass;
+    require_once($CFG->dirroot . '/rating/lib.php');
+    $delopt = new stdClass();
     $delopt->contextid = $context->id;
     $delopt->component = 'mod_mootyper';
     $delopt->ratingarea = 'exercises';
@@ -171,7 +171,7 @@ if ($mtmode == 2) {
     ];
     $event = owngrades_deleted::create($params);
     $event->trigger();
-    $webdir = $CFG->wwwroot . '/mod/mootyper/owngrades.php?id='.$cid.'&n='.$mid;
+    $webdir = $CFG->wwwroot . '/mod/mootyper/owngrades.php?id=' . $cid . '&n=' . $mid;
 } else {
     // Trigger grade_deleted event for mode 0, 1, or 2 if on the, View all grades, page.
     $params = [
@@ -185,11 +185,11 @@ if ($mtmode == 2) {
     ];
     $event = grade_deleted::create($params);
     $event->trigger();
-    $webdir = $CFG->wwwroot . '/mod/mootyper/gview.php?id='.$cid.'&n='.$mid;
+    $webdir = $CFG->wwwroot . '/mod/mootyper/gview.php?id=' . $cid . '&n=' . $mid;
 }
 
 if ($returnanchor !== '') {
-    $webdir .= '#'.$returnanchor;
+    $webdir .= '#' . $returnanchor;
 }
 
-header('Location: '.$webdir);
+header('Location: ' . $webdir);
