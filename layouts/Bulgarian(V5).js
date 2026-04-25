@@ -39,10 +39,10 @@ function keyupFirst(event) {
 function keyboardElement(ltr) {
     this.chr = ltr.toLowerCase();
 
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[)!?+"%ыУЕИШѝЯАОЖЮЙЪЭФ]/i)) {
         this.shiftright = true;
-    // phpcs:ignore
+    // Phpcs:ignore
     } else if (ltr.match(/[=:/–№$€ЩКСДЗЦ§“ГТНВМЧХПРЛБ]/)) {
         this.shiftleft = true;
     }
@@ -64,13 +64,13 @@ function keyboardElement(ltr) {
         if (this.shiftright) {
             document.getElementById('jkeyshiftr').className = "next4";
         }
-        if ( this.alt) {
+        if (this.alt) {
             document.getElementById('jkeyaltgr').className = "nextSpace";
         }
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[ьяаотнвм]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {
