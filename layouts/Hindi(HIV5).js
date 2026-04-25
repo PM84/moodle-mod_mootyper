@@ -33,20 +33,71 @@ function keyupFirst(event) {
 }
 
 /**
+ * Normalize Hindi multi-codepoint key outputs so one physical key highlights correctly.
+ * @param {string} ltr The current expected character.
+ * @param {number} [pos] Optional text index for token lookahead.
+ * @returns {string}
+ */
+function hindiDisplayToken(ltr, pos) {
+    var basePos = (typeof pos === 'number') ? pos : currentPos;
+
+    if (!ltr || typeof fullText === 'undefined' || typeof basePos === 'undefined') {
+        return ltr;
+    }
+
+    // Number-row shifted outputs that are stored as multiple codepoints in lesson text.
+    if (ltr === 'र' && fullText[basePos + 1] === '्') {
+        return 'र्';
+    }
+    if (ltr === 'ज' && fullText[basePos + 1] === '्' && fullText[basePos + 2] === 'ञ') {
+        return 'ज्ञ';
+    }
+    if (ltr === 'त' && fullText[basePos + 1] === '्' && fullText[basePos + 2] === 'र') {
+        return 'त्र';
+    }
+    if (ltr === 'क' && fullText[basePos + 1] === '्' && fullText[basePos + 2] === 'ष') {
+        return 'क्ष';
+    }
+    if (ltr === 'श' && fullText[basePos + 1] === '्' && fullText[basePos + 2] === 'र') {
+        return 'श्र';
+    }
+    if (ltr === 'य' && fullText[basePos + 1] === '़') {
+        return 'य़';
+    }
+
+    return ltr;
+}
+
+/**
  * Check for character typed so flags can be set.
  * @param {string} ltr The current letter.
  */
-function keyboardElement(ltr) {
-    this.chr = ltr.toLowerCase();
+function keyboardElement(ltr, pos) {
+    var keytoken = hindiDisplayToken(ltr, pos);
+    this.chr = keytoken.toLowerCase();
     this.alt = false;
     //if (isLetter(ltr)) { // Verify this is a unicode letter.
-        // phpcs:ignore
-        //if (ltr.match(/[्ॅऍ र्ज्ञत्रक्षश्र()ऋः]/)) {
-        //    this.shiftright = true; // Set specified shift key for right.
-        //} else if (ltr.match(/[]/)) {
-        //    this.shiftleft = true; // Set specified shift key for left.
-        //}
+    //    const shiftrightchars = ['ऍ', 'ॅ', 'र्', 'ज्ञ', 'औ', 'ऐ', 'आ', 'ई', 'ऊ', 'ओ', 'ए', 'अ', 'इ', 'उ', 'ँ', 'ण'];
+    //    const shiftleftchars = ['त्र', 'क्ष', 'श्र', '(', ')', 'ः', 'ऋ', 'भ', 'ङ', 'घ', 'ध', 'झ', 'ढ', 'ञ', 'ऑ', 'फ', 'ऱ', 'ख', 'थ', 'छ', 'ठ', 'ळ', 'श', 'ष', '।', 'य़', 'य़'];
+    //    if (shiftrightchars.includes(ltr)) {
+    //        this.shiftright = true; // Left-side keys use right shift (jkeyshiftd).
+    //    } else if (shiftleftchars.includes(ltr)) {
+    //        this.shiftleft = true; // Right-side keys use left shift (jkeyshiftl).
+    //    }
     //}
+    this.shiftright = false;
+    this.shiftleft = false;
+
+    const shiftrightchars = ['ऍ', 'ॅ', 'र्', 'ज्ञ', 'औ', 'ऐ', 'आ', 'ई', 'ऊ', 'ओ', 'ए', 'अ', 'इ', 'उ', 'ँ', 'ण'];
+    const shiftleftchars = ['त्र', 'क्ष', 'श्र', '(', ')', 'ः', 'ऋ', 'भ', 'ङ', 'घ', 'ध', 'झ', 'ढ', 'ञ', 'ऑ', 'फ', 'ऱ', 'ख', 'थ', 'छ', 'ठ', 'ळ', 'श', 'ष', '।', 'य़', 'य़'];
+
+    // Left-side keys (1-5, Q-T, A-G, X-C) require right shift (jkeyshiftd).
+    if (shiftrightchars.includes(keytoken)) {
+        this.shiftright = true;
+    // Right-side keys (6-0, -, =, Y-], H-\, N-/) require left shift (jkeyshiftl).
+    } else if (shiftleftchars.includes(keytoken)) {
+        this.shiftleft = true;
+    }
 
     this.turnOn = function() {
         if (isLetter(this.chr)) {
@@ -59,11 +110,11 @@ function keyboardElement(ltr) {
         if (this.chr === '\n' || this.chr === '\r\n' || this.chr === '\n\r' || this.chr === '\r') {
             document.getElementById('jkeyenter').className = "next4";
         }
-        //if (this.shiftleft) {
-        //    document.getElementById('jkeyshiftl').className = "next4";
-        //}
-        //if (this.shiftright) {
-            document.getElementById('jkeyshiftr').className = "next4";
+        if (this.shiftright) {
+            document.getElementById('jkeyshiftd').className = "next4";
+        }
+        if (this.shiftleft) {
+            document.getElementById('jkeyshiftl').className = "next4";
         }
     };
     this.turnOff = function() {
@@ -78,14 +129,14 @@ function keyboardElement(ltr) {
             document.getElementById(getKeyID(this.chr)).className = "normal";
         }
         if (this.chr === '\n' || this.chr === '\r\n' || this.chr === '\n\r' || this.chr === '\r') {
-            document.getElementById('jkeyenter').classname = "normal";
+            document.getElementById('jkeyenter').className = "normal";
         }
-        //if (this.shiftleft) {
-        //    document.getElementById('jkeyshiftl').className = "normal";
-        //}
-        //if (this.shiftright) {
-        //    document.getElementById('jkeyshiftr').className = "normal";
-        //}
+        if (this.shiftright) {
+            document.getElementById('jkeyshiftd').className = "normal";
+        }
+        if (this.shiftleft) {
+            document.getElementById('jkeyshiftl').className = "normal";
+        }
     };
 }
 
@@ -97,21 +148,27 @@ function keyboardElement(ltr) {
 function thenFinger(tCrka) {
     if (tCrka === ' ') {
         return 5; // Highlight the spacebar.
-    // phpcs:ignore
-    //} else if (tCrka.match(/[ृ़1ऍ0)जझचछयय़-ःडढटठृऋञॉऑ]/i)) {
-    } else if (tCrka.match(/[-़ौऍःृ1)0ऋडोॉयय़]/i)) {
+    }
+
+    // Use exact token membership so multi-codepoint Hindi clusters map reliably.
+    const finger4chars = ['1', 'ऍ', '0', ')', '-', 'ः', 'ृ', 'ऋ', 'ौ', 'औ',
+        'प', 'फ', 'ज', 'झ', 'ड', 'ढ', '़', 'ञ', 'ो', 'ओ', 'च', 'छ',
+        'ट', 'ठ', 'ॉ', 'ऑ', 'य', 'य़', 'य़'];
+    const finger3chars = ['2', 'ॅ', '9', '(', 'ै', 'ऐ', 'े', 'ए', 'द', 'ध',
+        'त', 'थ', 'ं', 'ँ', '.', '।'];
+    const finger2chars = ['3', '्', '8', 'श्र', 'ा', 'आ', 'अ', 'म', 'ण',
+        'ग', 'घ', 'क', 'ख', ',', 'ष'];
+    const finger1chars = ['4', 'र्', '5', 'ज्ञ', '6', 'त्र', '7', 'क्ष',
+        'ि', 'ी', 'ई', 'ु', 'ू', 'उ', 'ऊ', 'इ', 'न', 'व', 'ब', 'भ',
+        'ल', 'ळ', 'ह', 'ङ', 'र', 'ऱ', 'स', 'श'];
+
+    if (finger4chars.includes(tCrka)) {
         return 4; // Highlight the correct key above in red.
-    // phpcs:ignore
-    //} else if (tCrka.match(/[ॅेंँ2ैऐए(9दधतथ.।]/i)) {
-    } else if (tCrka.match(/[ंैॅ2े(9दधढथ।.ँ]/i)) {
+    } else if (finger3chars.includes(tCrka)) {
         return 3; // Highlight the correct key above in green.
-    // phpcs:ignore
-    //} else if (tCrka.match(/[्ा्3आअमण8श्रगघकख,ष]/i)) {
-    } else if (tCrka.match(/[्ा्3आअमण8श्रगघकख,ष]/i)) {
+    } else if (finger2chars.includes(tCrka)) {
         return 2; // Highlight the correct key above in yellow.
-    // phpcs:ignore
-    //} else if (tCrka.match(/[िूु4र्ीईइन5ज्ञऊउव6त्रबभपफलळ7क्षहङरऱसश]/i)) {
-    } else if (tCrka.match(/[िूु4र्ीईइन5ज्ञऊउव6त्रबभपफलळ7क्षहङरऱसश]/i)) {
+    } else if (finger1chars.includes(tCrka)) {
         return 1; // Highlight the correct key above in blue.
     } else {
         return 6; // Do not change any highlight.
@@ -128,13 +185,11 @@ function getKeyID(tCrka) {
         return "jkeyspace";
     } else if (tCrka === '\n') {
         return "jkeyenter";
-    } else if (tCrka === '' || tCrka === '') {
-        return "jkeybackquote";
     } else if (tCrka === '1' || tCrka === 'ऍ') {
         return "jkey1";
     } else if (tCrka === '2' || tCrka === 'ॅ') {
         return "jkey2";
-    } else if (tCrka === '3' || tCrka === '्') {
+    } else if (tCrka === '3') {
         return "jkey3";
     } else if (tCrka === '4' || tCrka === 'र्') {
         return "jkey4";
@@ -202,8 +257,6 @@ function getKeyID(tCrka) {
         return "jkeyapostrophe";
     } else if (tCrka === 'ॉ' || tCrka === 'ऑ') {
         return "jkeybackslash";
-    } else if (tCrka === '' || tCrka === '') {
-        return "jkeyz";
     } else if (tCrka === 'ं' || tCrka === 'ँ') {
         return "jkeyx";
     } else if (tCrka === 'म' || tCrka === 'ण') {
@@ -220,7 +273,7 @@ function getKeyID(tCrka) {
         return "jkeycomma";
     } else if (tCrka === '.' || tCrka === '।') {
         return "jkeyperiod";
-    } else if (tCrka === 'य' || tCrka === 'य़') {
+    } else if (tCrka === 'य' || tCrka === 'य़' || tCrka === 'य़') {
         return "jkeyslash";
     } else {
         return "jkey" + tCrka;

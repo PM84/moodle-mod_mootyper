@@ -46,17 +46,17 @@ function keyboardElement(ltr) {
         // phpcs:ignore
         if (ltr.match(/[AZERTQSDFGWXCVB³12345>]/)) {
             this.shiftright = true;
-        // phpcs:ignore
+        // Phpcs:ignore
         } else if (ltr.match(/[YUIOPHJKLMN67890°_¨*M%£?./+]/)) {
             this.shiftleft = true;
         }
     }
 
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[\\|@#€{}[\]~´`ñ]/i)) {
         this.alt = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ëïöü]/i)) {
         this.shiftleft = true;
         this.caret = true;
@@ -105,7 +105,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[azeruiop]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {
@@ -148,19 +148,19 @@ function thenFinger(tCrka) {
     if (tCrka === ' ') {
         return 5; // Highlight the spacebar.
         // phpcs:ignore
-    //} else if (tCrka.match(/[²³&1|aáqw<>\\à0}pm)°^¨[ù%´=+~\-_$*\]µ£`]/i)) {
+    // } else if (tCrka.match(/[²³&1|aáqw<>\\à0}pm)°^¨[ù%´=+~\-_$*\]µ£`]/i)) {
     } else if (tCrka.match(/[²³&1|aáqw<>\\à0}pm)°^¨[ù%´=+~\-_$*\]µ£`]/i)) {
         return 4; // Highlight the correct key above in red.
         // phpcs:ignore
-    //} else if (tCrka.match(/[é2@zsxç9{oóöl:/]/i)) {
+    // } else if (tCrka.match(/[é2@zsxç9{oóöl:/]/i)) {
     } else if (tCrka.match(/[é2@zsxç9{oóöl:/]/i)) {
         return 1; // Highlight the correct key above in green.
         // phpcs:ignore
-    //} else if (tCrka.match(/["3#eéë€êdc!8iíïk;.]/i)) {
+    // } else if (tCrka.match(/["3#eéë€êdc!8iíïk;.]/i)) {
     } else if (tCrka.match(/["3#eéë€êdc!8iíïk;.]/i)) {
         return 2; // Highlight the correct key above in yellow.
         // phpcs:ignore
-    //} else if (tCrka.match(/[\'4rf(5tgbv§6yhnñè7uúüj,?]/i)) {
+    // } else if (tCrka.match(/[\'4rf(5tgbv§6yhnñè7uúüj,?]/i)) {
     } else if (tCrka.match(/[\'4rf(5tgbv§6yhnñè7uúüj,?]/i)) {
         return 3; // Highlight the correct key above in blue.
     } else {

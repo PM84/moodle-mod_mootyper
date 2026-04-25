@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+ require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
  require_login($course, true, $cm);
 ?>
 <div id="innerKeyboard" style="margin: 0px auto;display: inline-block;
@@ -87,7 +87,7 @@ echo (isset($displaynone) && ($displaynone == true)) ? 'display:none;' : '';
             <div id="jkeyy" class="normal" style='text-align:left;'>Y
                 <span style="color:blue">&nbsp;&nbsp;Ü</span><br>&nbsp;</div>
             <div id="jkeyu" class="normal" style='text-align:left;'>U
-                <span style="color:blue">&nbsp;&nbsp;Ú</span><br>&nbsp;</div>
+                <span style="color:blue">&nbsp;Ú</span><br>&nbsp;</div>
             <div id="jkeyi" class="normal" style='text-align:left;'>I
                 <span style="color:blue">&nbsp;&nbsp;&nbsp;&nbsp;Í</span><br>&nbsp;</div>
             <div id="jkeyo" class="normal" style='text-align:left;'>O

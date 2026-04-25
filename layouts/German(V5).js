@@ -47,12 +47,12 @@ function keyboardElement(ltr) {
     if (isLetter(ltr)) { // Set specified shift key for right or left.
         if (ltr.match(/[°!"§$%QWEÊÉÈRTAÂSDFG>YXCVB]/)) {
             this.shiftright = true;
-            // phpcs:ignore
+            // Phpcs:ignore
         } else if (ltr.match(/[&/()=?`*';:_ZUIOÔPÜ*'HJKLÖÄNM;:_]/)) {
             this.shiftleft = true;
         }
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[|²³ã¦@¬|¢~€\[\]{}\\µ]/i)) {
         this.alt = true;
     }
@@ -117,7 +117,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[asdfjklö]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {

@@ -40,7 +40,7 @@ function keyboardElement(ltr) {
     this.chr = ltr.toUpperCase();
     this.alt = false;
 
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[QWERTASDFGZXCVB~!@#$%]/i)) {
         this.shiftright = true;
     } else if (ltr.match(/[YUIOPHJKLNM^&*()_+{}|:"<>?]/)) {
@@ -75,7 +75,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[ASDFJKLשדגכחלךף]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toUpperCase());
             } else {

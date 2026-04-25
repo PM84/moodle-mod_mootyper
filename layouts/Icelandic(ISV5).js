@@ -39,7 +39,7 @@ function keyupFirst(event) {
 function keyboardElement(ltr) {
     this.chr = ltr.toLowerCase();
     this.alt = false;
-        // phpcs:ignore
+        // Phpcs:ignore
         if (ltr.match(/[¨!"#$%>]/i)) {
             this.shiftright = true;
         } else if (ltr.match(/[&/()=_();:?*Þ]/)) {
@@ -56,10 +56,10 @@ function keyboardElement(ltr) {
     // phpcs:ignore
     if (ltr.match(/[¦€{[\]}\\|µ^~`]/)) {
         this.alt = true;
-    //} else if (ltr.match(/[ÉëÁ]/)) {
+    // } else if (ltr.match(/[ÉëÁ]/)) {
     //    this.shiftright = true;
     //    this.alt = true;
-    //} else if (ltr.match(/[ÚÍÓ]/)) {
+    // } else if (ltr.match(/[ÚÍÓ]/)) {
     //    this.shiftleft = true;
     //    this.alt = true;
     }
@@ -86,7 +86,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[asdfjklæ]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {

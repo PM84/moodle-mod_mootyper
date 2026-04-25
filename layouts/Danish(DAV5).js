@@ -1,5 +1,5 @@
 /**
- * @fileOverview Danish(DKV5.0) keyboard driver.
+ * @fileOverview Danish(DAV5.0) keyboard driver.
  * @author <a href="mailto:drachels@drachels.com">AL Rachels</a>
  * @version 5.0
  * @since 20210316
@@ -39,19 +39,19 @@ function keyupFirst(event) {
 function keyboardElement(ltr) {
     this.chr = ltr.toLowerCase();
 
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[§!"#¤%]/i)) {
         this.shiftright = true;
         this.alt = false;
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[&/¤()=?`^*>;:_]/i)) {
         this.shiftleft = true;
         this.alt = false;
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[@£$€{[\]}\\~µ|]/i)) {
         this.shift = false;
         this.alt = true;
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[½1234567890+´¨'<,.-]/)) {
         this.shift = false;
         this.alt = false;
@@ -86,7 +86,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[asdfjklæ]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {
@@ -132,7 +132,7 @@ function thenFinger(tCrka) {
         return 1; // Highlight the correct key above in blue.
         // phpcs:ignore
     } else {
-        // phpcs:ignore
+        // Phpcs:ignore
         return 6; // Do not change any highlight.
     }
 }

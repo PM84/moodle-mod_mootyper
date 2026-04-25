@@ -50,11 +50,11 @@ function keyboardElement(ltr) {
             this.shiftleft = true;
         }
     } else {
-        // phpcs:ignore
+        // Phpcs:ignore
         if (ltr.match(/[ª>!"·$%]/i)) {
             this.shiftright = true;
             this.shiftleft = false;
-        // phpcs:ignore
+        // Phpcs:ignore
         } else if (ltr.match(/[&/()=?¿^*¨;:_]/i)) {
             this.shiftright = false;
             this.shiftleft = true;
@@ -63,11 +63,11 @@ function keyboardElement(ltr) {
             this.shiftleft = false;
         }
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[áéíóú]/)) {
         this.accent = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ÁÉÍÓÚ]/)) {
         this.accent = true;
     }
@@ -79,7 +79,7 @@ function keyboardElement(ltr) {
     if (ltr === 'Ü') {
         this.accent = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[\\|@#~€¬\[\]{}]/i)) {
         this.alt = true;
     }
@@ -118,7 +118,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[asdfjklñ]/i)) {
                 // Turns off highlight of normal home row keys.
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
@@ -162,7 +162,7 @@ function keyboardElement(ltr) {
         if (this.accent) {
             document.getElementById('jkeyrighttick').className = "normal";
         }
-    }
+    };
 }
 
 /**
@@ -240,7 +240,7 @@ function getKeyID(tCrka) {
         return "jkey2";
     } else if (tCrka === '·' || tCrka === '#') {
         return "jkey3";
-    } else if (tCrka === '$'|| tCrka === '~') {
+    } else if (tCrka === '$' || tCrka === '~') {
         return "jkey4";
     } else if (tCrka === '%') {
         return "jkey5";
@@ -280,7 +280,7 @@ function getKeyID(tCrka) {
         return "jkeyo";
     } else if (tCrka === 'u' || tCrka === 'ú' || tCrka === 'ü') {
         return "jkeyu";
-                                                                 
+
     } else {
         return "jkey" + tCrka;
     }
@@ -292,7 +292,7 @@ function getKeyID(tCrka) {
  * @returns {(number|Array)}.
  */
 function isLetter(str) {
-    // return str.length === 1 && str.match(/[!-ﻼ]/i);
+    // Return str.length === 1 && str.match(/[!-ﻼ]/i);
     return str.length === 1 && str.match(/[a-z0123456789`¡ñçáéíóúü]/i);
     // When I try to use str.match(/[!-ﻼ]/i);, at least four lower case
     // keys start highlighting the Shift key, too. But they all

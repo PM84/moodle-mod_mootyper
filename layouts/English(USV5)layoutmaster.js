@@ -39,6 +39,8 @@ function keyupFirst(event) {
 function keyboardElement(ltr) {
     this.chr = ltr.toLowerCase();
     this.alt = false;
+    this.shiftleft = false;
+    this.shiftright = false;
     if (isLetter(ltr)) { // Set specified shift key for right or left.
         if (ltr.match(/[QWERTASDFGZXCVB]/)) {
             this.shiftright = true;
@@ -74,27 +76,24 @@ function keyboardElement(ltr) {
         }
     };
     this.turnOff = function() {
-        if (isLetter(this.chr)) {
-        // phpcs:ignore
-            if (this.chr.match(/[asdfjkl;]/i)) {
-                document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
-            } else {
-                document.getElementById(getKeyID(this.chr)).className = "normal";
-            }
+        if (this.chr === ' ') {
+            document.getElementById(getKeyID(this.chr)).className = "fingerSpace";
+        } else if (isLetter(this.chr)) {
+            document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
         } else {
-            document.getElementById(getKeyID(this.chr)).className = "normal";
+            document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
         }
         if (this.chr === '\n' || this.chr === '\r\n' || this.chr === '\n\r' || this.chr === '\r') {
-            document.getElementById('jkeyenter').classname = "normal";
+            document.getElementById('jkeyenter').className = "finger4";
         }
         if (this.shiftleft) {
-            document.getElementById('jkeyshiftl').className = "normal";
+            document.getElementById('jkeyshiftl').className = "finger4";
         }
         if (this.shiftright) {
-            document.getElementById('jkeyshiftr').className = "normal";
+            document.getElementById('jkeyshiftr').className = "finger4";
         }
         if (this.alt) {
-            document.getElementById('jkeyaltgr').className = "normal";
+            document.getElementById('jkeyaltgr').className = "finger4";
         }
     };
 }

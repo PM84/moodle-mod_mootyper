@@ -39,24 +39,24 @@ function keyupFirst(event) {
 function keyboardElement(ltr) {
     this.chr = ltr.toLowerCase();
 
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[~!@#$%^&*()_+:{}¨"|<>?]/i)) {
         this.shift = true;
         this.alt = false;
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[;\\`1234567890\-=[\]΄',./]/)) {
         this.shift = false;
         this.alt = false;
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[²³£§¶¤¦°±½«»¬]/)) {
         this.shift = false;
         this.alt = true;
-        // phpcs:ignore
+        // Phpcs:ignore
     } else if (ltr.match(/[άέήίόύώ]/)) {
         this.shift = false;
         this.alt = false;
         this.accent = true;
-       // phpcs:ignore
+       // Phpcs:ignore
     } else if (ltr.match(/[ΆΈΉΊΌΎΏ]/)) {
         this.shift = true;
         this.alt = false;
@@ -84,7 +84,7 @@ function keyboardElement(ltr) {
         }
     };
     this.turnOff = function() {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[ασδφξκλ΄]/i)) {
             document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
         } else {

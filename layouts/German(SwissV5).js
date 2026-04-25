@@ -51,12 +51,12 @@ function keyboardElement(ltr) {
     if (isLetter(ltr)) { // Set specified shift key for right or left.
         if (ltr.match(/[°+"*ç%QWEÊRTAÂSDFG>YXCVB]/)) {
             this.shiftright = true;
-        // phpcs:ignore
+        // Phpcs:ignore
         } else if (ltr.match(/[&/()=?`è!£éà£;:_ZUIOÔPÜ*HJKLÖNM;:_]/)) {
             this.shiftleft = true;
         }
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ã¦@#¬|¢´~€\[\]{}\\]/i)) {
         this.alt = true;
     }
@@ -84,7 +84,7 @@ function keyboardElement(ltr) {
         this.alt = true;
         this.accent = true;
     }
-    if (ltr === 'ñ'|| ltr === 'ã') {
+    if (ltr === 'ñ' || ltr === 'ã') {
         this.alt = true;
         this.tilde = true;
     }
@@ -124,7 +124,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[asdfjklö]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
             } else {
@@ -240,7 +240,7 @@ function getKeyID(tCrka) {
         return "jkeya";
     } else if (tCrka.match(/[äà{]/)) {
         return "jkeyumlauta";
-    } else if ( tCrka === '$' || tCrka === '£' || tCrka === '}') {
+    } else if (tCrka === '$' || tCrka === '£' || tCrka === '}') {
         return "jkeydollar";
     } else if (tCrka === ',' || tCrka === ';') {
         return "jkeycomma";

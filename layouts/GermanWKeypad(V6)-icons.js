@@ -46,12 +46,12 @@ function keyboardElement(ltr) {
     if (isLetter(ltr)) { // Set specified shift key for right or left.
         if (ltr.match(/[°!"§$%QWEÊRTAÂSDFG>YXCVB]/)) {
             this.shiftright = true;
-        // phpcs:ignore
+        // Phpcs:ignore
         } else if (ltr.match(/[&/()=?`*';:_ZUIOÔPÜ*'HJKLÖÄNM;:_]/)) {
             this.shiftleft = true;
         }
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[|²³ã¦@¬|¢~€\[\]{}\\µ]/i)) {
         this.alt = true;
     }
@@ -72,7 +72,7 @@ function keyboardElement(ltr) {
         this.alt = true;
         this.accent = true;
     }
-    if (ltr === 'ñ'|| ltr === 'ã') {
+    if (ltr === 'ñ' || ltr === 'ã') {
         this.alt = true;
         this.tilde = true;
     }
@@ -127,7 +127,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-            // phpcs:ignore
+            // Phpcs:ignore
             if (this.chr.match(/[asdfjklö]/i)) {
                 // Turns off highlight of normal home row keys.
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
@@ -188,7 +188,7 @@ function keyboardElement(ltr) {
         if (this.umlaut) {
             document.getElementById('jkeyumlaut').className = "normal";
         }
-    }
+    };
 }
 
 /**
@@ -325,6 +325,6 @@ function getKeyID(tCrka) {
  * @returns {(number|Array)}.
  */
 function isLetter(str) {
-    // return str.length === 1 && str.match(/[a-záíóúüù]/i);
+    // Return str.length === 1 && str.match(/[a-záíóúüù]/i);
     return str.length === 1 && str.match(/[!-ﻼ]/i);
 }

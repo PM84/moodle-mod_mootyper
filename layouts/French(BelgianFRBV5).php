@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+ require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
  require_login($course, true, $cm);
 ?>
 <div id="innerKeyboard" style="margin: 0px auto;display: inline-block;
@@ -40,8 +40,10 @@ echo (isset($displaynone) && ($displaynone == true)) ? 'display:none;' : '';
                 <span style="color:blue"> @</span></div>
             <div id="jkey3" class="normal" style='text-align:left;'>3<br>"
                 <span style="color:blue">&nbsp;&nbsp;#</span></div>
-            <div id="jkey4" class="normal" style='text-align:left;'>4<br>'</div>
-            <div id="jkey5" class="normal" style='text-align:left;'>5<br>(</div>
+            <div id="jkey4" class="normal" style='text-align:left;'>4<br>$
+                <span style="color:blue">&nbsp;&nbsp;{</span></div>
+            <div id="jkey5" class="normal" style='text-align:left;'>5<br>("
+                <span style="color:blue">&nbsp;&nbsp;[</span></div>
             <div id="jkey6" class="normal" style='text-align:left;'>6<br>§
                 <span style="color:green">&nbsp;&nbsp;^</span></div>
             <div id="jkey7" class="normal" style='text-align:left;'>7<br>è</div>

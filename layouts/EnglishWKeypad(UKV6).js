@@ -89,7 +89,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[asdfjkl;]/i)) {
                 // Turns off highlight of normal home row keys.
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
@@ -113,10 +113,10 @@ function keyboardElement(ltr) {
                 }
             }
         } else {
-            // I think this turns off the spacebar highlight.      
+            // I think this turns off the spacebar highlight.
             document.getElementById(getKeyID(this.chr)).className = "normal";
         }
-        // Turns off highlight for Enter keys.   
+        // Turns off highlight for Enter keys.
         if (this.chr === '\n' || this.chr === '\r\n' || this.chr === '\n\r' || this.chr === '\r') {
             document.getElementById('jkeyenter').classname = "normal";
             document.getElementById(getKeyID(this.chr) + 'p').className = "normal";
