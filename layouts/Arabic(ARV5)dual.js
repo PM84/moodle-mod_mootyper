@@ -42,18 +42,18 @@ function keyboardElement(ltr) {
     this.shiftright = false;
     this.shiftleft = false;
 
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[!@#$%]/)) {
         this.shiftright = true;
     } else if (ltr.match(/[^&*)(_+]/)) {
         this.shiftleft = true;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ذ1234567890-=]/)) {
         this.shiftright = false;
         this.shiftleft = false;
     }
-    // phpcs:ignore
+    // Phpcs:ignore
     if (ltr.match(/[ضصثقفغعهخحجد\\شسيبلاتنمكطئءؤرلاىةوزظ]/)) {
         this.shiftright = false;
         this.shiftleft = false;
@@ -79,7 +79,7 @@ function keyboardElement(ltr) {
     };
     this.turnOff = function() {
         if (isLetter(this.chr)) {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[شسيبتنمك]/i)) {
                 document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toUpperCase());
             } else {
