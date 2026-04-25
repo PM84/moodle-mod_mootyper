@@ -34,7 +34,6 @@ require_once($CFG->dirroot . '/mod/mootyper/backup/moodle2/restore_mootyper_step
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class restore_mootyper_activity_task extends restore_activity_task {
-
     /**
      * Define (add) particular settings this activity can have.
      */
@@ -73,15 +72,18 @@ class restore_mootyper_activity_task extends restore_activity_task {
     public static function define_decode_rules() {
         $rules = [];
 
-        $rules[] = new restore_decode_rule('MOOTYPERVIEWBYID',
-                                           '/mod/mootyper/view.php?id=$1',
-                                           'course_module');
-        $rules[] = new restore_decode_rule('MOOTYPERINDEX',
-                                           '/mod/mootyper/index.php?id=$1',
-                                           'course');
+        $rules[] = new restore_decode_rule(
+            'MOOTYPERVIEWBYID',
+            '/mod/mootyper/view.php?id=$1',
+            'course_module'
+        );
+        $rules[] = new restore_decode_rule(
+            'MOOTYPERINDEX',
+            '/mod/mootyper/index.php?id=$1',
+            'course'
+        );
 
         return $rules;
-
     }
 
     /**
