@@ -34,7 +34,6 @@ defined('MOODLE_INTERNAL') || die(); // @codingStandardsIgnoreLine
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class restore_mootyper_activity_structure_step extends restore_activity_structure_step {
-
     /**
      * @var stdClass data Can only be inserted after the MooTyper activity
      * data is stored and we know the exercise, lesson, and layout id. Therefore,
@@ -197,14 +196,15 @@ class restore_mootyper_activity_structure_step extends restore_activity_structur
         if ($exercises = $DB->get_records('mootyper_exercises', ['lesson' => $newmootyper->lesson, 'snumber' => $data->snumber])) {
             // Make sure we are using the right exercise.
             foreach ($exercises as $exercise) {
-                if (($exercise->texttotype = $data->texttotype)
+                if (
+                    ($exercise->texttotype = $data->texttotype)
                     && ($exercise->exercisename = $data->exercisename)
                     && ($exercise->lesson = $newmootyper->lesson)
-                    && ($exercise->snumber = $data->snumber)) {
-
+                    && ($exercise->snumber = $data->snumber)
+                ) {
                     $newexercisedata->id = $exercise->id;
                     $this->set_mapping('mootyper_exercise', $oldid, $exercise->id);
-                    // 20241020 Modified and changed to double equal signs. 
+                    // 20241020 Modified and changed to double equal signs.
                     // If this mootyper is an exam, update the exam exerciseid in the mootyper.
                     if (($newmootyper->isexam == 1) && ($newmootyper->exercise == $oldid)) {
                         ($newmootyper->exercise = $exercise->id);

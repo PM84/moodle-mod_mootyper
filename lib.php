@@ -74,7 +74,7 @@ function mootyper_supports($feature) {
             return true;
         case FEATURE_GRADE_OUTCOMES:
             return false;
-        case FEATURE_GROUPS;
+        case FEATURE_GROUPS:
             return true;
         case FEATURE_GROUPINGS:
             return true;
@@ -90,7 +90,6 @@ function mootyper_supports($feature) {
         default:
             return null;
     }
-
 }
 
 /**
@@ -103,14 +102,14 @@ function get_users_of_one_instance($mootyperid) {
     global $DB, $CFG;
     $params = [];
     $toreturn = [];
-    $gradestblname = $CFG->prefix."mootyper_grades";
-    $userstblname = $CFG->prefix."user";
-    $sql = "SELECT DISTINCT ".$userstblname.".id, "
-                             .$userstblname.".firstname, "
-                             .$userstblname.".lastname".
-                     " FROM ".$gradestblname.
-                " LEFT JOIN ".$userstblname." ON ".$gradestblname.".userid = ".$userstblname.".id".
-          " WHERE (mootyper=".$mootyperid.")";
+    $gradestblname = $CFG->prefix . "mootyper_grades";
+    $userstblname = $CFG->prefix . "user";
+    $sql = "SELECT DISTINCT " . $userstblname . ".id, "
+                             . $userstblname . ".firstname, "
+                             . $userstblname . ".lastname" .
+                     " FROM " . $gradestblname .
+                " LEFT JOIN " . $userstblname . " ON " . $gradestblname . ".userid = " . $userstblname . ".id" .
+          " WHERE (mootyper=" . $mootyperid . ")";
     if ($grades = $DB->get_records_sql($sql, $params)) {
         return $grades;
     }
@@ -127,65 +126,65 @@ function get_users_of_one_instance($mootyperid) {
  * @param int $desc
  * @return array, false if none.
  */
-function get_typer_grades_adv($mootyperid, $exerciseid, $userid=0, $orderby=-1, $desc=false) {
+function get_typer_grades_adv($mootyperid, $exerciseid, $userid = 0, $orderby = -1, $desc = false) {
     global $DB, $CFG;
     $params = [];
     $toreturn = [];
-    $gradestblname = $CFG->prefix."mootyper_grades";
-    $userstblname = $CFG->prefix."user";
-    $exertblname = $CFG->prefix."mootyper_exercises";
-    $atttblname = $CFG->prefix."mootyper_attempts";
-    $sql = "SELECT ".$gradestblname.".id, "
-                    .$userstblname.".firstname, "
-                    .$userstblname.".lastname, "
-                    .$userstblname.".id as u_id, "
-                    .$gradestblname.".pass, "
-                    .$gradestblname.".mistakes, "
-                    .$gradestblname.".timeinseconds, "
-                    .$gradestblname.".hitsperminute, "
-                    .$atttblname.".suspicion, "
-                    .$gradestblname.".fullhits, "
-                    .$gradestblname.".precisionfield, "
-                    .$gradestblname.".timetaken, "
-                    .$gradestblname.".exercise, "
-                    .$exertblname.".exercisename, "
-                    .$gradestblname.".wpm,"
-                    .$gradestblname.".grade,"
-                    .$gradestblname.".mistakedetails".
-    " FROM ".$gradestblname.
-    " LEFT JOIN ".$userstblname." ON ".$gradestblname.".userid = ".$userstblname.".id".
-    " LEFT JOIN ".$exertblname." ON ".$gradestblname.".exercise = ".$exertblname.".id".
-    " LEFT JOIN ".$atttblname." ON ".$atttblname.".id = ".$gradestblname.".attemptid".
-    " WHERE (mootyper=".$mootyperid.") AND (exercise=".$exerciseid." OR ".$exerciseid."=0) AND".
-    " (".$gradestblname.".userid=".$userid." OR ".$userid."=0)";
+    $gradestblname = $CFG->prefix . "mootyper_grades";
+    $userstblname = $CFG->prefix . "user";
+    $exertblname = $CFG->prefix . "mootyper_exercises";
+    $atttblname = $CFG->prefix . "mootyper_attempts";
+    $sql = "SELECT " . $gradestblname . ".id, "
+                    . $userstblname . ".firstname, "
+                    . $userstblname . ".lastname, "
+                    . $userstblname . ".id as u_id, "
+                    . $gradestblname . ".pass, "
+                    . $gradestblname . ".mistakes, "
+                    . $gradestblname . ".timeinseconds, "
+                    . $gradestblname . ".hitsperminute, "
+                    . $atttblname . ".suspicion, "
+                    . $gradestblname . ".fullhits, "
+                    . $gradestblname . ".precisionfield, "
+                    . $gradestblname . ".timetaken, "
+                    . $gradestblname . ".exercise, "
+                    . $exertblname . ".exercisename, "
+                    . $gradestblname . ".wpm,"
+                    . $gradestblname . ".grade,"
+                    . $gradestblname . ".mistakedetails" .
+    " FROM " . $gradestblname .
+    " LEFT JOIN " . $userstblname . " ON " . $gradestblname . ".userid = " . $userstblname . ".id" .
+    " LEFT JOIN " . $exertblname . " ON " . $gradestblname . ".exercise = " . $exertblname . ".id" .
+    " LEFT JOIN " . $atttblname . " ON " . $atttblname . ".id = " . $gradestblname . ".attemptid" .
+    " WHERE (mootyper=" . $mootyperid . ") AND (exercise=" . $exerciseid . " OR " . $exerciseid . "=0) AND" .
+    " (" . $gradestblname . ".userid=" . $userid . " OR " . $userid . "=0)";
     if ($orderby == 0 || $orderby == -1) {
-        $oby = " ORDER BY ".$gradestblname.".id";
+        $oby = " ORDER BY " . $gradestblname . ".id";
     } else if ($orderby == 1) {
-        $oby = " ORDER BY ".$userstblname.".firstname";
+        $oby = " ORDER BY " . $userstblname . ".firstname";
     } else if ($orderby == 2) {
-        $oby = " ORDER BY ".$userstblname.".lastname";
+        $oby = " ORDER BY " . $userstblname . ".lastname";
     } else if ($orderby == 3) {
-        $oby = " ORDER BY ".$atttblname.".suspicion";
+        $oby = " ORDER BY " . $atttblname . ".suspicion";
     } else if ($orderby == 4) {
-        $oby = " ORDER BY ".$gradestblname.".mistakes";
+        $oby = " ORDER BY " . $gradestblname . ".mistakes";
     } else if ($orderby == 5) {
-        $oby = " ORDER BY ".$gradestblname.".timeinseconds";
+        $oby = " ORDER BY " . $gradestblname . ".timeinseconds";
     } else if ($orderby == 6) {
-        $oby = " ORDER BY ".$gradestblname.".hitsperminute";
+        $oby = " ORDER BY " . $gradestblname . ".hitsperminute";
     } else if ($orderby == 7) {
-        $oby = " ORDER BY ".$gradestblname.".fullhits";
+        $oby = " ORDER BY " . $gradestblname . ".fullhits";
     } else if ($orderby == 8) {
-        $oby = " ORDER BY ".$gradestblname.".precisionfield";
+        $oby = " ORDER BY " . $gradestblname . ".precisionfield";
     } else if ($orderby == 9) {
-        $oby = " ORDER BY ".$gradestblname.".timetaken";
+        $oby = " ORDER BY " . $gradestblname . ".timetaken";
     } else if ($orderby == 10) {
-        $oby = " ORDER BY ".$exertblname.".exercisename";
+        $oby = " ORDER BY " . $exertblname . ".exercisename";
     } else if ($orderby == 11) {
-        $oby = " ORDER BY ".$gradestblname.".pass";
+        $oby = " ORDER BY " . $gradestblname . ".pass";
     } else if ($orderby == 12) {
-        $oby = " ORDER BY ".$gradestblname.".wpm";
+        $oby = " ORDER BY " . $gradestblname . ".wpm";
     } else if ($orderby == 13) {
-        $oby = " ORDER BY ".$gradestblname.".grade";
+        $oby = " ORDER BY " . $gradestblname . ".grade";
     } else {
         $oby = "";
     }
@@ -208,62 +207,62 @@ function get_typer_grades_adv($mootyperid, $exerciseid, $userid=0, $orderby=-1, 
  * @param int $desc
  * @return array, false if null.
  */
-function get_typergradesuser($sid, $uid, $orderby=-1, $desc=false) {
+function get_typergradesuser($sid, $uid, $orderby = -1, $desc = false) {
     global $DB, $CFG;
     $params = [];
     $toreturn = [];
-    $gradestblname = $CFG->prefix."mootyper_grades";
-    $userstblname = $CFG->prefix."user";
-    $exertblname = $CFG->prefix."mootyper_exercises";
-    $atttblname = $CFG->prefix."mootyper_attempts";
+    $gradestblname = $CFG->prefix . "mootyper_grades";
+    $userstblname = $CFG->prefix . "user";
+    $exertblname = $CFG->prefix . "mootyper_exercises";
+    $atttblname = $CFG->prefix . "mootyper_attempts";
     // 20231216 Added $gradestblname.".exercise a couple of lines down from here, for testing.
-    $sql = "SELECT ".$gradestblname.".id, "
-                    .$gradestblname.".exercise, "
-                    .$userstblname.".firstname, "
-                    .$userstblname.".lastname, "
-                    .$atttblname.".suspicion, "
-                    .$gradestblname.".mistakes, "
-                    .$gradestblname.".timeinseconds, "
-                    .$gradestblname.".hitsperminute, "
-                    .$gradestblname.".fullhits, "
-                    .$gradestblname.".precisionfield, "
-                    .$gradestblname.".pass, "
-                    .$gradestblname.".timetaken, "
-                    .$exertblname.".exercisename, "
-                    .$gradestblname.".wpm,"
-                    .$gradestblname.".grade,"
-                    .$gradestblname.".mistakedetails".
-    " FROM ".$gradestblname.
-    " LEFT JOIN ".$userstblname." ON ".$gradestblname.".userid = ".$userstblname.".id".
-    " LEFT JOIN ".$exertblname." ON ".$gradestblname.".exercise = ".$exertblname.".id".
-    " LEFT JOIN ".$atttblname." ON ".$atttblname.".id = ".$gradestblname.".attemptid".
-    " WHERE mootyper=".$sid." AND ".$gradestblname.".userid=".$uid;
+    $sql = "SELECT " . $gradestblname . ".id, "
+                    . $gradestblname . ".exercise, "
+                    . $userstblname . ".firstname, "
+                    . $userstblname . ".lastname, "
+                    . $atttblname . ".suspicion, "
+                    . $gradestblname . ".mistakes, "
+                    . $gradestblname . ".timeinseconds, "
+                    . $gradestblname . ".hitsperminute, "
+                    . $gradestblname . ".fullhits, "
+                    . $gradestblname . ".precisionfield, "
+                    . $gradestblname . ".pass, "
+                    . $gradestblname . ".timetaken, "
+                    . $exertblname . ".exercisename, "
+                    . $gradestblname . ".wpm,"
+                    . $gradestblname . ".grade,"
+                    . $gradestblname . ".mistakedetails" .
+    " FROM " . $gradestblname .
+    " LEFT JOIN " . $userstblname . " ON " . $gradestblname . ".userid = " . $userstblname . ".id" .
+    " LEFT JOIN " . $exertblname . " ON " . $gradestblname . ".exercise = " . $exertblname . ".id" .
+    " LEFT JOIN " . $atttblname . " ON " . $atttblname . ".id = " . $gradestblname . ".attemptid" .
+    " WHERE mootyper=" . $sid . " AND " . $gradestblname . ".userid=" . $uid;
     if ($orderby == 0 || $orderby == -1) {
-        $oby = " ORDER BY ".$gradestblname.".id";
+        $oby = " ORDER BY " . $gradestblname . ".id";
     } else if ($orderby == 1) {
-        $oby = " ORDER BY ".$userstblname.".firstname";
+        $oby = " ORDER BY " . $userstblname . ".firstname";
     } else if ($orderby == 2) {
-        $oby = " ORDER BY ".$userstblname.".lastname";
+        $oby = " ORDER BY " . $userstblname . ".lastname";
     } else if ($orderby == 3) {
-        $oby = " ORDER BY ".$atttblname.".suspicion";
+        $oby = " ORDER BY " . $atttblname . ".suspicion";
     } else if ($orderby == 4) {
-        $oby = " ORDER BY ".$gradestblname.".mistakes";
+        $oby = " ORDER BY " . $gradestblname . ".mistakes";
     } else if ($orderby == 5) {
-        $oby = " ORDER BY ".$gradestblname.".timeinseconds";
+        $oby = " ORDER BY " . $gradestblname . ".timeinseconds";
     } else if ($orderby == 6) {
-        $oby = " ORDER BY ".$gradestblname.".hitsperminute";
+        $oby = " ORDER BY " . $gradestblname . ".hitsperminute";
     } else if ($orderby == 7) {
-        $oby = " ORDER BY ".$gradestblname.".fullhits";
+        $oby = " ORDER BY " . $gradestblname . ".fullhits";
     } else if ($orderby == 8) {
-        $oby = " ORDER BY ".$gradestblname.".precisionfield";
+        $oby = " ORDER BY " . $gradestblname . ".precisionfield";
     } else if ($orderby == 9) {
-        $oby = " ORDER BY ".$gradestblname.".timetaken";
+        $oby = " ORDER BY " . $gradestblname . ".timetaken";
     } else if ($orderby == 10) {
-        $oby = " ORDER BY ".$exertblname.".exercisename";
+        $oby = " ORDER BY " . $exertblname . ".exercisename";
     } else if ($orderby == 12) {
-        $oby = " ORDER BY ".$gradestblname.".wpm";
+        $oby = " ORDER BY " . $gradestblname . ".wpm";
     } else if ($orderby == 13) {
-        $oby = " ORDER BY ".$gradestblname.".grade";
+        $oby = " ORDER BY " . $gradestblname . ".grade";
     } else {
         $oby = "";
     }
@@ -340,7 +339,7 @@ function get_exercise_record($eid) {
 function exam_already_done($mootyper, $userid) {
     global $DB;
     $table = 'mootyper_grades';
-    $select = 'userid='.$userid.' AND mootyper='.$mootyper->id; // Is put into the where clause.
+    $select = 'userid=' . $userid . ' AND mootyper=' . $mootyper->id; // Is put into the where clause.
     $result = $DB->get_records_select($table, $select);
     if (!is_null($result) && count($result) > 0) {
         return true;
@@ -363,7 +362,7 @@ function get_exercise_from_mootyper($mootyperid, $lessonid, $userid) {
 
     $table = 'mootyper_grades';
     // Progression should follow completed exercises, not only passed ones.
-    $select = 'userid='.$userid.' AND mootyper='.$mootyperid; // Is put into the where clause.
+    $select = 'userid=' . $userid . ' AND mootyper=' . $mootyperid; // Is put into the where clause.
     $result = $DB->get_records_select($table, $select);
     // Process result if it is not empty.
     if (!is_null($result) && count($result) > 0) {
@@ -598,7 +597,8 @@ function mootyper_print_recent_activity($course, $viewfullnames, $timestart) {
         $namefields = user_picture::fields('u', null, 'userid');
     } else {
         $userfieldsapi = \core_user\fields::for_userpic();
-        $namefields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;;
+        $namefields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
+        ;
     }
     $sql = "SELECT mtg.id, mtg.mootyper, mtg.timetaken, cm.id AS cmid, $namefields
          FROM {mootyper_grades} mtg
@@ -620,7 +620,6 @@ function mootyper_print_recent_activity($course, $viewfullnames, $timestart) {
     $showrecententries = get_config('mod_mootyper', 'showrecentactivity');
 
     foreach ($newentries as $anentry) {
-
         if (!array_key_exists($anentry->cmid, $modinfo->get_cms())) {
             continue;
         }
@@ -648,8 +647,10 @@ function mootyper_print_recent_activity($course, $viewfullnames, $timestart) {
 
         $groupmode = groups_get_activity_groupmode($cm, $course);
 
-        if ($groupmode == SEPARATEGROUPS &&
-                !has_capability('moodle/site:accessallgroups',  $context)) {
+        if (
+            $groupmode == SEPARATEGROUPS &&
+                !has_capability('moodle/site:accessallgroups', $context)
+        ) {
             if (isguestuser()) {
                 // Shortcut - guest user does not belong into any group.
                 continue;
@@ -675,23 +676,25 @@ function mootyper_print_recent_activity($course, $viewfullnames, $timestart) {
         return false;
     }
 
-    echo $OUTPUT->heading(get_string('modulenameplural', 'mootyper').':', 3);
+    echo $OUTPUT->heading(get_string('modulenameplural', 'mootyper') . ':', 3);
 
     foreach ($show as $submission) {
         $cm = $modinfo->get_cm($submission->cmid);
         $context = context_module::instance($submission->cmid);
         if (has_capability('mod/mootyper:viewgrades', $context)) {
-            $link = $CFG->wwwroot.'/mod/mootyper/gview.php?id='.$cm->id.'&n='.$submission->mootyper;
+            $link = $CFG->wwwroot . '/mod/mootyper/gview.php?id=' . $cm->id . '&n=' . $submission->mootyper;
         } else {
-            $link = $CFG->wwwroot.'/mod/mootyper/owngrades.php?id='.$cm->id.'&n='.$submission->mootyper;
+            $link = $CFG->wwwroot . '/mod/mootyper/owngrades.php?id=' . $cm->id . '&n=' . $submission->mootyper;
         }
         $name = $cm->name;
-        print_recent_activity_note($submission->timetaken,
-                                   $submission,
-                                   $name,
-                                   $link,
-                                   false,
-                                   $viewfullnames);
+        print_recent_activity_note(
+            $submission->timetaken,
+            $submission,
+            $name,
+            $link,
+            false,
+            $viewfullnames
+        );
     }
     return true;
 }
@@ -712,7 +715,7 @@ function mootyper_print_recent_activity($course, $viewfullnames, $timestart) {
  * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  * @return void adds items into $activities and increases $index
  */
-function mootyper_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
+function mootyper_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid = 0, $groupid = 0) {
 }
 
 /**
@@ -812,7 +815,7 @@ function mootyper_scale_used_anywhere(int $scaleid): bool {
  */
 function mootyper_grade_item_update($mootyper, $ratings = null, $mootypergrades = null): void {
     global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
     // Update the rating.
     $item = [
         'itemname' => get_string('gradeitemnameforrating', 'mootyper', $mootyper),
@@ -873,9 +876,10 @@ function mootyper_grade_item_update($mootyper, $ratings = null, $mootypergrades 
  * @param int $userid update grade of specific user only, 0 means all participants.
  * @return void
  */
-function mootyper_update_grades($mootyper, $userid=0): void {
+function mootyper_update_grades($mootyper, $userid = 0): void {
     global $CFG, $DB;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir . '/gradelib.php');
+    require_once($CFG->libdir . '/completionlib.php');
 
     $cm = get_coursemodule_from_instance('mootyper', $mootyper->id);
     $mootyper->cmidnumber = $cm->idnumber;
@@ -883,7 +887,7 @@ function mootyper_update_grades($mootyper, $userid=0): void {
 
     if ($mootyper->assessed) {
         // I think this is the Whole MooTyper grade stuff.
-        require_once($CFG->dirroot.'/rating/lib.php');
+        require_once($CFG->dirroot . '/rating/lib.php');
         $rm = new rating_manager();
         $ratings = $rm->get_user_grades((object) [
             'component' => 'mod_mootyper',
@@ -898,18 +902,26 @@ function mootyper_update_grades($mootyper, $userid=0): void {
             'itemtable' => 'mootyper_grades',
             'itemtableusercolumn' => 'userid',
         ]);
+
+        if ($userid && empty($ratings)) {
+            $rating = new stdClass();
+            $rating->userid = $userid;
+            $rating->rawgrade = null;
+            $ratings = $rating;
+        }
     }
 
     $mootypergrades = null;
+    $course = null;
     if (($mootyper->requiredgoal) || ($mootyper->requiredwpm)) {
         $sql = "SELECT g.userid,
-                       0 as datesubmitted,
-                       g.grade as rawgrade,
-                       g.timetaken as dategraded,
-                       g.mistakedetails
+                       0 AS datesubmitted,
+                       AVG(g.grade) AS rawgrade,
+                       MAX(g.timetaken) AS dategraded
                   FROM {mootyper} m
                   JOIN {mootyper_grades} g ON g.mootyper = m.id
-                 WHERE m.id = :mootyperid";
+                 WHERE m.id = :mootyperid
+                   AND g.grade <> -1";
 
         $params = [
             'mootyperid' => $mootyper->id,
@@ -919,22 +931,37 @@ function mootyper_update_grades($mootyper, $userid=0): void {
             $sql .= " AND g.userid = :userid";
             $params['userid'] = $userid;
         }
+        $sql .= " GROUP BY g.userid";
         $mootypergrades = [];
         if ($grades = $DB->get_recordset_sql($sql, $params)) {
-            foreach ($grades as $userid => $grade) {
-                if ($grade->rawgrade != -1) {
-                    $grade->feedback = $grade->mistakedetails;
-                    $mootypergrades[$userid] = $grade;
+            foreach ($grades as $grade) {
+                $grade->feedback = '';
+                $mootypergrades[$grade->userid] = $grade;
+                if (!$course) {
                     $course = $DB->get_record('course', ['id' => $mootyper->course]);
-                    // 20240122 I think this needs to be $course.
-                    $ci = new completion_info($course);
-                    if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
-                        $ci->update_state($cm, COMPLETION_UNKNOWN, $grade->userid);
-                    }
-
+                }
+                $ci = new completion_info($course);
+                if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+                    $ci->update_state($cm, COMPLETION_UNKNOWN, $grade->userid);
                 }
             }
             $grades->close();
+        }
+
+        if ($userid && empty($mootypergrades)) {
+            // If the user has no remaining grades, clear their gradebook value explicitly.
+            $grade = new stdClass();
+            $grade->userid = $userid;
+            $grade->rawgrade = null;
+            $mootypergrades = $grade;
+
+            if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+                if (!$course) {
+                    $course = $DB->get_record('course', ['id' => $mootyper->course]);
+                }
+                $ci = new completion_info($course);
+                $ci->update_state($cm, COMPLETION_UNKNOWN, $userid);
+            }
         }
     }
     mootyper_grade_item_update($mootyper, $ratings, $mootypergrades);
@@ -966,9 +993,11 @@ function mootyper_reset_userdata($data) {
         $instances = $DB->get_records('mootyper', ['course' => $data->courseid]);
         foreach ($instances as $instance) {
             if (reset_mootyper_instance($instance->id)) {
-                $status[] = ['component' => get_string('modulenameplural', 'mootyper')
-                , 'item' => get_string('resetmootyperall', 'mootyper')
-                .': '.$instance->name, 'error' => false, ];
+                $status[] = [
+                    'component' => get_string('modulenameplural', 'mootyper'),
+                    'item' => get_string('resetmootyperall', 'mootyper') . ': ' . $instance->name,
+                    'error' => false,
+                ];
             }
         }
     }
@@ -1056,7 +1085,7 @@ function mootyper_update_calendar(stdClass $mootyper, $cmid) {
     global $DB, $CFG;
 
     if ($CFG->branch > 30) { // If Moodle less than version 3.1 skip this.
-        require_once($CFG->dirroot.'/calendar/lib.php');
+        require_once($CFG->dirroot . '/calendar/lib.php');
 
         // Get CMID if not sent as part of $mootyper.
         if (!isset($mootyper->coursemodule)) {
@@ -1069,8 +1098,13 @@ function mootyper_update_calendar(stdClass $mootyper, $cmid) {
         $event->eventtype = MOOTYPER_EVENT_TYPE_OPEN;
         // The MOOTYPER_EVENT_TYPE_OPEN event should only be an action event if no close time is specified.
         $event->type = empty($mootyper->timeclose) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
-        if ($event->id = $DB->get_field('event', 'id',
-            ['modulename' => 'mootyper', 'instance' => $mootyper->id, 'eventtype' => $event->eventtype])) {
+        if (
+            $event->id = $DB->get_field(
+                'event',
+                'id',
+                ['modulename' => 'mootyper', 'instance' => $mootyper->id, 'eventtype' => $event->eventtype]
+            )
+        ) {
             if ((!empty($mootyper->timeopen)) && ($mootyper->timeopen > 0)) {
                 // Calendar event exists so update it.
                 $event->name = get_string('calendarstart', 'mootyper', $mootyper->name);
@@ -1110,8 +1144,13 @@ function mootyper_update_calendar(stdClass $mootyper, $cmid) {
         $event = new stdClass();
         $event->type = CALENDAR_EVENT_TYPE_ACTION;
         $event->eventtype = MOOTYPER_EVENT_TYPE_CLOSE;
-        if ($event->id = $DB->get_field('event', 'id',
-            ['modulename' => 'mootyper', 'instance' => $mootyper->id, 'eventtype' => $event->eventtype])) {
+        if (
+            $event->id = $DB->get_field(
+                'event',
+                'id',
+                ['modulename' => 'mootyper', 'instance' => $mootyper->id, 'eventtype' => $event->eventtype]
+            )
+        ) {
             if ((!empty($mootyper->timeclose)) && ($mootyper->timeclose > 0)) {
                 // Calendar event exists so update it.
                 $event->name = get_string('calendarend', 'mootyper', $mootyper->name);
@@ -1308,8 +1347,10 @@ function mootyper_get_coursemodule_info($coursemodule) {
  */
 function mod_mootyper_get_completion_active_rule_descriptions($cm) {
     // Values will be present in cm_info, and we assume these are up to date.
-    if (empty($cm->customdata['customcompletionrules'])
-        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+    if (
+        empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC
+    ) {
         return [];
     }
 

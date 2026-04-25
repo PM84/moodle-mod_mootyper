@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace mod_mootyper\grades;
 
@@ -36,8 +36,7 @@ use core_grades\local\gradeitem\advancedgrading_mapping as advanced_mapping;
  * @copyright AL Rachels <drachels@drachels.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class gradeitems implements itemnumber_mapping, advanced_mapping {
-
+class gradeitems implements advanced_mapping, itemnumber_mapping {
     /**
      * Return the list of grade item mappings for the mootyper.
      *

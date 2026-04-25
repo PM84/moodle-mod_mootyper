@@ -30,4 +30,4 @@ if [[ $# -eq 0 ]]; then
     set -- mod/mootyper/tests/behat/continue_gate.feature
 fi
 
-vendor/bin/behat --config "$BEHAT_CFG_PATCHED" "$@"
+"$ROOT_DIR/../vendor/bin/behat" --config "$BEHAT_CFG_PATCHED" "$@"

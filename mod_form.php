@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
 use mod_mootyper\local\keyboards;
 use mod_mootyper\local\lessons;
@@ -43,7 +43,6 @@ use core_grades\component_gradeitems;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class mod_mootyper_mod_form extends moodleform_mod {
-
     /**
      * @var $course Protected modifier.
      */
@@ -82,16 +81,18 @@ class mod_mootyper_mod_form extends moodleform_mod {
         // MooTyper activity setup, Availability settings.
         $mform->addElement('header', 'availabilityhdr', get_string('availability'));
 
-        $mform->addElement('date_time_selector',
+        $mform->addElement(
+            'date_time_selector',
             'timeopen',
             get_string('mootyperopentime', 'mootyper'),
             ['optional' => true, 'step' => 1]
-            );
-        $mform->addElement('date_time_selector',
+        );
+        $mform->addElement(
+            'date_time_selector',
             'timeclose',
             get_string('mootyperclosetime', 'mootyper'),
             ['optional' => true, 'step' => 1]
-            );
+        );
         // MooTyper activity password setup.
         $mform->addElement('selectyesno', 'usepassword', get_string('usepassword', 'mootyper'));
         $mform->addHelpButton('usepassword', 'usepassword', 'mootyper');
@@ -207,13 +208,16 @@ class mod_mootyper_mod_form extends moodleform_mod {
         $layouts = keyboards::get_keyboard_layouts_db();
         $mform->addElement('select', 'layout', get_string('layout', 'mootyper'), $layouts);
         $mform->addHelpButton('layout', 'layout', 'mootyper');
-        if (get_config('mod_mootyper', 'overwrite_defaultlayout') &&
+        if (
+            get_config('mod_mootyper', 'overwrite_defaultlayout') &&
                 isset($mootyperconfig->defaultlayout_filenamewithoutfiletype) &&
-                keyboards::is_layout_installed("$mootyperconfig->defaultlayout_filenamewithoutfiletype")) {
+                keyboards::is_layout_installed("$mootyperconfig->defaultlayout_filenamewithoutfiletype")
+        ) {
             // We should overwrite and the layout is installed!
-            $mform->setDefault('layout',
-                keyboards::get_id_of_layout_by_layoutname($mootyperconfig->defaultlayout_filenamewithoutfiletype
-                ));
+            $mform->setDefault(
+                'layout',
+                keyboards::get_id_of_layout_by_layoutname($mootyperconfig->defaultlayout_filenamewithoutfiletype)
+            );
         } else {
             // We should not overwrite or the laylout is not installed so we have to use the "normal" default.
             $mform->setDefault('layout', $mootyperconfig->defaultlayout);
@@ -265,8 +269,8 @@ class mod_mootyper_mod_form extends moodleform_mod {
         // 20200630 When a cmid is available, show the link.
         if ($id) {
             $mform->addElement('header', 'mootyper', get_string('pluginadministration', 'mootyper'));
-            $jlnk3 = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id;
-            $mform->addElement('html', '<a id="jlnk3" href="'.$jlnk3.'">'.get_string('emanage', 'mootyper').'</a>');
+            $jlnk3 = $CFG->wwwroot . '/mod/mootyper/exercises.php?id=' . $id;
+            $mform->addElement('html', '<a id="jlnk3" href="' . $jlnk3 . '">' . get_string('emanage', 'mootyper') . '</a>');
         }
 
         // 20200907 Add mootyper grading options for the whole activity.
@@ -367,7 +371,9 @@ class mod_mootyper_mod_form extends moodleform_mod {
             . 'var exerciseInfo = document.getElementById("mootyper-exerciseinfo");'
             . 'if (!lessonSelect || !exerciseSelect || !exerciseInfo) { return; }'
             . 'var escapeHtml = function(str) {'
-            . 'return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/\'/g, "&#039;");'
+            . 'return String(str).replace(/&/g,"&amp;")'
+            . '.replace(/</g,"&lt;").replace(/>/g,"&gt;")'
+            . '.replace(/\"/g,"&quot;").replace(/\'/g,"&#039;");'
             . '};'
             . 'var renderInfo = function(items) {'
             . 'if (!items.length) { return "<p class=\"text-muted\">" + escapeHtml(noExercisesMsg) + "</p>"; }'
@@ -417,8 +423,11 @@ class mod_mootyper_mod_form extends moodleform_mod {
         $gradefieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'grade');
         $gradecatfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'gradecat');
         $gradepassfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, 'gradepass');
-        $sendstudentnotificationsfieldname = component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber,
-                'sendstudentnotifications');
+        $sendstudentnotificationsfieldname = component_gradeitems::get_field_name_for_itemnumber(
+            $component,
+            $itemnumber,
+            'sendstudentnotifications'
+        );
 
         // The advancedgradingmethod is different in that it is suffixed with an area name... which is not the
         // itemnumber.
@@ -488,7 +497,6 @@ class mod_mootyper_mod_form extends moodleform_mod {
         $mform->setDefault($gradepassfieldname, '');
         $mform->setType($gradepassfieldname, PARAM_RAW);
         $mform->hideIf($gradepassfieldname, "{$gradefieldname}[modgrade_type]", 'eq', 'none');
-
     }
 
 
@@ -557,8 +565,10 @@ class mod_mootyper_mod_form extends moodleform_mod {
         $errors = parent::validation($data, $files);
 
         // Check open and close times are consistent.
-        if ($data['timeopen'] != 0 && $data['timeclose'] != 0 &&
-                $data['timeclose'] < $data['timeopen']) {
+        if (
+            $data['timeopen'] != 0 && $data['timeclose'] != 0 &&
+                $data['timeclose'] < $data['timeopen']
+        ) {
             $errors['timeclose'] = get_string('closebeforeopen', 'mootyper');
         }
 
@@ -585,23 +595,26 @@ class mod_mootyper_mod_form extends moodleform_mod {
         } else {
             $suffix = $this->get_suffix();
         }
-        $completionexercisegroup = 'completionexercisegroup'.$suffix;
-        $completionexerciseenabled = 'completionexerciseenabled'.$suffix;
-        $completionexercise = 'completionexercise'.$suffix;
+        $completionexercisegroup = 'completionexercisegroup' . $suffix;
+        $completionexerciseenabled = 'completionexerciseenabled' . $suffix;
+        $completionexercise = 'completionexercise' . $suffix;
 
         $group = [];
-        $group[] = $mform->createElement('checkbox',
+        $group[] = $mform->createElement(
+            'checkbox',
             $completionexerciseenabled,
             '',
             get_string('completionexercise', 'mootyper')
-            );
-        $group[] = $mform->createElement('text',
+        );
+        $group[] = $mform->createElement(
+            'text',
             $completionexercise,
             '',
             ['size' => 3]
         );
         $mform->setType($completionexercise, PARAM_INT);
-        $mform->addGroup($group,
+        $mform->addGroup(
+            $group,
             $completionexercisegroup,
             get_string('completionexercisegroup', 'mootyper'),
             [' '],
@@ -611,26 +624,29 @@ class mod_mootyper_mod_form extends moodleform_mod {
         $mform->addHelpButton($completionexercisegroup, 'completionexercisegroup', 'mootyper');
 
         // 20230926 Added new Require Lesson and changed code for Moodle 4.3.
-        $completionlessongroup = 'completionlessongroup'.$suffix;
-        $completionlessonenabled = 'completionlessonenabled'.$suffix;
-        $completionlesson = 'completionlesson'.$suffix;
+        $completionlessongroup = 'completionlessongroup' . $suffix;
+        $completionlessonenabled = 'completionlessonenabled' . $suffix;
+        $completionlesson = 'completionlesson' . $suffix;
         // Line 467 will add text in front of the completionlesson string. Line 480 adds text after the completionlesson string.
         $group = [];
-        $group[] = $mform->createElement('checkbox',
+        $group[] = $mform->createElement(
+            'checkbox',
             $completionlessonenabled,
             '',
             get_string('completionlesson', 'mootyper'),
             '',
         );
 
-        $group[] = $mform->createElement('selectyesno',
+        $group[] = $mform->createElement(
+            'selectyesno',
             $completionlesson,
             '',
             get_string('completionlesson', 'mootyper'),
         );
 
         $mform->setType($completionlesson, PARAM_INT);
-        $mform->addGroup($group,
+        $mform->addGroup(
+            $group,
             $completionlessongroup,
             get_string('completionlessongroup', 'mootyper'),
             [' '],
@@ -640,19 +656,21 @@ class mod_mootyper_mod_form extends moodleform_mod {
         $mform->addHelpButton($completionlessongroup, 'completionlessongroup', 'mootyper');
 
         // 20230926 Added new Require Precision and changed code for Moodle 4.3.
-        $completionprecisiongroup = 'completionprecisiongroup'.$suffix;
-        $completionprecisionenabled = 'completionprecisionenabled'.$suffix;
-        $completionprecision = 'completionprecision'.$suffix;
+        $completionprecisiongroup = 'completionprecisiongroup' . $suffix;
+        $completionprecisionenabled = 'completionprecisionenabled' . $suffix;
+        $completionprecision = 'completionprecision' . $suffix;
 
         $group = [];
-        $group[] = $mform->createElement('checkbox',
+        $group[] = $mform->createElement(
+            'checkbox',
             $completionprecisionenabled,
             '',
             get_string('completionprecision', 'mootyper')
         );
         $group[] = $mform->createElement('text', $completionprecision, '', ['size' => 3]);
         $mform->setType($completionprecision, PARAM_INT);
-        $mform->addGroup($group,
+        $mform->addGroup(
+            $group,
             $completionprecisiongroup,
             get_string('completionprecisiongroup', 'mootyper'),
             [' '],
@@ -662,19 +680,21 @@ class mod_mootyper_mod_form extends moodleform_mod {
         $mform->addHelpButton($completionprecisiongroup, 'completionprecisiongroup', 'mootyper');
 
         // 20230926 Added new Require WPM and changed code for Moodle 4.3.
-        $completionwpmgroup = 'completionwpmgroup'.$suffix;
-        $completionwpmenabled = 'completionwpmenabled'.$suffix;
-        $completionwpm = 'completionwpm'.$suffix;
+        $completionwpmgroup = 'completionwpmgroup' . $suffix;
+        $completionwpmenabled = 'completionwpmenabled' . $suffix;
+        $completionwpm = 'completionwpm' . $suffix;
 
         $group = [];
-        $group[] = $mform->createElement('checkbox',
+        $group[] = $mform->createElement(
+            'checkbox',
             'completionwpmenabled',
             '',
             get_string('completionwpm', 'mootyper')
         );
         $group[] = $mform->createElement('text', 'completionwpm', '', ['size' => 3]);
         $mform->setType('completionwpm', PARAM_INT);
-        $mform->addGroup($group,
+        $mform->addGroup(
+            $group,
             'completionwpmgroup',
             get_string('completionwpmgroup', 'mootyper'),
             [' '],
@@ -684,19 +704,21 @@ class mod_mootyper_mod_form extends moodleform_mod {
         $mform->addHelpButton($completionwpmgroup, 'completionwpmgroup', 'mootyper');
 
         // 20230926 Added new MooTyper Grade and changed code for Moodle 4.3.
-        $completionmootypergradegroup = 'completionmootypergradegroup'.$suffix;
-        $completionmootypergradeenabled = 'completionmootypergradeenabled'.$suffix;
-        $completionmootypergrade = 'completionmootypergrade'.$suffix;
+        $completionmootypergradegroup = 'completionmootypergradegroup' . $suffix;
+        $completionmootypergradeenabled = 'completionmootypergradeenabled' . $suffix;
+        $completionmootypergrade = 'completionmootypergrade' . $suffix;
 
         $group = [];
-        $group[] = $mform->createElement('checkbox',
+        $group[] = $mform->createElement(
+            'checkbox',
             'completionmootypergradeenabled',
             '',
             get_string('completionmootypergrade', 'mootyper')
         );
         $group[] = $mform->createElement('text', 'completionmootypergrade', '', ['size' => 3]);
         $mform->setType('completionmootypergrade', PARAM_INT);
-        $mform->addGroup($group,
+        $mform->addGroup(
+            $group,
             'completionmootypergradegroup',
             get_string('completionmootypergradegroup', 'mootyper'),
             [' '],
@@ -728,20 +750,20 @@ class mod_mootyper_mod_form extends moodleform_mod {
         } else {
             $suffix = $this->get_suffix();
         }
-        $completionexerciseenabled = 'completionexerciseenabled'.$suffix;
-        $completionexercise = 'completionexercise'.$suffix;
+        $completionexerciseenabled = 'completionexerciseenabled' . $suffix;
+        $completionexercise = 'completionexercise' . $suffix;
 
-        $completionlessonenabled = 'completionlessonenabled'.$suffix;
-        $completionlesson = 'completionlesson'.$suffix;
+        $completionlessonenabled = 'completionlessonenabled' . $suffix;
+        $completionlesson = 'completionlesson' . $suffix;
 
-        $completionprecisiontenabled = 'completionprecisiontenabled'.$suffix;
-        $completionprecision = 'completionprecision'.$suffix;
+        $completionprecisiontenabled = 'completionprecisiontenabled' . $suffix;
+        $completionprecision = 'completionprecision' . $suffix;
 
-        $completionwpmenabled = 'completionwpmenabled'.$suffix;
-        $completionwpm = 'completionwpm'.$suffix;
+        $completionwpmenabled = 'completionwpmenabled' . $suffix;
+        $completionwpm = 'completionwpm' . $suffix;
 
-        $completionmootypergradeenabled = 'completionmootypergradeenabled'.$suffix;
-        $completionmootypergrade = 'completionmootypergrade'.$suffix;
+        $completionmootypergradeenabled = 'completionmootypergradeenabled' . $suffix;
+        $completionmootypergrade = 'completionmootypergrade' . $suffix;
 
         return (!empty($data[$completionexerciseenabled]) && $data[$completionexercise] != 0)
             || (!empty($data[$completionlessonenabled]) && $data[$completionlesson] != 0)
@@ -760,9 +782,6 @@ class mod_mootyper_mod_form extends moodleform_mod {
      */
     public function get_data() {
         $data = parent::get_data();
-        // if (!$data) {
-        // return false;
-        // }
         if ($data) {
             $itemname = 'mootyper';
             $component = 'mod_mootyper';

@@ -62,19 +62,33 @@ $context = context_module::instance($cm->id);
 
 // 20241227 Get the lesson ID if available. STEP 0
 $lessonpo = optional_param('lesson', '', PARAM_INT);
-// Get all the exercises in this lesson so we can fix the snumbers if we need too. STEP 4
+// Get all the exercises in this lesson so we can fix the snumbers if we need too. STEP 4.
 $exes = lessons::get_exercises_by_lesson($lessonpo);
 
 // 20241231 Block of code to delete a lesson and all of the exercises in it.
 if ($lessonid) {
     $lessonid = (int)$lessonid;
-    $lessonrecord = $DB->get_record('mootyper_lessons', ['id' => $lessonid], '*', MUST_EXIST);
+    $lessonrecord = $DB->get_record('mootyper_lessons', ['id' => $lessonid], '*', IGNORE_MISSING);
 
-    // Delete the physical lesson file when deleting the lesson.
-    $lessonfilepath = $CFG->dirroot . '/mod/mootyper/lessons/' . $lessonrecord->lessonname . '.txt';
-    if (is_file($lessonfilepath) && !unlink($lessonfilepath)) {
-        throw new moodle_exception('errorcannotdeletefile', 'moodle', '', $lessonfilepath);
+    // Handle stale repeat requests where the lesson has already been deleted.
+    if (!$lessonrecord) {
+        $fallbacklesson = $DB->get_record_sql(
+            "SELECT id, lessonname
+               FROM {mootyper_lessons}
+           ORDER BY LOWER(lessonname) ASC",
+            null,
+            IGNORE_MULTIPLE
+        );
+
+        $webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id=' . $id;
+        if ($fallbacklesson) {
+            $webdir .= '&lesson=' . $fallbacklesson->id;
+        }
+        redirect($webdir);
     }
+
+    require_once($CFG->dirroot . '/mod/mootyper/lib.php');
+    require_once($CFG->dirroot . '/rating/lib.php');
 
     // Determine which activities currently reference this lesson.
     $mootypers = $DB->get_records('mootyper', ['lesson' => $lessonid]);
@@ -102,13 +116,33 @@ if ($lessonid) {
         }
     }
 
+    // Delete the physical lesson file only after validations pass.
+    $lessonfilepath = $CFG->dirroot . '/mod/mootyper/lessons/' . $lessonrecord->lessonname . '.txt';
+    if (is_file($lessonfilepath) && !unlink($lessonfilepath)) {
+        throw new moodle_exception('errorcannotdeletefile', 'moodle', '', $lessonfilepath);
+    }
+
+    $transaction = $DB->start_delegated_transaction();
+    $ratingmanager = new rating_manager();
+    $affectedgrades = [];
+
     // Delete checks/attempts/grades that belong to exercises in this lesson.
     $exercises = $DB->get_records('mootyper_exercises', ['lesson' => $lessonid]);
     foreach ($exercises as $exercise) {
         $grades = $DB->get_records('mootyper_grades', ['exercise' => $exercise->id]);
         foreach ($grades as $grade) {
+            $affectedgrades[$grade->mootyper][$grade->userid] = true;
+
+            // Remove ratings attached to this grade row.
+            $delopt = new stdClass();
+            $delopt->contextid = $context->id;
+            $delopt->component = 'mod_mootyper';
+            $delopt->ratingarea = 'exercises';
+            $delopt->itemid = $grade->id;
+            $ratingmanager->delete_ratings($delopt);
+
             if (!empty($grade->attemptid)) {
-                $DB->delete_records('mootyper_checks', ['id' => $grade->attemptid]);
+                $DB->delete_records('mootyper_checks', ['attemptid' => $grade->attemptid]);
                 $DB->delete_records('mootyper_attempts', ['id' => $grade->attemptid]);
             }
         }
@@ -118,6 +152,19 @@ if ($lessonid) {
     // Delete exercises and then the lesson itself.
     $DB->delete_records('mootyper_exercises', ['lesson' => $lessonid]);
     $DB->delete_records('mootyper_lessons', ['id' => $lessonid]);
+
+    // Refresh gradebook entries for users impacted by deleted lesson grades.
+    foreach ($affectedgrades as $mootyperid => $users) {
+        $mootyper = $DB->get_record('mootyper', ['id' => $mootyperid], '*', IGNORE_MISSING);
+        if (!$mootyper) {
+            continue;
+        }
+        foreach (array_keys($users) as $userid) {
+            mootyper_update_grades($mootyper, (int)$userid);
+        }
+    }
+
+    $transaction->allow_commit();
 
     // Trigger module lesson_deleted event.
     $params = [
@@ -138,221 +185,18 @@ if ($lessonid) {
     }
     header('Location: ' . $webdir);
     exit;
-
-    // 20241231 Get the lesson and count to see if there is an error of more than one.
-    $lessons = $DB->get_records('mootyper_lessons', ['id' => $lessonid]);
-
-
-
-    $lessonscount = $DB->count_records('mootyper_lessons', ['id' => $lessonid]);
-
-    if ($lessonscount == 1) {
-        foreach ($lessons as $lesson) {
-            // Go ahead and remove the lesson.
-
-            // Delete the physical lesson file when deleting the lesson.
-            $lessonfilepath = $CFG->dirroot . '/mod/mootyper/lessons/' . $lesson->lessonname . '.txt';
-            if (is_file($lessonfilepath) && !unlink($lessonfilepath)) {
-                throw new moodle_exception('errorcannotdeletefile', 'moodle', '', $lessonfilepath);
-            }
-
-
-
-			// After removal, get a different lesson to show on the exercises.php page.
-            // Use get_record_sql() to execute a custom query.
-            //$sql = "SELECT MIN(id) AS lowestid FROM {mootyper_lessons}";
-            //$sql = "SELECT id AS lowestid, lessonname FROM {mootyper_lessons} WHERE (id = 464)";
-            //$sql = "SELECT MAX(id) AS lowestid, lessonname FROM {mootyper_lessons}";
-            //$sql = "SELECT MIN(lessonname) AS lowestid FROM {mootyper_lessons}";
-            $sql = "SELECT * FROM {mootyper_lessons} ORDER BY LOWER(lessonname) ASC LIMIT 1";
-
-
-            $lowestidobject = $DB->get_records_sql($sql);
-            print_object($lowestidobject);
-foreach ($lowestidobject as $rcdid) {
-    echo "ID: ".$rcdid->id."\n";
-// Got to come up with $course when reloading the exercises.php page.
-$course =  $rcdid->courseid;
-}
-            //print_object($lowestidobject);
-
-
-
-            //var_dump($cm);
-            //var_dump($cmid);
-            //var_dump($lessonslowestid);
-            //die;
-//$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$lessonid.'&lesson='.$rcdid->id;
-$webdir = $CFG->wwwroot.'/mod/mootyper/view.php?id='.$cm->id;
-
-
-
-
-        }
-    } else {
-        // 20241231 You CANNOT have more than one lesson with this lesson ID.
-        // This is because we do not want to BREAK an activity somewhere else in our Moodle site.
-        throw new moodle_exception(get_string('mootyperlessonerror', 'mootyper'));
-    }
-    // 20241231 Count and find all the MooTypers using this lesson ID. STEP 1
-    $mootyperscount = $DB->count_records('mootyper', ['lesson' => $lessonpo]);
-
-
-    $mootypers = $DB->get_records('mootyper', ['lesson' => $lessonpo]);
-
-
-    // 20241231 List the MooTyper activities. STEP 2 and 3. Allow only admin if more than one.
-	// For teachers, should also check if editable by the teacher, or deny delete ability! NO NEED FOR THIS!!! Already done by view and exercises files.
-    // Note that teacher2, non-editing teacher does NOT even see the option to access Expor/Edit exercises.
-    if (($mootyperscount >= 1) && (is_siteadmin())) {
-        // 20250101 Need an admin capability check here as deleting this lesson will break multiple MooTyper activities.
-        // In other words, let an admin proceed, but stop a teacher and give them a warning message.
-        //  $mootypers = $DB->get_records('mootyper', ['lesson' => $lessonpo]);
-        foreach ($mootypers as $mootyper) {
-            // This will break every OTHER MooTyper activty that uses this lesson ID.
-            // 20250909 Need to change tactics and try to use the delete code used by exercise.php page.
-            // 20241229 Delete any mootyper_grades. This will need to be modified, I think!
-            // Cannot use $exerciseid or we wind up in the second part of this file.
-            // WIll need to use a variation such as $exerid.
-
-
-
-
-            // foreach ($exercise as $exerid) {
-            foreach ($exes as $exerid) {
-                // $DB->delete_records('mootyper_grades', (['exercise' => $exerciseid]));
-
-                // $DB->delete_records('mootyper_grades', (['exercise' => $exerid]));
-
-                // $DB->delete_records('mootyper_grades', ['mootyper' => $mootyper->id]);
-                // Can just invoke the function in lib.php at line 535.
-            }
-            // $DB->delete_records('mootyper_lessons', ['id' => $lessonid]);
-            // $DB->delete_records('mootyper_exercises', ['lesson' => $lessonid]);
-            // $DB->delete_records('mootyper_grades', ['id' => $mootyper->id, 'exercise' => $mootyper->exercise]);
-            // $DB->delete_records('mootyper', ['id' => $mootyper_grades->mootyper]);
-
-        }
-
-    } else if (($mootyperscount > 1) && !(is_siteadmin())){
-        // 20241231 There is only one MooTyper using this lesson ID so it is safe to delete it and associated exercises and grades. STEP 4 STEP 5 STEP 6 STEP 7 STEP 8
-        // If user is a teacher, or admin let them proceed.
-        foreach ($mootypers as $mootyper) {
-
-        }
-        // 20240101 Will need to see about doing a Moodle grade update here.
-        // STEP 8
-    } else {
-        // 20241231 There is only one MooTyper using this lesson ID so it is safe to delete it and associated exercises and grades. STEP 4 STEP 5 STEP 6 STEP 7 STEP 8
-        // If user is a teacher, or admin let them proceed.
-        foreach ($mootypers as $mootyper) {
-
-        }
-        // 20240101 Will need to see about doing a Moodle grade update here.
-        // STEP 8
-    }
-
-    // This will break every OTHER MooTyper activty that uses this lesson ID.
-    // $DB->delete_records('mootyper_lessons', ['id' => $lessonid]);
-    // $DB->delete_records('mootyper_exercises', ['lesson' => $lessonid]);
-
-    // 20241229 Delete any mootyper_grades. This will need to be modified, I think!
-    // Cannot use $exerciseid or we wind up in the second part of this file.
-    // WIll need to use a variation such as $exerid.
-    // $DB->delete_records('mootyper_grades', (['exercise' => $exerciseid]));
-    // $DB->delete_records('mootyper_grades', (['exercise' => $exerid]));
-
-    // $DB->delete_records('mootyper_grades', ['mootyper' => $mootyper->id]);
-    // Can just invoke the function in lib.php at line 535.
-
-    // Need a foreach loop here to get all the grades for this combination of lessson and exercises, so they can be deleted, too.
-    foreach ($exes as $exe) {
-        //$orphanedgrades = $DB->get_records('mootyper_grades', ['exercise' => $exe['id'] = $exerciseid]);
-        // 20241227 Get orphaned grades for ones created when completing the lesson with this ID, $lessonid.
-        $orphanedgrades = $DB->get_records('mootyper_grades', ['exercise' => $exe['id']]);
-        foreach ($orphanedgrades as $orphanedgrade) {
-            $mootyper = $DB->get_record('mootyper', ['id' => $orphanedgrade->mootyper]);
-            $attempt = $DB->get_records('mootyper_attempts', ['id' => $orphanedgrade->attemptid, 'mootyperid' => $orphanedgrade->mootyper, ]);
-			if ($attempt) {
-                $checks = $DB->get_record('mootyper_checks', ['id' => $orphanedgrade->attemptid]);
-                // 20241223 If there are any checks in the mdl_mootyper_checks table, delete them.
-                if ($checks) {
-                    $DB->delete_records('mootyper_checks', ['id' => $orphanedgrade->attemptid]);
-                    // 20241223 If there are not any checks then do nothing for now. Later this else needs to be deleted since it has nothing to do.
-                } else {
-
-                }
-
-                // 20241226 Delete the attempt.
-                // $DB->delete_records('mootyper_attempts', ['id' => $orphanedgrade->attemptid, 'mootyperid' => $orphanedgrade->mootyper]);
-            }
-        }
-    }
-    //$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id.'&lesson='.$lessonpo;
-    //$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id;
-    //$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$exe->id.'&lesson='.$lessonpo;
-    //$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id;
-
 }
 
-// 20250928 Here we need to find out the lowest lesson ID number, the mootyper ID number, and use them to go to exercises.php page.
-//$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$lessonid;
-
-// 20250928 THIS IS THE ONE I NEED! Use after the delete.
-//$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$lessonid.'&lesson='.$lowestidobject->lowestid;
-//$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$lessonid.'&lesson='.$lowestidobject->id;
-//$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$lessonid.'&lesson='.$rcdid->id;
-
-
-//$webdir = $CFG->wwwroot . '/course/view.php?id='.$cm->course;
-
-//$webdir = $CFG->wwwroot.'/course/view.php?id='.$cmid;
-//$webdir = $CFG->wwwroot.'/mod/mootyper/view.php?id='.$cmid->id;
-
-
-// 20250928 This one works and takes me back to the current MooTyper.
-//$webdir = $CFG->wwwroot.'/mod/mootyper/view.php?id='.$cm->id;
-
-//$url = '<a href="'.$CFG->wwwroot.'/mod/mootyper/view.php?id='.$cmid.'</a>';
-//echo 'test';
-//echo $url;
-
-///////////////////////////////20250828 Below here works and Will delete the selected exercise./////////////////////////////
+// 20250828 Below here works and Will delete the selected exercise.
 if ($exerciseid) {
     // 20241229 Get all the mootyper_grades that have this exercise listed no matter if it is passing or not.
     $orphanedgrades = $DB->get_records('mootyper_grades', ['exercise' => $exerciseid]);
-
-    // Have these here because I am trying to get Moodle to update the grades using whatever results,
-    // if any, are still available for the student(s). Since my first attemp of dumping the
-    // $orphanedgrades only listed one, I think I need to start using another student to see what's dumped.
-    // YES! with two students having completed the exercise, the orphanedgrades list included multiple students.
-
-    //$orderby = optional_param('orderby', -1, PARAM_INT);
-    //$grds = get_typergradesuser('mootyper_grades', ['exercise' => $exerciseid], $USER->id, $orderby, 0);
-
-
 
     // 20241229 Delete the exercise selected for deletion.
     $DB->delete_records('mootyper_exercises', (['id' => $exerciseid]));
     // 20241229 Delete any mootyper_grades.
     $DB->delete_records('mootyper_grades', (['exercise' => $exerciseid]));
 
-
-/*
-    // Developing events for deleting exercises, lessons, and grades.
-    // Trigger mootyper_grades, mootyper_exercises event for mode 0, 1, or 2 on the, lsnexrem.php, page.
-    $params = [
-        'objectid' => $mootyper->id,
-        'context' => $context,
-        'other' => [
-            'exercise' => $exerciseid,
-            'mode' => $mootyper->isexam,
-        ],
-        'relateduserid' => $dbgrade->userid,
-    ];
-    $event = grade_deleted::create($params);
-    $event->trigger();
-*/
 
     // Initialize a counter to use for snumber replacements.
     $count = 0;
@@ -368,23 +212,14 @@ if ($exerciseid) {
         // 20250101 Break exercisename at the first space found and keep the remainder.
         $exercisename = (explode(" ", $exercisename, 2));
         // 20250101 Update the Exercise name with snumber+remainder.
-        $exe['exercisename'] = str_replace('\n', "&#10;", $count.' '.$exercisename[1]);
+        $exe['exercisename'] = str_replace('\n', "&#10;", $count . ' ' . $exercisename[1]);
         $DB->update_record('mootyper_exercises', $exe);
     }
     $exes = lessons::get_exercises_by_lesson($lessonpo);
     // 20241229 Had to move these into the if check to go back to the proper location.
-	$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id.'&lesson='.$lessonpo;
-    header('Location: '.$webdir);
-
+    $webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id=' . $id . '&lesson=' . $lessonpo;
+    header('Location: ' . $webdir);
 }
 
 
-//$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id.'&lesson='.$lessonpo;
-//$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$lessonid;
-//$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id;
-header('Location: '.$webdir);
-
-
-// 20241229 Had to move these into the if check to go back to the proper location.
-$webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id.'&lesson='.$lessonpo;
-//header('Location: '.$webdir);
+header('Location: ' . $webdir);

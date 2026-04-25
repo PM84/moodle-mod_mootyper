@@ -49,10 +49,9 @@ require_once($CFG->dirroot . '/mod/mootyper/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\plugin\provider,
-    \core_privacy\local\request\core_userlist_provider {
-
+    \core_privacy\local\request\plugin\provider {
     // This trait must be included.
     use \core_privacy\local\legacy_polyfill;
 
@@ -191,7 +190,7 @@ class provider implements
 
         $user = $contextlist->get_user();
         $userid = $user->id;
-        $cmids = array_reduce($contextlist->get_contexts(), function($carry, $context) {
+        $cmids = array_reduce($contextlist->get_contexts(), function ($carry, $context) {
             if ($context->contextlevel == CONTEXT_MODULE) {
                 $carry[] = $context->instanceid;
             }
@@ -211,7 +210,7 @@ class provider implements
         // Find the MooTyper IDs.
         $mootyperidstocmids = static::get_mootyper_ids_to_cmids_from_cmids($cmids);
 
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        [$contextsql, $contextparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
         // Export the grades.
         $sql = "SELECT cm.id AS cmid,
@@ -247,7 +246,7 @@ class provider implements
         ] + $contextparams;
         $recordset = $DB->get_recordset_sql($sql, $params);
 
-        static::recordset_loop_and_export($recordset, 'mootyper', [], function($carry, $record) {
+        static::recordset_loop_and_export($recordset, 'mootyper', [], function ($carry, $record) {
             $carry[] = (object) [
                 'mootyper' => $record->mootyper,
                 'userid' => $record->userid,
@@ -255,7 +254,7 @@ class provider implements
                 'timeinseconds' => format_time($record->timeinseconds),
                 'hitsperminute' => $record->hitsperminute,
                 'fullhits' => $record->fullhits,
-                'precisionfield' => $record->precisionfield .' %',
+                'precisionfield' => $record->precisionfield . ' %',
                 'timetaken' => transform::datetime($record->timetaken),
                 'exercise' => $record->exercise,
                 'pass' => transform::yesno($record->pass),
@@ -263,7 +262,7 @@ class provider implements
                 'wpm' => $record->wpm,
             ];
             return $carry;
-        }, function($mootyperid, $data) use ($mootyperidstocmids) {
+        }, function ($mootyperid, $data) use ($mootyperidstocmids) {
             $context = context_module::instance($mootyperidstocmids[$mootyperid]);
             writer::with_context($context)->export_related_data([], 'grades', (object) ['grades' => $data]);
         });
@@ -291,7 +290,7 @@ class provider implements
         ] + $contextparams;
         $recordset = $DB->get_recordset_sql($sql, $params);
 
-        static::recordset_loop_and_export($recordset, 'mootyper', [], function($carry, $record) {
+        static::recordset_loop_and_export($recordset, 'mootyper', [], function ($carry, $record) {
             $carry[] = (object) [
                 'mootyperid' => $record->mamootyperid,
                 'userid' => $record->mauserid,
@@ -300,7 +299,7 @@ class provider implements
                 'suspicion' => transform::yesno($record->masuspicion),
             ];
             return $carry;
-        }, function($mootyperid, $data) use ($mootyperidstocmids) {
+        }, function ($mootyperid, $data) use ($mootyperidstocmids) {
             $context = context_module::instance($mootyperidstocmids[$mootyperid]);
             writer::with_context($context)->export_related_data([], 'attempts', (object) ['attempts' => $data]);
         });
@@ -314,8 +313,12 @@ class provider implements
      * @param array $subcontext The subcontext of the mootyper.
      * @param \stdClass $user The user record.
      */
-    protected static function export_mootyper_data_for_user(array $mootyperdata, \context_module $context,
-                                                            array $subcontext, \stdClass $user) {
+    protected static function export_mootyper_data_for_user(
+        array $mootyperdata,
+        \context_module $context,
+        array $subcontext,
+        \stdClass $user
+    ) {
 
         // Fetch the generic module data for the mootyper.
         $contextdata = helper::get_context_data($context, $user);
@@ -383,7 +386,7 @@ class provider implements
 
         // Prepare SQL to gather all completed IDs.
         $userids = $userlist->get_userids();
-        list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        [$insql, $inparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
 
         // Delete user-created personal mootypers.
         $DB->delete_records_select(
@@ -400,7 +403,7 @@ class provider implements
      */
     protected static function get_mootyper_ids_to_cmids_from_cmids(array $cmids) {
         global $DB;
-        list($insql, $inparams) = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED);
+        [$insql, $inparams] = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED);
         $sql = "
             SELECT h.id, cm.id AS cmid
               FROM {mootyper} h
@@ -424,8 +427,13 @@ class provider implements
      * @param callable $export The function to export the dataset, receives the last value from $splitkey and the dataset.
      * @return void
      */
-    protected static function recordset_loop_and_export(\moodle_recordset $recordset, $splitkey, $initial,
-            callable $reducer, callable $export) {
+    protected static function recordset_loop_and_export(
+        \moodle_recordset $recordset,
+        $splitkey,
+        $initial,
+        callable $reducer,
+        callable $export
+    ) {
 
         $data = $initial;
         $lastid = null;

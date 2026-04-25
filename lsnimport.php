@@ -44,10 +44,10 @@ require_once(__DIR__ . '/lib.php');
  * @param int $editablearg
  * @param int $coursearg
  */
-function read_lessons_file($dafile, $authoridarg, $visiblearg, $editablearg, $coursearg=null) {
+function read_lessons_file($dafile, $authoridarg, $visiblearg, $editablearg, $coursearg = null) {
     global $DB, $CFG, $USER;
     // Scan the mootyper lessons folder for lessonname.txt files.
-    $thefile = $CFG->dirroot."/mod/mootyper/lessons/".$dafile;
+    $thefile = $CFG->dirroot . "/mod/mootyper/lessons/" . $dafile;
     // Extract the lesson name from the file name.
     $record = new stdClass();
     $periodpos = strrpos($dafile, '.');
@@ -73,9 +73,9 @@ function read_lessons_file($dafile, $authoridarg, $visiblearg, $editablearg, $co
     }
     $haha = trim($haha);
     // Break lesson into an array of separate exercises.
-    $splitted = explode ('/**/' , $haha);
+    $splitted = explode('/**/', $haha);
     // 20210328 Changed for loop to count by two so we can get exercise name along with the exercise text.
-    for ($j = 0; $j < count($splitted); $j += 2) {
+    for ($j = 0; $j + 1 < count($splitted); $j += 2) {
         // Remove whitespace from both sides of $splitted.
         $exercise = trim($splitted[$j]);
         // 20210328 Added same cleanup for exercisename.
@@ -152,7 +152,7 @@ function update_exercises_file($dafile, $lsnid, $lsn) {
     global $DB, $CFG, $USER;
     // 202104010 Added this new function.
     // Scan the mootyper lessons folder for lessonname.txt files.
-    $thefile = $CFG->dirroot."/mod/mootyper/lessons/".$dafile;
+    $thefile = $CFG->dirroot . "/mod/mootyper/lessons/" . $dafile;
     // Extract the lesson name from the file name.
     $record = new stdClass();
     $periodpos = strrpos($dafile, '.');
@@ -171,9 +171,9 @@ function update_exercises_file($dafile, $lsnid, $lsn) {
         }
         $haha = trim($haha);
         // Break lesson into an array of separate exercises followed by exercise names.
-        $splitted = explode ('/**/' , $haha);
+        $splitted = explode('/**/', $haha);
 
-        for ($j = 0; $j < count($splitted); $j += 2) {
+        for ($j = 0; $j + 1 < count($splitted); $j += 2) {
             // Remove whitespace from both sides of $splitted.
             $fexercise = trim($splitted[$j]);
             $fexercisename = trim($splitted[$j + 1]);
@@ -181,14 +181,14 @@ function update_exercises_file($dafile, $lsnid, $lsn) {
             // Create sql to see how many exercises are in this lesson.
             $sql = "SELECT id, texttotype, exercisename, lesson, snumber
                       FROM {mootyper_exercises}
-                     WHERE lesson = '".$lsnid."'";
+                     WHERE lesson = '" . $lsnid . "'";
 
             // Get the total number of exercises that belong to this lesson.
             $snumber = count($DB->get_records_sql($sql));
             $snum = $j / 2 + 1;
             $sql = "SELECT id, texttotype, exercisename, lesson, snumber
                       FROM {mootyper_exercises}
-                     WHERE lesson = '".$lsnid."' AND snumber = '".$snum."'";
+                     WHERE lesson = '" . $lsnid . "' AND snumber = '" . $snum . "'";
 
             $record = $DB->get_record_sql($sql);
             // If there is no record, we must be adding a new exercise.
@@ -200,22 +200,23 @@ function update_exercises_file($dafile, $lsnid, $lsn) {
                 $record->snumber = $snum;
                 $DB->insert_record('mootyper_exercises', $record, false);
                 echo "<tr class='table-success'><td><b>$lsn</td><td>"
-                    .get_string('exercise_name_added', 'mootyper', $fexercisename).'</b></td></tr>';
+                    . get_string('exercise_name_added', 'mootyper', $fexercisename) . '</b></td></tr>';
             } else if (($record->texttotype == $fexercise) && ($record->exercisename == $fexercisename)) {
                 // If no changes, then do not need to do anything.
-                echo "<tr class='table-dark text-dark'><td>$lsn</td><td>".get_string('lsnimportnotadd', 'mootyper').'</td></tr>';
+                $notaddmsg = get_string('lsnimportnotadd', 'mootyper');
+                echo "<tr class='table-dark text-dark'><td>$lsn</td><td>" . $notaddmsg . '</td></tr>';
             } else if (($record->texttotype == $fexercise) && !($record->exercisename == $fexercisename)) {
                 // If the text is the same but the exercise name is different, then change it.
                 $record->exercisename = $fexercisename;
                 $DB->update_record('mootyper_exercises', $record, false);
                 echo "<tr class='table-success'><td><b>$lsn</td><td>"
-                    .get_string('exercise_name_updated', 'mootyper', $fexercisename).'</b></td></tr>';
+                    . get_string('exercise_name_updated', 'mootyper', $fexercisename) . '</b></td></tr>';
             } else if (!($record->texttotype == $fexercise) && ($record->exercisename == $fexercisename)) {
                 // If the text is different but not the exercise name, then update the text.
                 // Need updated string for adding changed text to type.
                 $record->texttotype = $fexercise;
                 $DB->update_record('mootyper_exercises', $record, false);
-                echo "<tr class='table-success'><td><b>$lsn</td><td>".get_string('lsnimportadd', 'mootyper').'</b></td></tr>';
+                echo "<tr class='table-success'><td><b>$lsn</td><td>" . get_string('lsnimportadd', 'mootyper') . '</b></td></tr>';
             }
         }
     }
@@ -242,7 +243,7 @@ if (!(has_capability('mod/mootyper:aftersetup', $context))) {
     ];
     $event = invalid_access_attempt::create($params);
     $event->trigger();
-    redirect('../../course/view.php?id='.$course->id, get_string('invalidaccessexp', 'mootyper'));
+    redirect('../../course/view.php?id=' . $course->id, get_string('invalidaccessexp', 'mootyper'));
 }
 
 // Print the page header.
@@ -255,16 +256,16 @@ $PAGE->set_cacheable(false);
 
 // Output starts here.
 echo $OUTPUT->header();
-echo '<b>'.get_string('lsnimport', 'mootyper').'</b><br><br>';
-echo '<b>'.get_string('sflesson', 'mootyper').'</b><br>';
+echo '<b>' . get_string('lsnimport', 'mootyper') . '</b><br><br>';
+echo '<b>' . get_string('sflesson', 'mootyper') . '</b><br>';
 echo '<table class="table table-hover" style="width:100%">';
 echo '<tbody>';
 // Set pointer to lessons folder, then get all lesson names in there.
-$pth = $CFG->dirroot."/mod/mootyper/lessons";
+$pth = $CFG->dirroot . "/mod/mootyper/lessons";
 $res = scandir($pth);
 
 for ($i = 0; $i < count($res); $i++) {
-    if (is_file($pth."/".$res[$i])) {
+    if (is_file($pth . "/" . $res[$i])) {
         // Get a filename from the lessons folder.
         $fl = $res[$i]; // Argument list dafile, authorid_arg, visible_arg, editable_arg, course_arg.
 
@@ -274,14 +275,14 @@ for ($i = 0; $i < count($res); $i++) {
         // Create sql to see if lesson name is already an installed lesson.
         $sql = "SELECT lessonname, id
             FROM {mootyper_lessons}
-            WHERE lessonname = '".$lsn."'";
+            WHERE lessonname = '" . $lsn . "'";
 
         if ($importlesson = $DB->get_record_sql($sql)) {
             // If it is found in the db, then check to see if it needs to be updated.
             update_exercises_file($fl, $importlesson->id, $lsn);
         } else {
             // If it's not found in the db, then add the new lesson to the database.
-            echo "<tr class='table-success'><td><b>$lsn</td><td>".get_string('lsnimportadd', 'mootyper').'</b></td></tr>';
+            echo "<tr class='table-success'><td><b>$lsn</td><td>" . get_string('lsnimportadd', 'mootyper') . '</b></td></tr>';
             read_lessons_file($fl, $USER->id, 0, 2);
             // Since we added a new lesson, make a log entry about it.
             $data = new StdClass();
@@ -300,17 +301,17 @@ for ($i = 0; $i < count($res); $i++) {
 }
 echo '</tbody>';
 echo '</table>';
-echo '<br><b>'.get_string('layout', 'mootyper').'</b><br>';
+echo '<br><b>' . get_string('layout', 'mootyper') . '</b><br>';
 echo '<table class="table table-hover" style="width:100%">';
 echo '<thead class="thead-dark">';
 echo get_string('layout', 'mootyper');
 echo '</thead>';
 echo '<tbody>';
 // Set pointer to keyboard layouts folder, then get all names in there.
-$pth2 = $CFG->dirroot."/mod/mootyper/layouts";
+$pth2 = $CFG->dirroot . "/mod/mootyper/layouts";
 $res2 = scandir($pth2);
 for ($j = 0; $j < count($res2); $j++) {
-    if (is_file($pth2."/".$res2[$j]) && ( substr($res2[$j], (strripos($res2[$j], '.') + 1) ) == 'php')) {
+    if (is_file($pth2 . "/" . $res2[$j]) && ( substr($res2[$j], (strripos($res2[$j], '.') + 1)) == 'php')) {
         // Get a filename from the lessons folder.
         $fl2 = $res2[$j];
         // Strip away the .txt portion of the filename.
@@ -319,14 +320,14 @@ for ($j = 0; $j < count($res2); $j++) {
         // Create sql to see if lesson name is already an installed lesson.
         $sql = "SELECT name
             FROM {mootyper_layouts}
-            WHERE name = '".$kbl."'";
+            WHERE name = '" . $kbl . "'";
 
         if ($importkbl = $DB->get_record_sql($sql)) {
             // If it's true the name is already in the database, do nothing.
-            echo "<tr class='table-dark text-dark'><td>$kbl</td><td>".get_string('kblimportnotadd', 'mootyper').'</td></tr>';
+            echo "<tr class='table-dark text-dark'><td>$kbl</td><td>" . get_string('kblimportnotadd', 'mootyper') . '</td></tr>';
         } else {
             // If it's not found in the db, then add the new layout to the database.
-            echo "<tr class='table-success'><td><b>$kbl</td><td>".get_string('kblimportadd', 'mootyper').'</b></td></tr>';
+            echo "<tr class='table-success'><td><b>$kbl</td><td>" . get_string('kblimportadd', 'mootyper') . '</b></td></tr>';
             // Actually go add the layout to the database.
             add_keyboard_layout($fl2);
             // Since we added a new layout, make a log entry about it.
@@ -347,8 +348,9 @@ for ($j = 0; $j < count($res2); $j++) {
 echo '</tbody>';
 echo '</table>';
 
-$jlnk2 = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id;
+$jlnk2 = $CFG->wwwroot . '/mod/mootyper/exercises.php?id=' . $id;
 // 11/19/19 Change from a, Continue, link to a, Continue, button.
-echo '<a href="'.$jlnk2.'" class="btn btn-primary"  style="border-radius: 8px">'.get_string('fcontinue', 'mootyper').'</a><br>';
+$fcontinuelink = '<a href="' . $jlnk2 . '" class="btn btn-primary"  style="border-radius: 8px">';
+echo $fcontinuelink . get_string('fcontinue', 'mootyper') . '</a><br>';
 echo $OUTPUT->footer();
 return;

@@ -33,7 +33,6 @@ defined('MOODLE_INTERNAL') || die(); // phpcs:ignore
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_mootyper_generator extends testing_module_generator {
-
     /**
      *
      * @var int $mootypercount MooTypers.

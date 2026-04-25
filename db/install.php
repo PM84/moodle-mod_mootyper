@@ -37,18 +37,18 @@ defined('MOODLE_INTERNAL') || die; // phpcs:ignore
 function xmldb_mootyper_install() {
     global $DB, $CFG, $USER;
 
-    $pth = $CFG->dirroot."/mod/mootyper/lessons";
+    $pth = $CFG->dirroot . "/mod/mootyper/lessons";
     $res = scandir($pth);
     for ($i = 0; $i < count($res); $i++) {
-        if (is_file($pth."/".$res[$i])) {
+        if (is_file($pth . "/" . $res[$i])) {
             $fl = $res[$i]; // Argument list dafile, authorid_arg, visible_arg, editable_arg, course_arg.
             read_lessons_file($fl, $USER->id, 0, 2);
         }
     }
-    $pth2 = $CFG->dirroot."/mod/mootyper/layouts";
+    $pth2 = $CFG->dirroot . "/mod/mootyper/layouts";
     $res2 = scandir($pth2);
     for ($j = 0; $j < count($res2); $j++) {
-        if (is_file($pth2."/".$res2[$j]) && ( substr($res2[$j], (strripos($res2[$j], '.') + 1) ) == 'php')) {
+        if (is_file($pth2 . "/" . $res2[$j]) && ( substr($res2[$j], (strripos($res2[$j], '.') + 1)) == 'php')) {
             $fl2 = $res2[$j];
             add_keyboard_layout($fl2);
         }
@@ -78,10 +78,10 @@ function add_keyboard_layout($dafile) {
  * @param int $editablearg
  * @param int $coursearg
  */
-function read_lessons_file($dafile, $authoridarg, $visiblearg, $editablearg, $coursearg=null) {
+function read_lessons_file($dafile, $authoridarg, $visiblearg, $editablearg, $coursearg = null) {
     global $DB, $CFG, $USER;
     // Scan the mootyper lessons folder for lessonname.txt files.
-    $thefile = $CFG->dirroot."/mod/mootyper/lessons/".$dafile;
+    $thefile = $CFG->dirroot . "/mod/mootyper/lessons/" . $dafile;
     // Extract the lesson name from the file name.
     $record = new stdClass();
     $periodpos = strrpos($dafile, '.');
@@ -107,7 +107,7 @@ function read_lessons_file($dafile, $authoridarg, $visiblearg, $editablearg, $co
     }
     $haha = trim($haha);
     // Break lesson into an array of separate exercises.
-    $splitted = explode ('/**/' , $haha);
+    $splitted = explode('/**/', $haha);
     // 20210328 Changed for loop to count by two so we can get exercise name along with the exercise text.
     for ($j = 0; $j < count($splitted); $j += 2) {
         // Remove whitespace from both sides of $splitted.

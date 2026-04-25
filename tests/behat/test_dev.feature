@@ -1,5 +1,5 @@
 @mod @mod_mootyper1
-Feature: Basic mootyper use
+Feature: Development mootyper smoke test
   In order to complete mootyper entries
   As a teacher or student
   I need to make mootyper entries
@@ -27,10 +27,8 @@ Feature: Basic mootyper use
     Then I should see "Mootyper for testing"
     And I should see "This mootyper introduction."
     And I wait 10 seconds
-
     And I should see "Setup"
     And I wait 5 seconds
-
     And I follow "Setup"
     And I wait 5 seconds
 
@@ -55,7 +53,6 @@ Feature: Basic mootyper use
     And I should see "Required precision (95%)"
     And I should see "Required WPM (20)"
     And I wait 5 seconds
-
     And I set the following fields to these values:
       | tb1 | fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj fjfj |
     And I wait 5 seconds
@@ -63,4 +60,3 @@ Feature: Basic mootyper use
     And I press "Continue"
     And I should see "Practice Exercise 2 of 10"
     Then I log out
-

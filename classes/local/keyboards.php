@@ -33,7 +33,6 @@ defined('MOODLE_INTERNAL') || die(); // phpcs:ignore
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class keyboards {
-
     /**
      * Checks if a layout given by name is installed.
      *
@@ -90,12 +89,61 @@ class keyboards {
     }
 
     /**
+     * Get a fallback layout when requested layout is missing or has missing files.
+     * Searches for a layout that has both .php and .js files present.
+     * @return object|false first available complete layout or false if none exist
+     */
+    private static function get_fallback_layout() {
+        global $CFG, $DB;
+        $layouts = $DB->get_records('mootyper_layouts', [], 'id', 'id, name');
+        $pathtodir = $CFG->dirroot . '/mod/mootyper/layouts';
+
+        // Try to find a layout with existing files.
+        foreach ($layouts as $layout) {
+            $phpfile = $pathtodir . '/' . $layout->name . '.php';
+            $jsfile = $pathtodir . '/' . $layout->name . '.js';
+            if (file_exists($phpfile) && file_exists($jsfile)) {
+                return $layout;
+            }
+        }
+
+        // No complete layout found; return first one and hope it has files.
+        if ($layouts) {
+            return reset($layouts);
+        }
+        return false;
+    }
+
+    /**
      * Get the MooTyper keyboard definition to use.
      * @param int $lid
      */
     public static function get_instance_layout_file($lid) {
         global $CFG, $DB;
         $dbrec = $DB->get_record('mootyper_layouts', ['id' => $lid]);
+        $pathtodir = $CFG->dirroot . '/mod/mootyper/layouts';
+
+        // Handle historical Korean V7 naming drift: KNV7/KNR7 now canonicalized to KRV7.
+        if ($dbrec && ($dbrec->name === 'Korean(KNV7)' || $dbrec->name === 'Korean(KNR7)')) {
+            $dbrec->name = 'Korean(KRV7)';
+        }
+
+        // 20260413 If layout record not found or file is missing, use fallback to prevent crash
+        if (!$dbrec) {
+            $dbrec = self::get_fallback_layout();
+            if (!$dbrec) {
+                return "$CFG->dirroot/mod/mootyper/layouts/English(USV6).php";
+            }
+        } else {
+            // Record exists, but verify the file exists.
+            $layoutfile = $pathtodir . '/' . $dbrec->name . '.php';
+            if (!file_exists($layoutfile)) {
+                $dbrec = self::get_fallback_layout();
+                if (!$dbrec) {
+                    return "$CFG->dirroot/mod/mootyper/layouts/English(USV6).php";
+                }
+            }
+        }
         return "$CFG->dirroot/mod/mootyper/layouts/$dbrec->name.php";
     }
 
@@ -106,6 +154,29 @@ class keyboards {
     public static function get_instance_layout_js_file($lid) {
         global $CFG, $DB;
         $dbrec = $DB->get_record('mootyper_layouts', ['id' => $lid]);
+        $pathtodir = $CFG->dirroot . '/mod/mootyper/layouts';
+
+        // Handle historical Korean V7 naming drift: KNV7/KNR7 now canonicalized to KRV7.
+        if ($dbrec && ($dbrec->name === 'Korean(KNV7)' || $dbrec->name === 'Korean(KNR7)')) {
+            $dbrec->name = 'Korean(KRV7)';
+        }
+
+        // 20260413 If layout record not found or file is missing, use fallback to prevent crash
+        if (!$dbrec) {
+            $dbrec = self::get_fallback_layout();
+            if (!$dbrec) {
+                return "$CFG->wwwroot/mod/mootyper/layouts/English(USV6).js";
+            }
+        } else {
+            // Record exists, but verify the file exists.
+            $layoutfile = $pathtodir . '/' . $dbrec->name . '.js';
+            if (!file_exists($layoutfile)) {
+                $dbrec = self::get_fallback_layout();
+                if (!$dbrec) {
+                    return "$CFG->wwwroot/mod/mootyper/layouts/English(USV6).js";
+                }
+            }
+        }
         return "$CFG->wwwroot/mod/mootyper/layouts/$dbrec->name.js";
     }
 }

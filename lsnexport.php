@@ -58,13 +58,13 @@ $filename = $fname->lessonname;
 
 // Check to see if we need GMT added to filename based on lesson export filename setting.
 if (get_config('mod_mootyper', 'lesson_export_filename')) {
-    $filename .= '_'.gmdate("Ymd_Hi").'GMT';
+    $filename .= '_' . gmdate("Ymd_Hi") . 'GMT';
 }
 $filename .= '.txt';
 
 $delimiter = " ";
 header('Content-Type: text/plain;charset=utf-8');
-header('Content-Disposition: attachement; filename="'.$filename.'";');
+header('Content-Disposition: attachement; filename="' . $filename . '";');
 header("Pragma: no-cache");
 header("Expires: 0");
 $f = fopen('php://output', 'w');
@@ -92,13 +92,13 @@ if ($exercise = $DB->get_records_sql($sql, $params)) {
         --$count;
         if ($count > 0) {
             // Write out the next exercise and exercise name with a break indicator.
-            $field1 = [$txt->texttotype.chr(10).'/**/'.chr(10)];
-            $field2 = [$txt->exercisename.chr(10).'/**/'.chr(10)];
+            $field1 = [$txt->texttotype . chr(10) . '/**/' . chr(10)];
+            $field2 = [$txt->exercisename . chr(10) . '/**/' . chr(10)];
         } else {
             // Write out last exercise with with a break indicator follwed by the exercise name
             // and no break indicator after it.
-            $field1 = [$txt->texttotype.chr(10).'/**/'.chr(10)];
-            $field2 = [$txt->exercisename.chr(10)];
+            $field1 = [$txt->texttotype . chr(10) . '/**/' . chr(10)];
+            $field2 = [$txt->exercisename . chr(10)];
         }
         // Place the texttotyper followed by the exercise name in our file $f.
         fwrite($f, implode(" ", $field1));

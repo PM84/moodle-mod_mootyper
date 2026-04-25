@@ -34,7 +34,7 @@ require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 
 global $CFG, $DB, $USER;
-    require_once($CFG->libdir.'/completionlib.php');
+    require_once($CFG->libdir . '/completionlib.php');
 
 $cmid = optional_param('cmid', 0, PARAM_INT); // Course_module ID.
 $lsnname = optional_param('lsnname', '', PARAM_RAW); // MooTyper lesson name.
@@ -172,8 +172,6 @@ if (($mootyper->requiredgoal == 0) && ($mootyper->requiredwpm > 0)) {
 } else if (($mootyper->requiredgoal > 0) && ($mootyper->requiredwpm == 0)) {
     // Results for goal only.
     $record->grade = (min(100, ($mootyper->scale * (optional_param('rpAccInput', '', PARAM_FLOAT) / 100))));
-
-
 } else if (($mootyper->requiredgoal == 0) && ($mootyper->requiredwpm == 0)) {
     // Results for no goal and no wpm.
     $record->grade = null;
@@ -181,10 +179,14 @@ if (($mootyper->requiredgoal == 0) && ($mootyper->requiredwpm > 0)) {
 // 20230103 Set decimal to two places. 20240902 change from number_format to sprintf due to deprecation.
 $record->grade = sprintf('%0.2f', $record->grade);
 // 20230103 Add goal and wpm info to the mistake details.
-$record->mistakedetails .= get_string('reqgoalwpm', 'mootyper',
-                           ['goal' => $mootyper->requiredgoal,
+$record->mistakedetails .= get_string(
+    'reqgoalwpm',
+    'mootyper',
+    ['goal' => $mootyper->requiredgoal,
                            'wpm' => $mootyper->requiredwpm,
-                           'currentresult' => $record->grade, ]);
+    'currentresult' => $record->grade,
+    ]
+);
 
 $DB->insert_record('mootyper_grades', $record, false);
 
@@ -208,7 +210,6 @@ if ($mootyper->assessed) {
     $DB->insert_record('rating', $ratingoptions, false);
     // 20200808 Update entry in Moodle Grades.
     mootyper_update_grades($mootyper, $record->userid);
-
 } else {
     // Otherwise, place a whole grade into the mdl_grade_items table.
     // 20240902 Added, $record->userid.
@@ -237,7 +238,6 @@ if ($mtmode === 1) {
     // ...$mootyper->completionprecision <= 1;.
     // ...$mootyper->completionwpm <= 1;.
     // ...$mootyper->completionpass <= 1;.
-
 } else {
     $event = exercise_completed::create($params);
 }
@@ -264,13 +264,15 @@ if (!($mtmode === 1) && ($exercisename === $count)) {
 
     // 20240119 Added new completion code.
     $completion = new completion_info($course);
-    if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC &&
-        ($mootyper->completionexercise
-            || $mootyper->completionlesson
-            || $mootyper->completionprecision
-            || $mootyper->completionwpm
-            || $mootyper->completionmootypergrade
-        )) {
+    if (
+        $completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC &&
+        ($mootyper->completionexercise ||
+            $mootyper->completionlesson ||
+            $mootyper->completionprecision ||
+            $mootyper->completionwpm ||
+            $mootyper->completionmootypergrade
+        )
+    ) {
         $completion->update_state($cm, COMPLETION_COMPLETE, $mootyper->id);
     }
 
@@ -282,5 +284,5 @@ if (!($mtmode === 1) && ($exercisename === $count)) {
     $event->trigger();
 }
 
-$webdir = $CFG->wwwroot . '/mod/mootyper/view.php?n='.$record->mootyper;
-echo '<script type="text/javascript">window.location="'.$webdir.'";</script>';
+$webdir = $CFG->wwwroot . '/mod/mootyper/view.php?n=' . $record->mootyper;
+echo '<script type="text/javascript">window.location="' . $webdir . '";</script>';

@@ -1,8 +1,8 @@
 @mod @mod_mootyper @javascript
-Feature: MooTyper layout input harness
-  In order to validate keyboard layouts for non-Latin languages
+Feature: MooTyper unique-script layout input harness
+  In order to validate keyboard layouts for mostly unique alphabets
   As a teacher and student
-  I need reusable Behat scenarios that verify key highlighting and typing progression
+  I need reusable Behat scenarios that verify key highlighting and typing progression with tiny lessons
 
   Background:
     Given the following "courses" exist:
@@ -17,29 +17,50 @@ Feature: MooTyper layout input harness
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
 
-  Scenario: Korean KNV7 key highlighting and simulated typing harness
+  Scenario Outline: Unique-script single-character harness validates highlighting and progression
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "MooTyper" to section "1" using the activity chooser
     And I set the following fields to these values:
-      | Name                | MooTyper KNV7 Harness                  |
-      | Description         | Behat harness for Korean layout typing |
-      | isexam              | Practice                               |
-      | Lesson name         | Lesson 01                              |
-      | continuoustype      | 0                                      |
-      | countmistypedspaces | 0                                      |
-      | countmistakes       | 0                                      |
-      | showkeyboard        | 1                                      |
-      | layout              | Korean(KNV7)                           |
+      | Name        | <activityname>              |
+      | Description | Behat harness for <layout> |
     And I click on "Save and display" "button"
+    And the current mootyper uses layout "<layout>" with a tiny lesson "<lessonname>" containing "<texttotype>"
     And I log out
 
-    When I am on the "MooTyper KNV7 Harness" "mootyper activity" page logged in as "student1"
-    And I simulate committing the first mootyper character
-    Then at least one mootyper key should be highlighted as next
+    When I am on the "<activityname>" "mootyper activity" page logged in as "student1"
+    And I click on "#tb1" "css_element"
+    Then the mootyper key "<expectedkey>" should be highlighted as next
+    When I type "<texttotype>" in mootyper using simulated input
+    Then mootyper progress should be complete
 
-    # Replace this sample with a target sentence for the selected lesson/layout.
-    When I type "ㅂㅈㄷㄱ ㅅ" in mootyper using simulated input
+    Examples:
+      | activityname              | layout             | lessonname             | texttotype | expectedkey |
+      | MooTyper Cherokee Harness | Cherokee(CWYV5)    | Behat Cherokee tiny    | Ꭰ          | jkeya       |
+      | MooTyper Hebrew Harness   | Hebrew(V5)dual     | Behat Hebrew tiny      | ש          | jkeyA       |
+      | MooTyper Arabic Harness   | Arabic(ARV5)dual   | Behat Arabic tiny      | ش          | jkeyA       |
+      | MooTyper Hindi Harness    | Hindi(HIV5)        | Behat Hindi tiny       | ओ          | jkeya       |
+      | MooTyper Thai Harness     | Thai(V4)           | Behat Thai tiny        | ก          | jkeyd       |
+      | MooTyper Russian Harness  | Russian(RUV5)      | Behat Russian tiny     | ф          | jkeyф       |
+      | MooTyper Tamil Harness    | Tamil(V5)e         | Behat Tamil tiny       | அ          | jkeya       |
+      | MooTyper Telugu Harness   | Telugu(V4)         | Behat Telugu tiny      | క          | jkeyk       |
+      | MooTyper Maori Harness    | Maori(MRIV5)       | Behat Maori tiny       | ā          | jkeya       |
+
+  Scenario: Amharic sequence-aware harness validates highlighting and progression
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add a "MooTyper" to section "1" using the activity chooser
+    And I set the following fields to these values:
+      | Name        | MooTyper Amharic Harness       |
+      | Description | Behat harness for Amharic ETV7 |
+    And I click on "Save and display" "button"
+    And the current mootyper uses layout "Amharic(ETV7)" with a tiny lesson "Behat Amharic tiny" containing "ሀ"
+    And I log out
+
+    When I am on the "MooTyper Amharic Harness" "mootyper activity" page logged in as "student1"
+    And I click on "#tb1" "css_element"
+    Then the mootyper key "jkeyh" should be highlighted as next
+    When I type "ሀ" in mootyper using simulated input
     Then mootyper progress should be complete
 
   Scenario: Edit form lesson switch refreshes exercise list

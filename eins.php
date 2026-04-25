@@ -63,15 +63,14 @@ if (!(has_capability('mod/mootyper:aftersetup', $context))) {
     ];
     $event = invalid_access_attempt::create($params);
     $event->trigger();
-    redirect('../../course/view.php?id='.$course->id, get_string('invalidaccessexp', 'mootyper'));
+    redirect('../../course/view.php?id=' . $course->id, get_string('invalidaccessexp', 'mootyper'));
 }
 
 // Check to see if Confirm button is clicked and returning 'Confirm' to trigger insert record.
 $param1 = optional_param('button', '', PARAM_TEXT);
 
 // DB insert.
-if (isset($param1) && get_string('fconfirm', 'mootyper') == $param1 ) {
-
+if (isset($param1) && get_string('fconfirm', 'mootyper') == $param1) {
     $texttotypeepo = optional_param('texttotype', '', PARAM_RAW);
 
     // If new lesson, add lesson details to mdl_mootyper_lessons table.
@@ -96,13 +95,13 @@ if (isset($param1) && get_string('fconfirm', 'mootyper') == $param1 ) {
     $exercisenamepo = optional_param('exercise_name', '', PARAM_TEXT);
     $erecord = new stdClass();
     // 20210325 Add new exercise name to the auto sname and add to the table.
-    $erecord->exercisename = "".$snum.' '.$exercisenamepo;
+    $erecord->exercisename = "" . $snum . ' ' . $exercisenamepo;
     $erecord->snumber = $snum;
     $erecord->lesson = $lessonid;
     $erecord->texttotype = str_replace("\r\n", '\n', $texttotypeepo);
 
     $DB->insert_record('mootyper_exercises', $erecord, false);
-    $webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id.'&lesson='.$lessonid;
+    $webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id=' . $id . '&lesson=' . $lessonid;
 
     // Get the lesson name to use in the exercise_added event.
     if ($lsnnamepo) {
@@ -111,7 +110,7 @@ if (isset($param1) && get_string('fconfirm', 'mootyper') == $param1 ) {
         $lesson = $lessonpo;
     }
 
-    echo '<script type="text/javascript">window.location="'.$webdir.'";</script>';
+    echo '<script type="text/javascript">window.location="' . $webdir . '";</script>';
 
     // Trigger module exercise_added event.
     $params = [
@@ -124,7 +123,6 @@ if (isset($param1) && get_string('fconfirm', 'mootyper') == $param1 ) {
     ];
     $event = exercise_added::create($params);
     $event->trigger();
-
 }
 // Get all the default configuration settings for MooTyper.
 $moocfg = get_config('mod_mootyper');
@@ -170,26 +168,26 @@ if (has_capability('mod/mootyper:editall', context_course::instance($course->id)
 $color3 = $mootyper->keybdbgc;
 // Add colored background with border.
 echo '<div align="center" style="font-size:1em;
-    font-weight:bold;background: '.$color3.';
+    font-weight:bold;background: ' . $color3 . ';
     border:2px solid black;
     -webkit-border-radius:16px;
-    -moz-border-radius:16px;border-radius:16px;">'.'<br>';
+    -moz-border-radius:16px;border-radius:16px;">' . '<br>';
 
 // Start page form and add lesson name selector.
 echo '<form method="POST">';
 // Add the label, Exercise will be a part of lesson.
-echo get_string('fnewexercise', 'mootyper').'&nbsp;';
+echo get_string('fnewexercise', 'mootyper') . '&nbsp;';
 echo '<select onchange="this.form.submit()" name="lesson">';
 // Add, create new lesson, as first selection on the lesson name selector list.
-echo '<option value="-1">'.get_string('fnewlesson', 'mootyper').'</option>';
+echo '<option value="-1">' . get_string('fnewlesson', 'mootyper') . '</option>';
 // Check the selection list of lesson names for match to lessonpo.
 for ($ij = 0; $ij < count($lessons); $ij++) {
     if ($lessons[$ij]['id'] == $lessonpo) {
         // If selection matches lessonpo (id), show it in the text box.
-        echo '<option selected="true" value="'.$lessons[$ij]['id'].'">'.$lessons[$ij]['lessonname'].'</option>';
+        echo '<option selected="true" value="' . $lessons[$ij]['id'] . '">' . $lessons[$ij]['lessonname'] . '</option>';
     } else {
         // Add the rest of the lesson names to the list.
-        echo '<option value="'.$lessons[$ij]['id'].'">'.$lessons[$ij]['lessonname'].'</option>';
+        echo '<option value="' . $lessons[$ij]['id'] . '">' . $lessons[$ij]['lessonname'] . '</option>';
     }
 }
 echo '</select>';
@@ -201,9 +199,8 @@ if ($snum = null) {
 
 // Add lesson name, visibility, and editing options if this is a new lesson.
 if ($lessonpo == -1) {
-
     // Set up place to enter new lesson name.
-    echo '<br><br>'.get_string('lsnname', 'mootyper').': <input type="text" name="lessonname" id="lessonname">
+    echo '<br><br>' . get_string('lsnname', 'mootyper') . ': <input type="text" name="lessonname" id="lessonname">
         <span style="color:red;" id="namemsg"></span>';
 
     // 20210325 Prevent error before exercise name is actually created.
@@ -211,37 +208,37 @@ if ($lessonpo == -1) {
         $num = ' ';
     }
     // 20210325 Set up place to enter new exercise name.
-    echo '<br><br>'.get_string('exercise_name', 'mootyper').': '
-        .$snum.' <input type="text" name="exercise_name" id="exercise_name"></span>';
+    echo '<br><br>' . get_string('exercise_name', 'mootyper') . ': '
+        . $snum . ' <input type="text" name="exercise_name" id="exercise_name"></span>';
 
     // Set up visibility selector options for this new lesson.
-    echo '<br><br>'.get_string('visibility', 'mootyper').': <select name="visible">';
-    echo '<option value="2">'.get_string('vaccess2', 'mootyper').'</option>';
-    echo '<option value="1">'.get_string('vaccess1', 'mootyper').'</option>';
+    echo '<br><br>' . get_string('visibility', 'mootyper') . ': <select name="visible">';
+    echo '<option value="2">' . get_string('vaccess2', 'mootyper') . '</option>';
+    echo '<option value="1">' . get_string('vaccess1', 'mootyper') . '</option>';
     if (is_siteadmin()) {
-        echo '<option value="0">'.get_string('vaccess0', 'mootyper').'</option>';
+        echo '<option value="0">' . get_string('vaccess0', 'mootyper') . '</option>';
     }
     echo '</select>';
 
     // Set up editing selector options for this new lesson.
-    echo '<br><br>'.get_string('editable', 'mootyper').': <select name="editable">';
-    echo '<option value="2">'.get_string('eaccess2', 'mootyper').'</option>';
-    echo '<option value="1">'.get_string('eaccess1', 'mootyper').'</option>';
+    echo '<br><br>' . get_string('editable', 'mootyper') . ': <select name="editable">';
+    echo '<option value="2">' . get_string('eaccess2', 'mootyper') . '</option>';
+    echo '<option value="1">' . get_string('eaccess1', 'mootyper') . '</option>';
     if (is_siteadmin()) {
-        echo '<option value="0">'.get_string('eaccess0', 'mootyper').'</option>';
+        echo '<option value="0">' . get_string('eaccess0', 'mootyper') . '</option>';
     }
     echo '</select>';
 } else {
     // 20210325 Set up place to enter new exercise name.
-    echo '<br><br>'.get_string('exercise_name', 'mootyper').': '
-        .$snum.' <input type="text" name="exercise_name" id="exercise_name"></span>';
+    echo '<br><br>' . get_string('exercise_name', 'mootyper') . ': '
+        . $snum . ' <input type="text" name="exercise_name" id="exercise_name"></span>';
 }
 
 // Get our alignment strings and add a selector for text alignment.
 $aligns = [get_string('defaulttextalign_left', 'mod_mootyper'),
             get_string('defaulttextalign_center', 'mod_mootyper'),
             get_string('defaulttextalign_right', 'mod_mootyper'), ];
-echo '<br><br><span id="editalign" class="">'.get_string('defaulttextalign', 'mootyper').': ';
+echo '<br><br><span id="editalign" class="">' . get_string('defaulttextalign', 'mootyper') . ': ';
 echo '<select onchange="this.form.submit()" name="editalign">';
 
 // This will loop through ALL three alignments and show current alignment setting.
@@ -249,16 +246,16 @@ foreach ($aligns as $akey => $aval) {
     // The first if is executed ONLY when, when defaulttextalign matches one of the alignments
     // and it will then show that alignment in the selector.
     if ($akey == $editalign) {
-        echo '<option value="'.$akey.'" selected="true">'.$aval.'</option>';
+        echo '<option value="' . $akey . '" selected="true">' . $aval . '</option>';
         $align = $aval;
     } else {
         // This part of the if is reached the most and its when an alignment
         // is is not the one selected.
-        echo '<option value="'.$akey.'">'.$aval.'</option>';
+        echo '<option value="' . $akey . '">' . $aval . '</option>';
     }
 }
 
-echo '</select></span>'.get_string('defaulttextalign_warning', 'mootyper');
+echo '</select></span>' . get_string('defaulttextalign_warning', 'mootyper');
 
 ?>
 
@@ -309,22 +306,22 @@ function clClick() {
 // Create a link back to where we came from in case we want to cancel.
 if ($lessonpo == -1) {
     // 20200414 On cancel, go back to the MT activity if invoked from there.
-    $url = $CFG->wwwroot . '/mod/mootyper/view.php?id='.$id;
+    $url = $CFG->wwwroot . '/mod/mootyper/view.php?id=' . $id;
 } else {
     // Use this link for new lesson with exercise.
-    $url = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id.'&lesson='.$lessonpo;
+    $url = $CFG->wwwroot . '/mod/mootyper/exercises.php?id=' . $id . '&lesson=' . $lessonpo;
 }
 
 // Add a text area for adding the text of the exercise.
-echo '<br><span id="text_holder_span" class=""></span><br>'.get_string('fexercise', 'mootyper').':<br>'
-    .'<textarea rows="4" cols="60" name="texttotype" id="texttotype" style="text-align:'.$align.'"></textarea>';
+echo '<br><span id="text_holder_span" class=""></span><br>' . get_string('fexercise', 'mootyper') . ':<br>'
+    . '<textarea rows="4" cols="60" name="texttotype" id="texttotype" style="text-align:' . $align . '"></textarea>';
 
 // Add a confirm and cancel button.
 echo '<br><br><input class="btn btn-primary" style="border-radius: 8px"
      name="button" onClick="return clClick()" type="submit" value="'
-    .get_string('fconfirm', 'mootyper').'"> <a href="'
-    .$url.'" class="btn btn-secondary"  style="border-radius: 8px">'
-    .get_string('cancel', 'mootyper').'</a>'.'</form>';
+    . get_string('fconfirm', 'mootyper') . '"> <a href="'
+    . $url . '" class="btn btn-secondary"  style="border-radius: 8px">'
+    . get_string('cancel', 'mootyper') . '</a>' . '</form>';
 
 echo '</div>';
 

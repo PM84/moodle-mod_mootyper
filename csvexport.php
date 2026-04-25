@@ -44,7 +44,7 @@ require_login(0, true, null, false);
  * @param string $delimiter
  * @return array, false if none.
  */
-function array_to_csv_download($array, $filename = "export.csv", $delimiter=";") {
+function array_to_csv_download($array, $filename = "export.csv", $delimiter = ";") {
     $mootyperid = optional_param('mootyperid', 0, PARAM_INT); // Get the id for this MooTyper.
     $id = optional_param('id', 0, PARAM_INT); // Get the course module id for this MooTyper.
     $coursename = optional_param('coursename', '', PARAM_RAW); // Get the course name for this MooTyper.
@@ -60,33 +60,33 @@ function array_to_csv_download($array, $filename = "export.csv", $delimiter=";")
     $context = context_module::instance($cm->id);
 
     // Start building a row 1 entry of the course name, activity name, mode, lesson name, required precision, and required WPM.
-    $coursename = get_string('course')." = ".$coursename;
-    $mtname = get_string('activity')." = ".$mtname;
+    $coursename = get_string('course') . " = " . $coursename;
+    $mtname = get_string('activity') . " = " . $mtname;
 
     // Continue building a row 1 entry grades csv output, based on the mode.
     switch ($misexam) {
         case 0:
-            $mtmode = get_string('fmode', 'mootyper')." = ".get_string('flesson', 'mootyper');
+            $mtmode = get_string('fmode', 'mootyper') . " = " . get_string('flesson', 'mootyper');
             break;
         case 1:
-            $mtmode = get_string('fmode', 'mootyper')." = ".get_string('isexamtext', 'mootyper');
+            $mtmode = get_string('fmode', 'mootyper') . " = " . get_string('isexamtext', 'mootyper');
             break;
         case 2:
-            $mtmode = get_string('fmode', 'mootyper')." = ".get_string('practice', 'mootyper');
+            $mtmode = get_string('fmode', 'mootyper') . " = " . get_string('practice', 'mootyper');
             break;
         default:
             $mtmode = get_string('error', 'moodle');
     }
 
     // Create a spreadsheet csv filename based on the lesson name.
-    $filename = get_string('flesson', 'mootyper')."_".$lsnname.'_'.gmdate("Ymd_Hi").'GMT.csv';
+    $filename = get_string('flesson', 'mootyper') . "_" . $lsnname . '_' . gmdate("Ymd_Hi") . 'GMT.csv';
 
     // Get the lesson name, required precision, and required WPM for the csv spreadsheet row 1 entry.
-    $lsnname = get_string('flesson', 'mootyper')." = ".$lsnname;
-    $timelimit = get_string('timelimit', 'mootyper')." = ".$timelimit.":00 ".get_string('minutes');
-    $requiredgoal = get_string('requiredgoal', 'mootyper').' = '.$requiredgoal.'%';
-    $requiredwpm = get_string('requiredwpm', 'mootyper').' = '.$requiredwpm;
-    $scale = get_string('gradenoun').' = '.$scale;
+    $lsnname = get_string('flesson', 'mootyper') . " = " . $lsnname;
+    $timelimit = get_string('timelimit', 'mootyper') . " = " . $timelimit . ":00 " . get_string('minutes');
+    $requiredgoal = get_string('requiredgoal', 'mootyper') . ' = ' . $requiredgoal . '%';
+    $requiredwpm = get_string('requiredwpm', 'mootyper') . ' = ' . $requiredwpm;
+    $scale = get_string('gradenoun') . ' = ' . $scale;
 
     // Trigger export_viewallgrades_to_csv event.
     $params = [
@@ -106,7 +106,7 @@ function array_to_csv_download($array, $filename = "export.csv", $delimiter=";")
     $filename = preg_replace('/\s+/', '', $filename);
 
     header('Content-Type: application/csv');
-    header('Content-Disposition: attachement; filename="'.$filename.'";');
+    header('Content-Disposition: attachement; filename="' . $filename . '";');
     header("Pragma: no-cache");
     header("Expires: 0");
     $f = fopen('php://output', 'w');
@@ -135,13 +135,13 @@ function array_to_csv_download($array, $filename = "export.csv", $delimiter=";")
     fputcsv($f, $details, $delimiter);
     fputcsv($f, $headings, $delimiter);
     foreach ($array as $gr) {
-        $fields = [$gr->firstname.' '.$gr->lastname,
+        $fields = [$gr->firstname . ' ' . $gr->lastname,
                    $gr->exercisename,
-                   $gr->mistakes.': '.$gr->mistakedetails,
+                   $gr->mistakes . ': ' . $gr->mistakedetails,
                    format_time($gr->timeinseconds),
                    format_float($gr->hitsperminute),
                    $gr->fullhits,
-                   format_float($gr->precisionfield).'%',
+                   format_float($gr->precisionfield) . '%',
                    $gr->wpm,
                    $gr->grade,
                    date(get_config('mod_mootyper', 'dateformat'), $gr->timetaken),
@@ -160,7 +160,7 @@ $grds = get_typer_grades_adv($mid, 0, 0, 2, 0);
 // Add suspicion mark to first name for each suspicious entry.
 foreach ($grds as $gr) {
     if ($gr->suspicion) {
-        $gr->firstname = '!!!!! '.$gr->firstname;
+        $gr->firstname = '!!!!! ' . $gr->firstname;
     }
 }
 

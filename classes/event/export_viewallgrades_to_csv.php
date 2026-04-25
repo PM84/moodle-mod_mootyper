@@ -33,7 +33,6 @@ defined('MOODLE_INTERNAL') || die(); // phpcs:ignore
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class export_viewallgrades_to_csv extends \core\event\base {
-
     /**
      * Init method.
      */

@@ -44,7 +44,6 @@ use mod_mootyper\local\factories\url as url_factory;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class container {
-
     /**
      * Create the legacy data mapper factory.
      *

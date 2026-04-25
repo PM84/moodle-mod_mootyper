@@ -66,7 +66,7 @@ if (!(has_capability('mod/mootyper:aftersetup', $context))) {
     ];
     $event = invalid_access_attempt::create($params);
     $event->trigger();
-    redirect('../../course/view.php?id='.$course->id, get_string('invalidaccessexp', 'mootyper'));
+    redirect('../../course/view.php?id=' . $course->id, get_string('invalidaccessexp', 'mootyper'));
 }
 
 // Get the default config for MooTyper.
@@ -187,8 +187,10 @@ $showkeyboardpo = optional_param('showkeyboard', $dfkb, PARAM_CLEAN);
 $mootyperconfig = get_config('mod_mootyper');
 if ($mootyper->layout == null || is_null($mootyper->layout)) {
     // Current MooTyper layout is empty so set it to the site default.
-    if (isset($mootyperconfig->defaultlayout_filenamewithoutfiletype) &&
-            keyboards::is_layout_installed("$mootyperconfig->defaultlayout_filenamewithoutfiletype")) {
+    if (
+        isset($mootyperconfig->defaultlayout_filenamewithoutfiletype) &&
+            keyboards::is_layout_installed("$mootyperconfig->defaultlayout_filenamewithoutfiletype")
+    ) {
         // 20230925 Can't remember for sure, but I think this was a temp change for behat testing.
         // ...$dfly = keyboards::get_layout_id($mootyperconfig->defaultlayout_filenamewithoutfiletype);.
         $dfly = $mootyperconfig->defaultlayout_filenamewithoutfiletype;
@@ -312,7 +314,7 @@ if (isset($param1) && get_string('fconfirm', 'mootyper') == $param1) {
     $mootyper->textbgc = $textbgcpo;
     $mootyper->texterrorcolor = $texterrorcolorpo;
     $DB->update_record('mootyper', $mootyper);
-    header('Location: '.$CFG->wwwroot.'/mod/mootyper/view.php?n='.$n);
+    header('Location: ' . $CFG->wwwroot . '/mod/mootyper/view.php?n=' . $n);
 }
 
 // Print the page header.
@@ -326,7 +328,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($mootyper->name);
 $htmlout = '';
 $htmlout .= '<div align="center" style="font-size:1em;
-    font-weight:bold;background: '.$backgroundcolorpo.';
+    font-weight:bold;background: ' . $backgroundcolorpo . ';
     border:2px solid black;
     -webkit-border-radius:16px;
     -moz-border-radius:16px;
@@ -348,8 +350,8 @@ if (is_siteadmin()) {
 }
 
 $htmlout .= '<table><tr><td>'
-    .get_string('fmode', 'mootyper').'</td><td><select'
-    .$disselect.' onchange="this.form.submit()" name="mode" id="mode">';
+    . get_string('fmode', 'mootyper') . '</td><td><select'
+    . $disselect . ' onchange="this.form.submit()" name="mode" id="mode">';
 
 // 20160322 Modified to use only improved function get_mootyperlessons.
 if (has_capability('mod/mootyper:aftersetup', context_module::instance($cm->id))) {
@@ -358,19 +360,19 @@ if (has_capability('mod/mootyper:aftersetup', context_module::instance($cm->id))
 
 // Start building htmlout for this page based on exam or lesson exercise. Mode = 0 is Lesson.
 if ($modepo == 0 || is_null($modepo)) { // If mode is 0, this is a lesson?
-    $htmlout .= '<option selected="true" value="0">'.get_string('sflesson', 'mootyper').'</option>
-        <option value="1">'.get_string('isexamtext', 'mootyper').'</option>
-        <option value="2">'.get_string('practice', 'mootyper').'</option>';
+    $htmlout .= '<option selected="true" value="0">' . get_string('sflesson', 'mootyper') . '</option>
+        <option value="1">' . get_string('isexamtext', 'mootyper') . '</option>
+        <option value="2">' . get_string('practice', 'mootyper') . '</option>';
     $htmlout .= '</select></td></tr><tr><td>';
     $htmlout .= get_string('excategory', 'mootyper')
-        .'</td><td><select'.$disselect
-        .' onchange="this.form.submit()" id="lesson" name="lesson">';
+        . '</td><td><select' . $disselect
+        . ' onchange="this.form.submit()" id="lesson" name="lesson">';
 
     for ($ij = 0; $ij < count($lessons); $ij++) {
         if ($lessons[$ij]['id'] == $lessonpo) {
-            $htmlout .= '<option selected="true" value="'.$lessons[$ij]['id'].'">'.$lessons[$ij]['lessonname'].'</option>';
+            $htmlout .= '<option selected="true" value="' . $lessons[$ij]['id'] . '">' . $lessons[$ij]['lessonname'] . '</option>';
         } else {
-            $htmlout .= '<option value="'.$lessons[$ij]['id'].'">'.$lessons[$ij]['lessonname'].'</option>';
+            $htmlout .= '<option value="' . $lessons[$ij]['id'] . '">' . $lessons[$ij]['lessonname'] . '</option>';
         }
     }
     // 20260321 MooTyper_471bt - Show exercises in the selected lesson for teacher reference.
@@ -388,41 +390,43 @@ if ($modepo == 0 || is_null($modepo)) { // If mode is 0, this is a lesson?
     }
     $htmlout .= '</td></tr>';
 } else if ($modepo == 1) { // Or, if mode is 1, this is an exam?
-    $htmlout .= '<option value="0">'.get_string('sflesson', 'mootyper').'</option>
-        <option value="1" selected="true">'.get_string('isexamtext', 'mootyper').'</option>
-        <option value="2">'.get_string('practice', 'mootyper').'</option>';
+    $htmlout .= '<option value="0">' . get_string('sflesson', 'mootyper') . '</option>
+        <option value="1" selected="true">' . get_string('isexamtext', 'mootyper') . '</option>
+        <option value="2">' . get_string('practice', 'mootyper') . '</option>';
     $htmlout .= '</select></td></tr><tr><td>';
-    $htmlout .= get_string('flesson', 'mootyper').'</td><td><select'
-        .$disselect.' onchange="this.form.submit()" id="lesson" name="lesson">';
+    $htmlout .= get_string('flesson', 'mootyper') . '</td><td><select'
+        . $disselect . ' onchange="this.form.submit()" id="lesson" name="lesson">';
     for ($ij = 0; $ij < count($lessons); $ij++) {
         if ($lessons[$ij]['id'] == $lessonpo) {
-            $htmlout .= '<option selected="true" value="'.$lessons[$ij]['id'].'">'.$lessons[$ij]['lessonname'].'</option>';
+            $htmlout .= '<option selected="true" value="' . $lessons[$ij]['id'] . '">' . $lessons[$ij]['lessonname'] . '</option>';
         } else {
-            $htmlout .= '<option value="'.$lessons[$ij]['id'].'">'.$lessons[$ij]['lessonname'].'</option>';
+            $htmlout .= '<option value="' . $lessons[$ij]['id'] . '">' . $lessons[$ij]['lessonname'] . '</option>';
         }
     }
     $htmlout .= '</select></td></tr>';
     $exercises = lessons::get_exercises_by_lesson($lessonpo);
-    $htmlout .= '<tr><td>'.get_string('fexercise', 'mootyper').'</td><td><select'.$disselect.' name="exercise" id="exercise">';
+    $htmlout .= '<tr><td>' . get_string('fexercise', 'mootyper') . '</td>';
+    $htmlout .= '<td><select' . $disselect . ' name="exercise" id="exercise">';
     for ($ik = 0; $ik < count($exercises); $ik++) {
         if ($exercises[$ik]['id'] == $exercisepo) {
-            $htmlout .= '<option selected="true" value="'.$exercises[$ik]['id'].'">'.$exercises[$ik]['exercisename'].'</option>';
+            $htmlout .= '<option selected="true" value="' . $exercises[$ik]['id'] . '">';
+            $htmlout .= $exercises[$ik]['exercisename'] . '</option>';
         } else {
-            $htmlout .= '<option value="'.$exercises[$ik]['id'].'">'.$exercises[$ik]['exercisename'].'</option>';
+            $htmlout .= '<option value="' . $exercises[$ik]['id'] . '">' . $exercises[$ik]['exercisename'] . '</option>';
         }
     }
 } else if ($modepo == 2) { // If mode is 2, this is a practice lesson?
-    $htmlout .= '<option selected="true" value="0">'.get_string('sflesson', 'mootyper').'</option>
-        <option value="1">'.get_string('isexamtext', 'mootyper').'</option>
-        <option value="2" selected="true">'.get_string('practice', 'mootyper').'</option>';
+    $htmlout .= '<option selected="true" value="0">' . get_string('sflesson', 'mootyper') . '</option>
+        <option value="1">' . get_string('isexamtext', 'mootyper') . '</option>
+        <option value="2" selected="true">' . get_string('practice', 'mootyper') . '</option>';
     $htmlout .= '</select></td></tr><tr><td>';
-    $htmlout .= get_string('excategory', 'mootyper').'</td><td><select'
-        .$disselect.' onchange="this.form.submit()" id="lesson" name="lesson">';
+    $htmlout .= get_string('excategory', 'mootyper') . '</td><td><select'
+        . $disselect . ' onchange="this.form.submit()" id="lesson" name="lesson">';
     for ($ij = 0; $ij < count($lessons); $ij++) {
         if ($lessons[$ij]['id'] == $lessonpo) {
-            $htmlout .= '<option selected="true" value="'.$lessons[$ij]['id'].'">'.$lessons[$ij]['lessonname'].'</option>';
+            $htmlout .= '<option selected="true" value="' . $lessons[$ij]['id'] . '">' . $lessons[$ij]['lessonname'] . '</option>';
         } else {
-            $htmlout .= '<option value="'.$lessons[$ij]['id'].'">'.$lessons[$ij]['lessonname'].'</option>';
+            $htmlout .= '<option value="' . $lessons[$ij]['id'] . '">' . $lessons[$ij]['lessonname'] . '</option>';
         }
     }
     // 20260321 MooTyper_471bt - Show exercises in the selected lesson for teacher reference.
@@ -442,17 +446,17 @@ if ($modepo == 0 || is_null($modepo)) { // If mode is 0, this is a lesson?
 }
 // Add the time limit.
 $htmlout .= '</select></td></tr><tr><td>'
-    .get_string('timelimit', 'mootyper').'</td><td><input value="'
-    .$timelimitpo.'" style="width: 35px;" type="text" name="timelimit"> '
-    .get_string('minutes').' </td></tr>';
+    . get_string('timelimit', 'mootyper') . '</td><td><input value="'
+    . $timelimitpo . '" style="width: 35px;" type="text" name="timelimit"> '
+    . get_string('minutes') . ' </td></tr>';
 // Add the required precision percentage.
 $htmlout .= '</select></td></tr><tr><td>'
-    .get_string('requiredgoal', 'mootyper').'</td><td><input value="'
-    .$goalpo.'" style="width: 35px;" type="text" name="requiredgoal"> % </td></tr>';
+    . get_string('requiredgoal', 'mootyper') . '</td><td><input value="'
+    . $goalpo . '" style="width: 35px;" type="text" name="requiredgoal"> % </td></tr>';
 // Add the required speed in words per minute.
 $htmlout .= '</select></td></tr><tr><td>'
-    .get_string('requiredwpm', 'mootyper').'</td><td><input value="'
-    .$wpmpo.'" style="width: 35px;" type="text" name="requiredwpm"></td></tr>';
+    . get_string('requiredwpm', 'mootyper') . '</td><td><input value="'
+    . $wpmpo . '" style="width: 35px;" type="text" name="requiredwpm"></td></tr>';
 
 // Add a selector for text alignment.
 $aligns = [get_string('defaulttextalign_left', 'mod_mootyper'),
@@ -461,21 +465,21 @@ $aligns = [get_string('defaulttextalign_left', 'mod_mootyper'),
            ];
 $defaulttextalign = $moocfg->defaulttextalign;
 
-$htmlout .= '<tr><td>'.get_string('defaulttextalign', 'mootyper').'</td><td><select name="textalign">';
+$htmlout .= '<tr><td>' . get_string('defaulttextalign', 'mootyper') . '</td><td><select name="textalign">';
 // Get the ID and name of each alignment in the DB.
 foreach ($aligns as $akey => $aval) {
     // The first if is executed ONLY when, Text alignment, is
     // clicked to change alignment.
     if ($akey == $defaulttextalign) {
-        $htmlout .= '<option value="'.$akey.'" selected="true">'.$aval.'</option>';
+        $htmlout .= '<option value="' . $akey . '" selected="true">' . $aval . '</option>';
     } else if ($akey == $textalignpo) {
         // This part of the if is reached when going to setup with an
         // alignment already selected and it is the one already in use.
-        $htmlout .= '<option value="'.$akey.'" selected="true">'.$aval.'</option>';
+        $htmlout .= '<option value="' . $akey . '" selected="true">' . $aval . '</option>';
     } else {
         // This part of the if is reached the most and its when an alignment
         // is already selected but it is not the one being selected.
-        $htmlout .= '<option value="'.$akey.'">'.$aval.'</option>';
+        $htmlout .= '<option value="' . $akey . '">' . $aval . '</option>';
     }
 }
 $htmlout .= '</select>';
@@ -484,74 +488,74 @@ $htmlout .= '</select>';
 $tempchkkb = optional_param('showkeyboard', 0, PARAM_BOOL);
 
 // Add the check box to enable continuous typing.
-$htmlout .= '<tr><td>'.get_string('continuoustype', 'mootyper').'</td><td>';
+$htmlout .= '<tr><td>' . get_string('continuoustype', 'mootyper') . '</td><td>';
 $continuoustypechecked = $continuoustypepo == 'on' ? ' checked="checked"' : '';
-$htmlout .= '<input type="checkbox"'.$continuoustypechecked.' " name="continuoustype">';
+$htmlout .= '<input type="checkbox"' . $continuoustypechecked . ' " name="continuoustype">';
 
 // Add the check box to enable counting mistyped spaces.
-$htmlout .= '<tr><td>'.get_string('countmistypedspaces', 'mootyper').'</td><td>';
+$htmlout .= '<tr><td>' . get_string('countmistypedspaces', 'mootyper') . '</td><td>';
 $countmistypedspaceschecked = $countmistypedspacespo == 'on' ? ' checked="checked"' : '';
-$htmlout .= '<input type="checkbox"'.$countmistypedspaceschecked.' " name="countmistypedspaces">';
+$htmlout .= '<input type="checkbox"' . $countmistypedspaceschecked . ' " name="countmistypedspaces">';
 
 // Add the check box to enable counting multiple keystrokes for one error.
-$htmlout .= '<tr><td>'.get_string('countmistakes', 'mootyper').'</td><td>';
+$htmlout .= '<tr><td>' . get_string('countmistakes', 'mootyper') . '</td><td>';
 $countmistakeschecked = $countmistakespo == 'on' ? ' checked="checked"' : '';
-$htmlout .= '<input type="checkbox"'.$countmistakeschecked.' " name="countmistakes">';
+$htmlout .= '<input type="checkbox"' . $countmistakeschecked . ' " name="countmistakes">';
 
 // Add the check box for show keyboard.
-$htmlout .= '<tr><td>'.get_string('showkeyboard', 'mootyper').'</td><td>';
+$htmlout .= '<tr><td>' . get_string('showkeyboard', 'mootyper') . '</td><td>';
 $showkeyboardchecked = $showkeyboardpo == 'on' ? ' checked="checked"' : '';
-$htmlout .= '<input type="checkbox"'.$showkeyboardchecked.' " name="showkeyboard">';
+$htmlout .= '<input type="checkbox"' . $showkeyboardchecked . ' " name="showkeyboard">';
 
 // Add the dropdown slector for keyboard layouts.
 $layouts = keyboards::get_keyboard_layouts_db();
 $deflayout = $moocfg->defaultlayout;
-$htmlout .= '<tr><td>'.get_string('layout', 'mootyper').'</td><td><select name="layout">';
+$htmlout .= '<tr><td>' . get_string('layout', 'mootyper') . '</td><td><select name="layout">';
 // Get the ID and name of each keyboard layout in the DB.
 foreach ($layouts as $lkey => $lval) {
     // The first if is executed ONLY when Showkeyboard is
     // clicked to turn it on or off. It seems to have the
     // the job of selecting our default layout when turned ON.
     if (($tempchkkb) && ($lkey == $deflayout)) {
-        $htmlout .= '<option value="'.$lkey.'" selected="true">'.$lval.'</option>';
+        $htmlout .= '<option value="' . $lkey . '" selected="true">' . $lval . '</option>';
     } else if ($lkey == $layoutpo) {
         // This part of the if is reached when going to setup with a
         // keyboard layout already selected and it is the one already in use.
-        $htmlout .= '<option value="'.$lkey.'" selected="true">'.$lval.'</option>';
+        $htmlout .= '<option value="' . $lkey . '" selected="true">' . $lval . '</option>';
     } else {
         // This part of the if is reached the most and its when a keyboard layout
         // is already selected but it is not the one being checked.
-        $htmlout .= '<option value="'.$lkey.'">'.$lval.'</option>';
+        $htmlout .= '<option value="' . $lkey . '">' . $lval . '</option>';
     }
 }
 
 // Add input box for statistics background color.
-$htmlout .= '</td></tr><tr><td>'.get_string('statsbgc', 'mootyper').'</td><td>';
-$htmlout .= '<input value="'.$statscolorpo.'" style="width: 135px;" type="text" name="statsbgc"></td></tr>';
+$htmlout .= '</td></tr><tr><td>' . get_string('statsbgc', 'mootyper') . '</td><td>';
+$htmlout .= '<input value="' . $statscolorpo . '" style="width: 135px;" type="text" name="statsbgc"></td></tr>';
 
 // Add input box for normal keytoptextc color.
-$htmlout .= '</td></tr><tr><td>'.get_string('keytoptextc', 'mootyper').'</td><td>';
-$htmlout .= '<input value="'.$keytoptextcpo.'" style="width: 135px;" type="text" name="keytoptextc"></td></tr>';
+$htmlout .= '</td></tr><tr><td>' . get_string('keytoptextc', 'mootyper') . '</td><td>';
+$htmlout .= '<input value="' . $keytoptextcpo . '" style="width: 135px;" type="text" name="keytoptextc"></td></tr>';
 
 // Add input box for normal keytop color.
-$htmlout .= '</td></tr><tr><td>'.get_string('keytopbgc', 'mootyper').'</td><td>';
-$htmlout .= '<input value="'.$keytopcolorpo.'" style="width: 135px;" type="text" name="keytopbgc"></td></tr>';
+$htmlout .= '</td></tr><tr><td>' . get_string('keytopbgc', 'mootyper') . '</td><td>';
+$htmlout .= '<input value="' . $keytopcolorpo . '" style="width: 135px;" type="text" name="keytopbgc"></td></tr>';
 
 // Add input box for keyboard background color.
-$htmlout .= '</td></tr><tr><td>'.get_string('keybdbgc', 'mootyper').'</td><td>';
-$htmlout .= '<input value="'.$backgroundcolorpo.'" style="width: 135px;" type="text" name="keybdbgc"></td></tr>';
+$htmlout .= '</td></tr><tr><td>' . get_string('keybdbgc', 'mootyper') . '</td><td>';
+$htmlout .= '<input value="' . $backgroundcolorpo . '" style="width: 135px;" type="text" name="keybdbgc"></td></tr>';
 
 // Add input box for cursorcolor.
-$htmlout .= '</td></tr><tr><td>'.get_string('cursorcolor', 'mootyper').'</td><td>';
-$htmlout .= '<input value="'.$cursorcolorpo.'" style="width: 135px;" type="text" name="cursorcolor"></td></tr>';
+$htmlout .= '</td></tr><tr><td>' . get_string('cursorcolor', 'mootyper') . '</td><td>';
+$htmlout .= '<input value="' . $cursorcolorpo . '" style="width: 135px;" type="text" name="cursorcolor"></td></tr>';
 
 // Add input box for textbgc.
-$htmlout .= '</td></tr><tr><td>'.get_string('textbgc', 'mootyper').'</td><td>';
-$htmlout .= '<input value="'.$textbgcpo.'" style="width: 135px;" type="text" name="textbgc"></td></tr>';
+$htmlout .= '</td></tr><tr><td>' . get_string('textbgc', 'mootyper') . '</td><td>';
+$htmlout .= '<input value="' . $textbgcpo . '" style="width: 135px;" type="text" name="textbgc"></td></tr>';
 
 // Add input box for texterrorcolor.
-$htmlout .= '</td></tr><tr><td>'.get_string('texterrorcolor', 'mootyper').'</td><td>';
-$htmlout .= '<input value="'.$texterrorcolorpo.'" style="width: 135px;" type="text" name="texterrorcolor"></td></tr>';
+$htmlout .= '</td></tr><tr><td>' . get_string('texterrorcolor', 'mootyper') . '</td><td>';
+$htmlout .= '<input value="' . $texterrorcolorpo . '" style="width: 135px;" type="text" name="texterrorcolor"></td></tr>';
 
 // Finish adding html to our page.
 $htmlout .= '</select>';
@@ -559,10 +563,11 @@ $htmlout .= '</td></tr>';
 $htmlout .= '</table>';
 // Change to BS4 style button to fix issue #77 on github.
 $htmlout .= '<br><input type="submit" name="button" class="btn btn-primary" style="border-radius: 8px" value="'
-    .get_string('fconfirm', 'mootyper').'">';
+    . get_string('fconfirm', 'mootyper') . '">';
 // Create return URL for use with Cancel button, 12/26/19.
-$url = $CFG->wwwroot . '/mod/mootyper/view.php?id='.$cm->id;
-$htmlout .= ' <a href="'.$url.'" class="btn btn-secondary" style="border-radius: 8px">'.get_string('cancel', 'mootyper').'</a>';
+$url = $CFG->wwwroot . '/mod/mootyper/view.php?id=' . $cm->id;
+$cancellink = ' <a href="' . $url . '" class="btn btn-secondary" style="border-radius: 8px">';
+$htmlout .= $cancellink . get_string('cancel', 'mootyper') . '</a>';
 
 $htmlout .= '</form>';
 $htmlout .= '<br>';

@@ -51,7 +51,7 @@ $actuallesson = $DB->get_record('mootyper_lessons', ['id' => $lesson->lesson]);
 
 // This context->id will be used for the path to file storage.
 $context = context_module::instance($cm->id);
-$mootyper = $DB->get_record('mootyper', ['id' => $cm->instance] , '*', MUST_EXIST);
+$mootyper = $DB->get_record('mootyper', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, true, $cm);
 
@@ -67,13 +67,13 @@ if (!(has_capability('mod/mootyper:aftersetup', $context))) {
     ];
     $event = invalid_access_attempt::create($params);
     $event->trigger();
-    redirect('../../course/view.php?id='.$course->id, get_string('invalidaccessexp', 'mootyper'));
+    redirect('../../course/view.php?id=' . $course->id, get_string('invalidaccessexp', 'mootyper'));
 }
 
 // Check to see if Confirm button is clicked and returning 'Confirm' to trigger update record.
 $param1 = optional_param('button', '', PARAM_TEXT);
 
-if (isset($param1) && get_string('fconfirm', 'mootyper') == $param1 ) {
+if (isset($param1) && get_string('fconfirm', 'mootyper') == $param1) {
     // 20210325 Added as part of capability to edit lesson and exercise names.
     $newlessonname = optional_param('lesson_name', '', PARAM_RAW);
     $newexercisename = optional_param('exercise_name', '', PARAM_RAW);
@@ -110,9 +110,8 @@ if (isset($param1) && get_string('fconfirm', 'mootyper') == $param1 ) {
     $event = exercise_edited::create($params);
     $event->trigger();
 
-    $webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id.'&lesson='.$rcrd->lesson;
-    echo '<script type="text/javascript">window.location="'.$webdir.'";</script>';
-
+    $webdir = $CFG->wwwroot . '/mod/mootyper/exercises.php?id=' . $id . '&lesson=' . $rcrd->lesson;
+    echo '<script type="text/javascript">window.location="' . $webdir . '";</script>';
 }
 
 // Get all the default configuration settings for MooTyper.
@@ -134,8 +133,12 @@ $PAGE->set_title(get_string('etitle', 'mootyper'));
 $PAGE->set_heading(get_string('eheading', 'mootyper'));
 $PAGE->set_cacheable(false);
 echo $OUTPUT->header();
-$exercisetoedit = $DB->get_record('mootyper_exercises',
-    ['id' => $ex], 'id, texttotype, exercisename, lesson, snumber', MUST_EXIST);
+$exercisetoedit = $DB->get_record(
+    'mootyper_exercises',
+    ['id' => $ex],
+    'id, texttotype, exercisename, lesson, snumber',
+    MUST_EXIST
+);
 
 ?>
 
@@ -195,7 +198,7 @@ function clClick() {
 // 20200625 Get the current MooTyper keyboard background default color for our page background here.
 $color3 = $mootyper->keybdbgc;
 echo '<div align="center" style="font-size:1em;
-     font-weight:bold;background: '.$color3.';
+     font-weight:bold;background: ' . $color3 . ';
      border:2px solid black;
      -webkit-border-radius:16px;
      -moz-border-radius:16px;border-radius:16px;">';
@@ -203,16 +206,16 @@ echo '<div align="center" style="font-size:1em;
 echo '<form method="POST">';
 
 // 20210327 Add a text area for editing the name of the lesson.
-echo '<label>'.get_string('lsnname', 'mootyper')
-    .' = <input type="text" name="lesson_name" value="'
-    .str_replace('\n', "&#10;", $lessonname->lessonname)
-    .'"</label><br />';
+echo '<label>' . get_string('lsnname', 'mootyper')
+    . ' = <input type="text" name="lesson_name" value="'
+    . str_replace('\n', "&#10;", $lessonname->lessonname)
+    . '"</label><br />';
 
 // 20210327 Add a text area for editing the name of the exercise.
-echo '<label>'.get_string('exercise_name', 'mootyper')
-    .' = <input type="text" name="exercise_name" value="'
-    .str_replace('\n', "&#10;", $exercisetoedit->exercisename)
-    .'"</label><br />';
+echo '<label>' . get_string('exercise_name', 'mootyper')
+    . ' = <input type="text" name="exercise_name" value="'
+    . str_replace('\n', "&#10;", $exercisetoedit->exercisename)
+    . '"</label><br />';
 
 // Get our alignment strings and add a selector for text alignment.
 $aligns = [
@@ -221,7 +224,7 @@ $aligns = [
     get_string('defaulttextalign_right', 'mod_mootyper'),
 ];
 
-echo '<span id="editalign" class="">'.get_string('defaulttextalign', 'mootyper').': ';
+echo '<span id="editalign" class="">' . get_string('defaulttextalign', 'mootyper') . ': ';
 echo '<select onchange="this.form.submit()" name="editalign">';
 
 // This will loop through ALL three alignments and show current alignment setting.
@@ -229,32 +232,33 @@ foreach ($aligns as $akey => $aval) {
     // The first if is executed ONLY when, when defaulttextalign matches one of the alignments
     // and it will then show that alignment in the selector.
     if ($akey == $editalign) {
-        echo '<option value="'.$akey.'" selected="true">'.$aval.'</option>';
+        echo '<option value="' . $akey . '" selected="true">' . $aval . '</option>';
         $align = $aval;
     } else {
         // This part of the if is reached the most and its when an alignment
         // is is not the one selected.
-        echo '<option value="'.$akey.'">'.$aval.'</option>';
+        echo '<option value="' . $akey . '">' . $aval . '</option>';
     }
 }
 
 echo '</select></span>';
 // Create a link back to where we came from in case we want to cancel.
-$url = $CFG->wwwroot . '/mod/mootyper/exercises.php?id='.$id.'&lesson='.$rcrd->lesson;
+$url = $CFG->wwwroot . '/mod/mootyper/exercises.php?id=' . $id . '&lesson=' . $rcrd->lesson;
 
 // Add a text area for editing the text of the exercise.
 echo '<span id="text_holder_span" class=""></span><br>'
-    .get_string('fexercise', 'mootyper')
-    .':<br>'
-    .'<textarea name="texttotype" id="texttotype" rows="3" cols="60" style="text-align:'
-    .$align.'">'
-    .str_replace('\n', "&#10;", $exercisetoedit->texttotype)
-    .'</textarea>';
+    . get_string('fexercise', 'mootyper')
+    . ':<br>'
+    . '<textarea name="texttotype" id="texttotype" rows="3" cols="60" style="text-align:'
+    . $align . '">'
+    . str_replace('\n', "&#10;", $exercisetoedit->texttotype)
+    . '</textarea>';
 
 $editor = editors_get_preferred_editor(FORMAT_HTML);
-$attobuttons = 'files = recordrtc'. PHP_EOL .'list = unorderedlist, orderedlist'. PHP_EOL .'other = html, htmlplus';
+$attobuttons = 'files = recordrtc' . PHP_EOL . 'list = unorderedlist, orderedlist' . PHP_EOL . 'other = html, htmlplus';
 
-$editor->use_editor('exercisetoedit',
+$editor->use_editor(
+    'exercisetoedit',
     [
         'context' => $context,
         'enable_filemanagement' => true,
@@ -270,18 +274,17 @@ $editor->use_editor('exercisetoedit',
 $lessonauthor = $DB->get_record("user", ['id' => $actuallesson->authorid]);
 $coursename = $DB->get_record("course", ['id' => $actuallesson->courseid]);
 // Add a number 0, 1, or 2 to get the correct string to use.
-$visible = get_string('vaccess'.$actuallesson->visible, 'mootyper');
-$editable = get_string('eaccess'.$actuallesson->editable, 'mootyper');
-echo '<br>'.get_string('authorid', 'mootyper').': '.$actuallesson->authorid.', '
-           .$lessonauthor->firstname.' '.$lessonauthor->lastname.'<br>';
-echo get_string('visibility', 'mootyper').': '.$visible.', ';
-echo get_string('editable', 'mootyper').': '.$editable.'<br>';
+$visible = get_string('vaccess' . $actuallesson->visible, 'mootyper');
+$editable = get_string('eaccess' . $actuallesson->editable, 'mootyper');
+echo '<br>' . get_string('authorid', 'mootyper') . ': ' . $actuallesson->authorid . ', '
+           . $lessonauthor->firstname . ' ' . $lessonauthor->lastname . '<br>';
+echo get_string('visibility', 'mootyper') . ': ' . $visible . ', ';
+echo get_string('editable', 'mootyper') . ': ' . $editable . '<br>';
 // 20220729 Added check for missing courseid and and name that would indicate the lesson came with MooTyper.
 if ((!$actuallesson->courseid) || (!$coursename->fullname)) {
     echo get_string('lessonincluded', 'mootyper');
-
 } else {
-    echo get_string('createdin', 'mootyper').$actuallesson->courseid.', '.$coursename->fullname;
+    echo get_string('createdin', 'mootyper') . $actuallesson->courseid . ', ' . $coursename->fullname;
 }
 
 echo '</select></span><br>';
@@ -292,12 +295,12 @@ echo '<input class="btn btn-primary"
     name="button"
     onClick="return clClick()"
     type="submit" value="'
-    .get_string('fconfirm', 'mootyper')
-    .'"> <a href="'
-    .$url
-    .'" class="btn btn-secondary"  style="border-radius: 8px">'
-    .get_string('cancel', 'mootyper')
-    .'</a>'.'</form>';
+    . get_string('fconfirm', 'mootyper')
+    . '"> <a href="'
+    . $url
+    . '" class="btn btn-secondary"  style="border-radius: 8px">'
+    . get_string('cancel', 'mootyper')
+    . '</a>' . '</form>';
 
 echo '</div>';
 

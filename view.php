@@ -116,43 +116,43 @@ foreach ($aligns as $akey => $aval) {
 // Apply colors and text alignment to current MooTyper.
 echo '<style>
     .keyboardback {
-        background-color: '.$color3.';
+        background-color: ' . $color3 . ';
         box-shadow:
             0 1px 0 #aaa,
             0 4px 0 #bbb,
             0 5px 0px #ddd;
     }
     .keyboardpadback {
-        background-color: '.$color3.';
+        background-color: ' . $color3 . ';
         box-shadow:
             0 1px 0 #aaa,
             0 4px 0 #bbb,
             0 5px 0px #ddd;
     }
     .keypadback {
-        background-color: '.$color3.';
+        background-color: ' . $color3 . ';
         box-shadow:
             0 1px 0 #aaa,
             0 4px 0 #bbb,
             0 5px 0px #ddd;
     }
     .normal {
-        color: '.$color7.';
-        background: '.$color2.';
+        color: ' . $color7 . ';
+        background: ' . $color2 . ';
     }
     div#statsLDiv {
-        background: '.$color1.'
+        background: ' . $color1 . '
     }
     div#statsMDiv {
-        background: '.$color1.'
+        background: ' . $color1 . '
     }
     div#statsRDiv {
-        background: '.$color1.'
+        background: ' . $color1 . '
     }
     #texttoenter {
-        text-align: '.$textalign.';
+        text-align: ' . $textalign . ';
         line-height: 1.2;
-        background-color: '.$color5.';
+        background-color: ' . $color5 . ';
         padding:0px 10px 0px 10px;
         border: 1px solid black;
         box-shadow:
@@ -163,19 +163,19 @@ echo '<style>
         border-bottom-left-radius: 8px ;
     }
     .tb1 {
-        text-align: '.$textalign.'
+        text-align: ' . $textalign . '
     }
     .txtBlue {
-        background-color: '.$color4.'
+        background-color: ' . $color4 . '
     }
     .txtRed {
-        background-color: '.$color6.'
+        background-color: ' . $color6 . '
     }
     </style>';
 
 if ($mootyper->lesson != null) {
     // Availability restrictions applied to students only.
-    if ((!(results::is_available($mootyper)))&& (!(has_capability('mod/mootyper:viewgrades', $context)))) {
+    if ((!(results::is_available($mootyper))) && (!(has_capability('mod/mootyper:viewgrades', $context)))) {
         if ($mootyper->timeclose != 0 && time() > $mootyper->timeclose) {
             echo $mootyperoutput->mootyper_inaccessible(get_string('mootyperclosed', 'mootyper', userdate($mootyper->timeclose)));
         } else {
@@ -185,15 +185,15 @@ if ($mootyper->lesson != null) {
         exit();
     } else if ($mootyper->usepassword && empty($USER->mootyperloggedin[$mootyper->id])) { // Password protected mootyper code.
         $correctpass = false;
-        if (!empty($userpassword) && (($mootyper->password == md5(trim($userpassword))) ||
-            ($mootyper->password == trim($userpassword)))) {
+        if (
+            !empty($userpassword) && (($mootyper->password == md5(trim($userpassword))) ||
+            ($mootyper->password == trim($userpassword)))
+        ) {
             require_sesskey();
             // With or without md5 for backward compatibility (MDL-11090).
             $correctpass = true;
             $USER->mootyperloggedin[$mootyper->id] = true;
-
         } else if (isset($mootyper->extrapasswords)) {
-
             // Group overrides may have additional passwords.
             foreach ($mootyper->extrapasswords as $password) {
                 if (strcmp($password, md5(trim($userpassword))) === 0 || strcmp($password, trim($userpassword)) === 0) {
@@ -218,7 +218,9 @@ if ($mootyper->lesson != null) {
     if ($mtmode === '1') {
         $exerciseid = $mootyper->exercise;
         $exercise = get_exercise_record($exerciseid);
-        $texttoenter = $exercise->texttotype;
+        if ($exercise !== false) {
+            $texttoenter = $exercise->texttotype;
+        }
     } else {
         $exercise = get_exercise_from_mootyper($mootyper->id, $mootyper->lesson, $USER->id);
         if ($exercise != false) {
@@ -240,36 +242,36 @@ if ($mootyper->lesson != null) {
     if (isset($texttoenter)) {
         // 20191130 Modified to pass data required by exercise_, exam_, and lesson_completed events.
         $insertdir = $CFG->wwwroot
-                     .'/mod/mootyper/gcnext.php?cmid='.$cm->id
-                     .'&lsnname='.$lsnname->id
-                     .'&exercisename='.$exercise->exercisename
-                     .'&mtmode='.$mtmode
-                     .'&count='.$count;
+                     . '/mod/mootyper/gcnext.php?cmid=' . $cm->id
+                     . '&lsnname=' . $lsnname->id
+                     . '&exercisename=' . $exercise->exercisename
+                     . '&mtmode=' . $mtmode
+                     . '&count=' . $count;
     }
 
     if (exam_already_done($mootyper, $USER->id) && $mtmode === '1') {
         echo get_string('examdone', 'mootyper');
         echo '<span class="reportlink"><a href="index.php?id='
-            .$course->id.'">'
-            .get_string('viewallmootypers', 'mootyper')
-            .'</a></span>';
+            . $course->id . '">'
+            . get_string('viewallmootypers', 'mootyper')
+            . '</a></span>';
         echo "<br>";
         if (has_capability('mod/mootyper:viewgrades', context_module::instance($cm->id))) {
             $jlnk4 = $CFG->wwwroot
-                     .'/mod/mootyper/gview.php?id='.$id
-                     .'&n='.$mootyper->id;
-            echo '<a href="'.$jlnk4.'">'
-                          .get_string('viewgrades', 'mootyper')
-                          .'</a><br /><br />';
+                     . '/mod/mootyper/gview.php?id=' . $id
+                     . '&n=' . $mootyper->id;
+            echo '<a href="' . $jlnk4 . '">'
+                          . get_string('viewgrades', 'mootyper')
+                          . '</a><br /><br />';
         }
 
         if (has_capability('mod/mootyper:viewmygrades', context_module::instance($cm->id))) {
             $jlnk7 = $CFG->wwwroot
-                     ."/mod/mootyper/owngrades.php?id=".$id
-                     ."&n=".$mootyper->id;
-            echo '<a href="'.$jlnk7
-                            .'">'.get_string('viewmygrades', 'mootyper')
-                            .'</a><br /><br />';
+                     . "/mod/mootyper/owngrades.php?id=" . $id
+                     . "&n=" . $mootyper->id;
+            echo '<a href="' . $jlnk7
+                            . '">' . get_string('viewmygrades', 'mootyper')
+                            . '</a><br /><br />';
         }
     } else if ($exercise != false) {
         if ($mootyper->showkeyboard) {
@@ -280,25 +282,36 @@ if ($mootyper->lesson != null) {
         $keyboardjs = keyboards::get_instance_layout_js_file($mootyper->layout);
         $assetversion = (string)$CFG->version;
         $typercache = '20260409c';
-        // 20260320 For Korean(KNV7) layout, append a dedicated cache-bust token so stale layout
+        // 20260320 For Korean(KRV7) layout, append a dedicated cache-bust token so stale layout
         // scripts (which only had onset highlighting) are replaced immediately.
-        $kbcache = (strpos($keyboardjs, 'Korean(KNV7)') !== false) ? '&knv7kb=20260320a' : '';
-        echo '<script type="text/javascript" src="'.$keyboardjs.'?v='.$assetversion.$kbcache.'"></script>';
-        // 20241118 If using the Amharic(ETV7) or Korean(KNV7) keyboard layout,
+        $iskoreanv7layout = (strpos($keyboardjs, 'Korean(KRV7)') !== false)
+            || (strpos($keyboardjs, 'Korean(KNV7)') !== false)
+            || (strpos($keyboardjs, 'Korean(KNR7)') !== false);
+        $ishindiv5layout = (strpos($keyboardjs, 'Hindi(HIV5)') !== false);
+        $kbcache = $iskoreanv7layout ? '&knv7kb=20260320a' : '';
+        $hindicache = $ishindiv5layout ? '&hiv5kb=20260423a' : '';
+        echo '<script type="text/javascript" src="' . $keyboardjs . '?v=' . $assetversion . $kbcache . $hindicache . '"></script>';
+        // 20241118 If using the Amharic(ETV7) or Korean(KRV7) keyboard layout,
         // use the appropriate typer JS file; otherwise use the regular typer.js file.
         $isamharickeyboard = (strpos($keyboardjs, 'Amharic(ETV7)') !== false);
-        $iskoreankeyboard = (strpos($keyboardjs, 'Korean(KNV7)') !== false);
+        // Korean V7 layout files currently exist with multiple naming variants.
+        // Use the KRV7 standalone typer for any of those variants.
+        $iskoreankeyboard = $iskoreanv7layout;
         if ($isamharickeyboard) {
             // 20241118 Using the Amharic(ETV7) keyboard layout so switch to typer(ETV7).js file.
-            echo '<script type="text/javascript" src="typer(ETV7).js?v='.$assetversion.'&t='.$typercache.'"></script>';
+            $scriptsrc = 'js/typer(ETV7).js?v=' . $assetversion . '&t=' . $typercache;
+            echo '<script type="text/javascript" src="' . $scriptsrc . '"></script>';
         } else if ($iskoreankeyboard) {
-            // 20260320 Korean(KNV7) standalone typer - complete replacement for typer.js.
-            // Add a dedicated cache-bust token so browsers with stale KNV7 script cache refresh immediately.
-            echo '<script type="text/javascript" src="typer(KNV7).js?v='.$assetversion.'&knv7=20260320b&t='.$typercache.'"></script>';
+            // 20260320 Korean(KRV7) standalone typer - complete replacement for typer.js.
+            // Add a dedicated cache-bust token so browsers with stale KRV7 script cache refresh immediately.
+            $scriptsrc = 'js/typer(KRV7).js?v=' . $assetversion . '&knv7=20260320b&t=' . $typercache;
+            echo '<script type="text/javascript" src="' . $scriptsrc . '"></script>';
         } else {
-            echo '<script type="text/javascript" src="typer.js?v='.$assetversion.'&t='.$typercache.'"></script>';
+            $hinditypercache = $ishindiv5layout ? '&hiv5typer=20260423a' : '';
+            $scriptsrc = 'js/typer.js?v=' . $assetversion . '&t=' . $typercache . $hinditypercache;
+            echo '<script type="text/javascript" src="' . $scriptsrc . '"></script>';
         }
-?>
+        ?>
 <div id="mainDiv" align="left">
 <form name='form1' id='form1' method='post' action='<?php echo $insertdir; // phpcs:ignore ?>'> 
 <div id="keyboard" style="float: left; text-align:center; margin-left: auto; margin-right: auto;">
@@ -310,36 +323,36 @@ if ($mootyper->lesson != null) {
         $tempstr = '';
         // Add label containing mode, lesson name, exercise x of x, required precision and WPM above the status bar.
         if ($mtmode === '0') {
-            $tempstr = get_string('fmode', 'mootyper').' = '
-                .get_string('flesson', 'mootyper');
+            $tempstr = get_string('fmode', 'mootyper') . ' = '
+                . get_string('flesson', 'mootyper');
         } else if ($mtmode === '1') {
-            $tempstr = get_string('fmode', 'mootyper').' = '
-                .get_string('isexamtext', 'mootyper');
+            $tempstr = get_string('fmode', 'mootyper') . ' = '
+                . get_string('isexamtext', 'mootyper');
         } else if ($mtmode === '2') {
-            $tempstr = get_string('fmode', 'mootyper').' = '
-                .get_string('practice', 'mootyper');
+            $tempstr = get_string('fmode', 'mootyper') . ' = '
+                . get_string('practice', 'mootyper');
         }
-        $tempstr = $tempstr.'&nbsp;&nbsp; '
-            .get_string('lsnname', 'mootyper').' = '.$lsnname->lessonname
-            .'&nbsp;'
-            .get_string('exercise', 'mootyper', $exercise->exercisename).$count;
-        $tempstr = $tempstr.'<br>'
-            .get_string('timelimit', 'mootyper').' ('.$reqiredtimelimit.':00)'
-            .'&nbsp;'
-            .get_string('requiredgoal', 'mootyper').' ('.$reqiredgoal.'%)'
-            .'&nbsp;'
-            .get_string('requiredwpm', 'mootyper').' ('.$reqiredwpm.')';
-        $tempstr = $tempstr.'<br>'
-            .get_string('continuoustype', 'mootyper').' '.$mootyper->continuoustype.''
-            .'&nbsp;'
-            .get_string('countmistypedspaces', 'mootyper').' '.$mootyper->countmistypedspaces.''
-            .'&nbsp;'
-            .get_string('countmistakes', 'mootyper').' '.$mootyper->countmistakes.'';
-        $tempstr = $tempstr.' <a href="index.php?id='
-            .$course->id.'">'
-            .get_string('viewallmootypers', 'mootyper')
-            .'</a>';
-        echo '<span class="settingsinfo">'.$tempstr.'</span>';
+        $tempstr = $tempstr . '&nbsp;&nbsp; '
+            . get_string('lsnname', 'mootyper') . ' = ' . $lsnname->lessonname
+            . '&nbsp;'
+            . get_string('exercise', 'mootyper', $exercise->exercisename) . $count;
+        $tempstr = $tempstr . '<br>'
+            . get_string('timelimit', 'mootyper') . ' (' . $reqiredtimelimit . ':00)'
+            . '&nbsp;'
+            . get_string('requiredgoal', 'mootyper') . ' (' . $reqiredgoal . '%)'
+            . '&nbsp;'
+            . get_string('requiredwpm', 'mootyper') . ' (' . $reqiredwpm . ')';
+        $tempstr = $tempstr . '<br>'
+            . get_string('continuoustype', 'mootyper') . ' ' . $mootyper->continuoustype . ''
+            . '&nbsp;'
+            . get_string('countmistypedspaces', 'mootyper') . ' ' . $mootyper->countmistypedspaces . ''
+            . '&nbsp;'
+            . get_string('countmistakes', 'mootyper') . ' ' . $mootyper->countmistakes . '';
+        $tempstr = $tempstr . ' <a href="index.php?id='
+            . $course->id . '">'
+            . get_string('viewallmootypers', 'mootyper')
+            . '</a>';
+        echo '<span class="settingsinfo">' . $tempstr . '</span>';
 
         ?>
 </h5>
@@ -398,27 +411,28 @@ if ($mootyper->lesson != null) {
 
         // 20200428 Added round corners to buttons. This one is View all grades.
         if (has_capability('mod/mootyper:viewgrades', context_module::instance($cm->id))) {
-            $jlnk4 = $CFG->wwwroot.'/mod/mootyper/gview.php?id='.$id.'&n='.$mootyper->id;
-            echo '<a href="'.$jlnk4
-                .'" class="btn btn-primary btn-sm"  style="border-radius: 8px">'
-                .get_string('viewgrades', 'mootyper').'</a>&nbsp;';
+            $jlnk4 = $CFG->wwwroot . '/mod/mootyper/gview.php?id=' . $id . '&n=' . $mootyper->id;
+            echo '<a href="' . $jlnk4
+                . '" class="btn btn-primary btn-sm"  style="border-radius: 8px">'
+                . get_string('viewgrades', 'mootyper') . '</a>&nbsp;';
         }
         // This is the Settings button.
         // 20200628 Added check to hide button if the lesson is NOT editable by current user.
-        if ((has_capability('mod/mootyper:aftersetup', context_module::instance($cm->id)))
-            && (lessons::is_editable_by_me($USER->id, $mootyper->id, $lsnname->id))) {
-
-            $jlnk6 = $CFG->wwwroot."/mod/mootyper/mod_setup.php?n=".$mootyper->id."&e=1";
-            echo '<a href="'.$jlnk6
-                .'" class="btn btn-primary btn-sm"  style="border-radius: 8px">'
-                .get_string('fsettings', 'mootyper').'</a>&nbsp;';
+        if (
+            (has_capability('mod/mootyper:aftersetup', context_module::instance($cm->id)))
+            && (lessons::is_editable_by_me($USER->id, $mootyper->id, $lsnname->id))
+        ) {
+            $jlnk6 = $CFG->wwwroot . "/mod/mootyper/mod_setup.php?n=" . $mootyper->id . "&e=1";
+            echo '<a href="' . $jlnk6
+                . '" class="btn btn-primary btn-sm"  style="border-radius: 8px">'
+                . get_string('fsettings', 'mootyper') . '</a>&nbsp;';
         }
         // This is the View my grades button. 20230924 Added name to the button.
         if (has_capability('mod/mootyper:viewmygrades', context_module::instance($cm->id))) {
-            $jlnk7 = $CFG->wwwroot."/mod/mootyper/owngrades.php?id=".$id."&n=". $mootyper->id;
-            echo '<a href="'.$jlnk7
-                .'" class="btn btn-primary btn-sm"  style="border-radius: 8px" name="viewmygrades">'
-                .get_string('viewmygrades', 'mootyper').'</a>';
+            $jlnk7 = $CFG->wwwroot . "/mod/mootyper/owngrades.php?id=" . $id . "&n=" . $mootyper->id;
+            echo '<a href="' . $jlnk7
+                . '" class="btn btn-primary btn-sm"  style="border-radius: 8px" name="viewmygrades">'
+                . get_string('viewmygrades', 'mootyper') . '</a>';
         }
         // Attempt recovery buttons are shown only in Practice mode.
         $canrecoverall = has_capability('mod/mootyper:viewgrades', context_module::instance($cm->id));
@@ -431,8 +445,8 @@ if ($mootyper->lesson != null) {
                 'scope' => 'mine',
                 'sesskey' => sesskey(),
             ]);
-            echo '&nbsp;<a href="'.$recovermine.'" class="btn btn-secondary btn-sm" style="border-radius: 8px">'
-                .get_string('attemptrecovermine', 'mootyper').'</a>';
+            echo '&nbsp;<a href="' . $recovermine . '" class="btn btn-secondary btn-sm" style="border-radius: 8px">'
+                . get_string('attemptrecovermine', 'mootyper') . '</a>';
         }
 
         if ($showrecoverall) {
@@ -441,8 +455,8 @@ if ($mootyper->lesson != null) {
                 'scope' => 'all',
                 'sesskey' => sesskey(),
             ]);
-            echo '&nbsp;<a href="'.$recoverall.'" class="btn btn-secondary btn-sm" style="border-radius: 8px">'
-                .get_string('attemptrecoverall', 'mootyper').'</a>';
+            echo '&nbsp;<a href="' . $recoverall . '" class="btn btn-secondary btn-sm" style="border-radius: 8px">'
+                . get_string('attemptrecoverall', 'mootyper') . '</a>';
         }
         // Next button is Continue. Hidden until exercise is complete.
         // It is followed by the Status bar and Mistake details.
@@ -451,7 +465,8 @@ if ($mootyper->lesson != null) {
             style="border-radius: 8px; visibility: hidden;"
             id="btnContinue"
             name='btnContinue'
-            onclick="return (typeof window.mootyperContinueClickHandler === 'function') ? window.mootyperContinueClickHandler(window.event || null) : true;"
+            onclick="return (typeof window.mootyperContinueClickHandler === 'function')
+                ? window.mootyperContinueClickHandler(window.event || null) : true;"
             type="button"
             value=<?php // phpcs:ignore
             echo "'" . get_string('fcontinue', 'mootyper') . "'";?>>
@@ -540,57 +555,56 @@ if ($mootyper->lesson != null) {
         // 20200418 Moved function to ..classes/local/results.php.
         $record = results::get_last_check($mootyper->id);
         if (is_null($record)) {
-            echo '<script type="text/javascript">inittexttoenter("'.$texttoinit.'", 0, 0, 0, 0, 0, "'
-                 .$CFG->wwwroot
-                 .'", '.$mootyper->showkeyboard
-                 .', '.$mootyper->continuoustype
-                 .', '.$mootyper->countmistypedspaces
-                 .', '.$mootyper->countmistakes
-                 .');</script>';
+            echo '<script type="text/javascript">inittexttoenter("' . $texttoinit . '", 0, 0, 0, 0, 0, "'
+                 . $CFG->wwwroot
+                 . '", ' . $mootyper->showkeyboard
+                 . ', ' . $mootyper->continuoustype
+                 . ', ' . $mootyper->countmistypedspaces
+                 . ', ' . $mootyper->countmistakes
+                 . ');</script>';
         } else {
-            echo '<script type="text/javascript">inittexttoenter("'.$texttoinit
-                 .'", 1, '.$record->mistakes
-                 .', '.$record->hits
-                 .', '.$record->timetaken
-                 .', '.$record->attemptid
-                 .', "'.$CFG->wwwroot
-                 .'", '.$mootyper->showkeyboard
-                 .', '.$mootyper->continuoustype
-                 .', '.$mootyper->countmistypedspaces
-                 .', '.$mootyper->countmistakes
-                 .');</script>';
+            echo '<script type="text/javascript">inittexttoenter("' . $texttoinit
+                 . '", 1, ' . $record->mistakes
+                 . ', ' . $record->hits
+                 . ', ' . $record->timetaken
+                 . ', ' . $record->attemptid
+                 . ', "' . $CFG->wwwroot
+                 . '", ' . $mootyper->showkeyboard
+                 . ', ' . $mootyper->continuoustype
+                 . ', ' . $mootyper->countmistypedspaces
+                 . ', ' . $mootyper->countmistakes
+                 . ');</script>';
         }
     } else {
         echo get_string('endlesson', 'mootyper');
         echo '<span class="reportlink"><a href="index.php?id='
-            .$course->id.'">'
-            .get_string('viewallmootypers', 'mootyper')
-            .'</a></span>';
+            . $course->id . '">'
+            . get_string('viewallmootypers', 'mootyper')
+            . '</a></span>';
         echo "<br />";
         if (has_capability('mod/mootyper:viewgrades', context_module::instance($cm->id))) {
             $jlnk4 = $CFG->wwwroot
-                     .'/mod/mootyper/gview.php?id='.$id
-                     .'&n='.$mootyper->id;
-            echo '<a href="'.$jlnk4.'">'
-                          .get_string('viewgrades', 'mootyper')
-                          .'</a><br /><br />';
+                     . '/mod/mootyper/gview.php?id=' . $id
+                     . '&n=' . $mootyper->id;
+            echo '<a href="' . $jlnk4 . '">'
+                          . get_string('viewgrades', 'mootyper')
+                          . '</a><br /><br />';
         }
         if (has_capability('mod/mootyper:viewmygrades', context_module::instance($cm->id))) {
             $jlnk7 = $CFG->wwwroot
-                     ."/mod/mootyper/owngrades.php?id=".$id
-                     ."&n=".$mootyper->id;
-            echo '<a href="'.$jlnk7. '">'
-                          .get_string('viewmygrades', 'mootyper')
-                          .'</a><br /><br />';
+                     . "/mod/mootyper/owngrades.php?id=" . $id
+                     . "&n=" . $mootyper->id;
+            echo '<a href="' . $jlnk7 . '">'
+                          . get_string('viewmygrades', 'mootyper')
+                          . '</a><br /><br />';
         }
     }
-
 } else {
     if (has_capability('mod/mootyper:setup', context_module::instance($cm->id))) {
-        $valnk = $CFG->wwwroot. "/mod/mootyper/mod_setup.php?n=".$mootyper->id;
-        echo '<a href="'.$valnk.'">'
-                      .get_string('fsetup', 'mootyper')
-                      .'</a>';
+        $valnk = $CFG->wwwroot . "/mod/mootyper/mod_setup.php?n=" . $mootyper->id;
+        echo '<a href="' . $valnk . '">'
+                      . get_string('fsetup', 'mootyper')
+                      . '</a>';
     } else {
         echo get_string('notreadyyet', 'mootyper');
     }

@@ -33,7 +33,6 @@ defined('MOODLE_INTERNAL') || die(); // phpcs:ignore
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class lessons {
-
     /**
      * 20160322 Changed call from mod_setup so this is no longer used by exercises.php.
      * Currently this is only used by eins.php which does not need the extra parameters
@@ -48,7 +47,7 @@ class lessons {
         $params = [];
         $lstoreturn = [];
         $sql = "SELECT id, lessonname
-               FROM ".$CFG->prefix."mootyper_lessons
+               FROM " . $CFG->prefix . "mootyper_lessons
                ORDER BY lessonname";
         if ($lessons = $DB->get_records_sql($sql, $params)) {
             foreach ($lessons as $ex) {
@@ -76,11 +75,11 @@ class lessons {
         $lstoreturn = []; // DETERMINE IF USER IS INSIDE A COURSE???
         // 20191124 Changed SQL for Postgre compatibility based on issue #34.
         $sql = "SELECT id, lessonname
-            FROM ".$CFG->prefix."mootyper_lessons
-            WHERE ((visible = 2 AND authorid = ".$u.") OR
-                (visible = 1 AND ".self::is_user_enrolled($u, $c)." = 1) OR
-                (visible = 0 AND ".self::is_user_enrolled($u, $c)." = 1) OR
-                (".self::can_view_edit_all($u, $c)." = 1))
+            FROM " . $CFG->prefix . "mootyper_lessons
+            WHERE ((visible = 2 AND authorid = " . $u . ") OR
+                (visible = 1 AND " . self::is_user_enrolled($u, $c) . " = 1) OR
+                (visible = 0 AND " . self::is_user_enrolled($u, $c) . " = 1) OR
+                (" . self::can_view_edit_all($u, $c) . " = 1))
             ORDER BY lessonname";
 
         if ($lessons = $DB->get_records_sql($sql, $params)) {
@@ -130,11 +129,13 @@ class lessons {
             $crs = $lesson->courseid;
         }
 
-        if (($lesson->editable == 0)
+        if (
+            ($lesson->editable == 0)
             // 20200625 Fix for ticket MooTyper_548. When editable is 1, changed second $id to $crs.
             || (($lesson->editable == 1) && (self::is_user_enrolled($usr, $id)) && ($crs == $lesson->courseid))
             || (($lesson->editable == 2) && ($lesson->authorid == $usr))
-            || (self::can_view_edit_all($usr, $crs))) {
+            || (self::can_view_edit_all($usr, $crs))
+        ) {
             return true;
         } else {
             return false;
@@ -145,7 +146,7 @@ class lessons {
      * Get current exercise for current lesson.
      *
      * @param int $less
-        * @return array
+     * @return array
      */
     public static function get_exercises_by_lesson($less) {
         global $DB;
@@ -198,12 +199,11 @@ class lessons {
 
         $params = [];
         $params[] = $usr;
-        $sql2 = "SELECT * FROM ".$CFG->prefix."user_enrolments
+        $sql2 = "SELECT * FROM " . $CFG->prefix . "user_enrolments
                  WHERE userid = ?";
         $enrolls = $DB->get_records_sql($sql2, $params);
         $rt = count($enrolls) > 0 ? 1 : 0;
 
         return $rt;
     }
-
 }

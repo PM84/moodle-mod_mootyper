@@ -58,17 +58,12 @@ sending an email, leave a comment at
 
 GitHub issue to MooTyper ticket mapping table:
 GitHub # | GitHub issue title | MooTyper ticket | Upgrade status | Notes
-114 | Scheduled task fails repeatedly with no output | MooTyper_1100 | pending-triage | Confidence: Medium. Rationale: Likely related to existing cron_task.php review work.
 115 | Bug: Accent letters not working in German layout | MooTyper_1466 | pending-triage | Confidence: High. Rationale: Tracked as 20231026 MooTyper_1466 - Bug: Accent letters not working in German layout #115.
 
 20170704 MooTyper_1465 - Special characters not working for swiss french in mac #42.
 20180315 MooTyper_1468 - Spanish accent marks not working on Linux or Mac #57 nor Chromebooks #130.
     2026041011 Connectivity restored; Linux validation can proceed on Raspberry Pi host
         10.0.6.58 via VNC. Mac/Chromebook runtime checks remain pending.
-20200521 MooTyper_435 - Need to be able to delete un-need lesson files from lesson folder.
-    20240212 See ticket re:may be in v4.2.4 already! Need to VERIFY.
-    2026032104 Verified not fixed: no admin workflow deletes files from mod/mootyper/lessons,
-        and lsnimport.php still auto-imports any lesson file present in that folder.
 20200521 MooTyper_438 - move contents of the csvexport.php file into gview.php file.
 20200521 MooTyper_436 - Lesson import request to change to file upload.
 20200521 MooTyper_437 - Request for new Audio Exercise Mode.
@@ -87,7 +82,6 @@ GitHub # | GitHub issue title | MooTyper ticket | Upgrade status | Notes
 20200521 MooTyper_466 - Export order looks unordered due to sort on lastname.
 20200521 MooTyper_467 - See about adding Tab as a character to type in an exercise.
 20200521 MooTyper_468 - log link where you have deleted own grade returns to view all grades instead of own grades.
-20200521 MooTyper_469 - Pratice lesson grade remove should check it is last grade before removing.
 20200521 MooTyper_470 - Going to add a category does not create nav bar breadcrumb.
 20200607 MooTyper_495 - Need to verify backup as it appears to be broken.
 20200612 MooTyper_537 - discovered dictation stuff in current code that needs to be eliminated.
@@ -136,8 +130,15 @@ GitHub # | GitHub issue title | MooTyper ticket | Upgrade status | Notes
         6) Add an optional scheduled reset workflow for selected Practice mode activities
             (candidate scope under MooTyper_754): use reset_mootyper_instance() on matching
             IDs using a defined schedule, with dry-run/logging and explicit opt-in selection.
-20231019 MooTyper_1102 - See about changing Suspicion to be based on WPM and character
-    count of the exercise.
+20231014 MooTyper_1100 - Need to revisit cron_task.php as it is not really needed. Commented
+    out as not currently needed.
+    2026041702 Reopened for review: current classes/task/cron_task.php is a heartbeat only and
+        performs no maintenance actions.
+    2026041703 Recommendation: add a scheduled housekeeping pass for stale in-progress attempts
+        (for example no activity for N hours), starting with Practice mode scope; use
+        mootyper_attempts.inprogress + latest mootyper_checks.checktime as the inactivity
+        signal, close matched attempts (set inprogress=0), delete related checks, process in
+        bounded batches, and expose enable/timeout/batch settings with mtrace counts.
 20231026 MooTyper_1466 - Bug: Accent letters not working in German layout #115
 20231106 MooTyper_1112 - English to Hebrew lessons. See ticket. WAITING
 20240111 MooTyper_1168 - Deleting a MooTyper instance seems to leave some items undeleted.
@@ -148,11 +149,6 @@ GitHub # | GitHub issue title | MooTyper ticket | Upgrade status | Notes
 20240115 MooTyper_1170 - Might need a previous_completions.php file. - WAITING
 20240129 MooTyper_1183 - Exercise Completion may need rewrite to account for bad exercise
     grade in Lesson mode.
-20240218 MooTyper_1209 - MooTyper - Grades in Moodle are not updated when deleting own MooTyper
-    exercise grades.
-    2026032109 Verified not fixed: attrem.php calls mootyper_update_grades(), but when a user
-        has no remaining mootyper_grades rows the update path does not explicitly clear the
-        user's gradebook/completion state, so stale values can remain.
 20240326 MooTyper_1227 - Would be nice to have pictures for which finger to use. In progress
     in the MooTyper Keyboard development course with new English(USV5.2)masterlayout version.
 20240524 MooTyper_1248 - Need new KB layout installation code when installing/upgrading MooTyper.
@@ -163,9 +159,22 @@ GitHub # | GitHub issue title | MooTyper ticket | Upgrade status | Notes
 20251122 MooTyper_1387 - Using Amharic in Opera - Mistake details widens the page w/each mistake.
 20260322 MooTyper_1450 - Need to check all the KB layout *.js files for code style errors.
 Moodle Versions
+
 ===============
 
 === 5.1.0 === pending
+20200521 MooTyper_435bt - Need to be able to delete un-need lesson files from lesson folder.
+    20240212 See ticket re:may be in v4.2.4 already! Need to VERIFY.
+    2026032104 Verified not fixed: no admin workflow deletes files from mod/mootyper/lessons,
+        and lsnimport.php still auto-imports any lesson file present in that folder.
+    2026041702 Implemented and validated lesson-delete hardening in lsnexrem.php: delete path
+        now cleans dependent grades/attempts/checks/ratings, updates affected users in the
+        gradebook, removes the physical lesson file only when present, and gracefully re-points
+        activities to the alphabetically first available lesson.
+    2026041703 Live verification on moodledev activity id 8382 (lesson aaaaa12): Delete all
+        exercises from lesson completed; admin View all grades and student View my grades both
+        refreshed cleanly with grades cleared and lesson fallback set to __Micky__. Added guard
+        so stale repeat delete URLs now redirect to exercises instead of throwing an error.
 20200521 MooTyper_439bt - Possible unused function get_typerexercises() and
     get_typerexercisesfull($lsn = 0) in classes/local/lessons.php.
     2026041001 Confirmed no call sites in plugin and removed both functions from
@@ -177,6 +186,11 @@ Moodle Versions
         the overview_help icon/string is shown.
     2026040702 Tested against Moodle 4.0 and higher in both Boost and Classic:
         the overview_help display path appears deprecated (icon/string not shown).
+20200521 MooTyper_469bt - Pratice lesson grade remove should check it is last grade before removing.
+    2026041304 Moved from Deferred. Confirmed scope is individual grade deletion order:
+        a user can only delete their latest grade first, preventing non-terminal gaps that
+        can block lesson completion requirements. This is related to, but distinct from,
+        MooTyper_1127 (exercise deletion risk across multiple users).
 20200621 MooTyper_545bt - Evaluate current suspicion setting.
     2026040901 Moved from Deferred after rework of suspicion evaluation.
     2026040902 Suspicion now tracks counter rollback anomalies and long no-progress gaps
@@ -193,6 +207,20 @@ Moodle Versions
 20230513 MooTyper_902bt - Settings are incomplete on the settings.php and mod_form.php pages.
     20260405 Folded GitHub issue #133 into MooTyper_902 and moved from Deferred;
         fix was included in v5.0.0 (Build: 2026032100).
+20231019 MooTyper_1102bt - See about changing Suspicion to be based on WPM and character
+    count of the exercise.
+    2026041303 Moved from Deferred after linking to MooTyper_545 rework; ticket scope is
+        covered by the new suspicion calculation logic added under MooTyper_545 entries
+        2026040902 and 2026040903.
+20240218 MooTyper_1209bt - MooTyper - Grades in Moodle are not updated when deleting own MooTyper
+    exercise grades.
+    2026032109 Verified not fixed: attrem.php calls mootyper_update_grades(), but when a user
+        has no remaining mootyper_grades rows the update path does not explicitly clear the
+        user's gradebook/completion state, so stale values can remain.
+    2026041701 Implemented and validated fix in lib.php: mootyper_update_grades() now sends
+        per-user null-grade updates when no rows remain (for both rating and whole-activity
+        grade items), and uses per-user aggregate grade updates to avoid stale 100 carryover.
+        Verified on moodledev activity id 8382 (Frank Furter): gradebook value cleared to null.
 20241030 MooTyper_1332bt - Need a Vietnamese(VNV5) Keyboard Layout.
     2026041003 Confirmed layout is installable/selectable via generic layout import.
     2026041004 Fixed Vietnamese(VNV5) and Vietnamese(VNIV5) JS key reset handling and
@@ -245,6 +273,92 @@ Moodle Versions
         instead of getcwd(), and treat already-missing layout files as non-fatal.
     2026041102 Live validation passed: deleting Spanish(V4) from layouts.php completed
         cleanly when physical layout files were absent, with DB cleanup and normal return.
+    2026041301 Discovered downstream crash in classes/local/keyboards.php when attempting
+        to view/use an activity that referenced a deleted layout; get_instance_layout_js_file()
+        and get_instance_layout_file() called get_record() and tried to access ->name on bool
+        (false return value when record not found). Added fallback logic to find first available
+        layout on demand and gracefully switch to the fallback if requested layout is missing.
+    2026041302 Extended fallback logic to also verify layout files actually exist on disk;
+        now searches for a complete layout (both .php and .js files present) when the
+        requested layout record exists but files are orphaned, or when the record doesn't exist.
+20260413 MooTyper_1470bt - The layout folder contains multiple Danish files - investigate on
+    what to keep.
+    2026041301 Deleted V4 Danish layout files (Danish(DAV4).php/.js and Danish(DKV4).php/.js)
+        after verifying they were orphaned and no longer in use.
+    2026041302 Corrected file comments in both Danish(DAV5) and Danish(DKV5) layout files;
+        both had been mislabeled as DKV5 in their docstrings.
+    2026041303 Follow-up review of DK vs DA naming: DK aligns to ISO country code for
+        Denmark, while DA appears to be a legacy/context-specific label. Initial on-screen
+        layout comparison shows no visible differences beyond the name label; physical
+        keyboard validation is pending before deciding whether DAV5 should be retired.
+20260414 MooTyper_1471bt - Investigate adding a Cherokee keyboard layout.
+    2026041401 Moved from Deferred and added initial Cherokee scaffold files:
+        layouts/Cherokee(CWYV5).php and layouts/Cherokee(CWYV5).js.
+    2026041402 Scaffold is based on English(UKV5) so the ISO-style extra key area
+        (including the key left of Z) is available for physical keyboard validation;
+        next step is iterative Cherokee character mapping and runtime typing tests.
+    2026041601 Added Cherokee(CWYV5) multi-codepoint cluster grouping in typer.js so
+        number-row combinations (for example ᏣᎳᎩ, ᎣᏏᏲ, and ᏩᏙ) map to a single
+        physical key target for highlighting and scoring.
+    2026041602 Added Cherokee(CWYV5) follow-up handling for CWY transliteration outputs
+        (CWY/OSY/WDO) and fixed key-id runtime issues in Cherokee(CWYV5).js, so
+        number-row combo keys highlight on the number row instead of the first letter key.
+    2026041603 Reworked thenFinger() in Cherokee(CWYV5).js to use key-id mapping so
+        finger highlight colors follow the actual key positions in this layout.
+    2026041604 Hardened Cherokee(CWYV5).js key highlighting by guarding missing key IDs
+        and replacing brittle getKeyID() condition chains with a deterministic
+        Cherokee/CWY token-to-key map, preventing runtime stalls.
+    2026041605 Added Cherokee transliteration alias support for KWY/kwy alongside CWY/cwy
+        in Cherokee(CWYV5).js and typer.js cluster recognition, so key-1 combined targets
+        no longer fall back to spacebar highlighting when lessons use the KWY form.
+    2026041606 Corrected Cherokee(CWYV5).js token detection for the two-character ᏩᏙ output
+        to use a two-codepoint slice (not three), preventing missed key targets and
+        spacebar fallback highlighting on that number-row combo key.
+    2026041607 Fixed Cherokee(CWYV5).js key-highlight fallback by normalizing Cherokee
+        lowercase/uppercase syllabic forms in getKeyID(), so toLowerCase() paths resolve
+        to intended physical key IDs instead of defaulting to jkeyspace.
+    2026041608 Added missing Cherokee(CWYV5) shifted-key mapping for Ꮚ (backquote key)
+        and explicit shifted-syllabic right/left shift-token routing in keyboardElement(),
+        so shifted row-key exercises highlight the correct key and shift side.
+    2026041609 Extended Cherokee(CWYV5) shifted-syllabic shift-token routing for row 2
+        (Q..] keys), so shifted row-2 exercises highlight the correct shift key while
+        still crediting typed keys correctly.
+    2026041610 Extended Cherokee(CWYV5) shifted-syllabic shift-token routing for row 3
+        (A..# keys) and hardened jkey# DOM lookup in key-highlighting helpers, so row-3
+        shifted exercises highlight shift keys correctly and the row's final key remains reliable.
+    2026041611 Corrected Cherokee(CWYV5) row-3 shift-token classification so unshifted
+        row-3 syllabics (for example ᎠᏍᏗ...) no longer light shift keys, while true shifted
+        row-3 syllabics (for example ᏌᏎᏐ...) still light the proper shift side.
+    2026041612 Remapped Cherokee(CWYV5) row-3 final syllabics (Ꮹ/Ꮾ) to jkey# and added
+        shifted Ꮾ to row-3 shift-left token routing, so the last key before Enter highlights
+        in the intended row-3 position instead of the ISO key left of Z.
+    2026041613 Swapped Cherokee(CWYV5).php key IDs so the key before Enter uses
+        jkeybackslash and the ISO key left of Z uses jkey#, then aligned JS mapping for
+        Ꮹ/Ꮾ to jkeybackslash to match intended Cherokee layout key naming.
+    2026041614 Extended Cherokee(CWYV5) shifted-token routing to cover row-4 uppercase
+        syllabics (#..B and N../ groups) so shift keys highlight correctly, and hardened
+        typer.js physical-key fallback to accept IntlBackslash/Backslash variants for
+        jkey# and jkeybackslash when a keyboard driver emits no printable character.
+    2026041615 Updated Cherokee(CWYV5).php to leave the ISO key left of Z visually blank
+        for the Sequoyah Cherokee Nation layout choice while retaining runtime key handling
+        for cross-keyboard compatibility.
+    2026041616 Final cleanup after the Sequoyah layout decision: removed remaining
+        Cherokee jkey# highlight/token assumptions in Cherokee(CWYV5).js and typer.js,
+        while keeping jkeybackslash physical-key fallback tolerant of Backslash/
+        IntlBackslash scan codes.
+20260417 MooTyper_1473bt - Feature Request - Relocate mootyper/*.js files to a js folder.
+    2026041701 Created mod/mootyper/js, moved typer.js + typer(ETV7).js + typer(KNV7).js,
+        and updated view.php script includes to the new js/ paths.
+    2026041801 Fixed Korean V7 runtime script selection in view.php to treat KNV7/KRV7/KNR7
+        layout filename variants as Korean V7, so the standalone js/typer(KRV7).js loader is used
+        and key highlighting works again.
+    2026041802 Normalized Korean V7 naming to KR conventions: renamed layout PHP to
+        layouts/Korean(KRV7).php, updated Korean(KRV7).js THE_LAYOUT/labels, and renamed
+        standalone typer file to js/typer(KRV7).js with matching loader updates.
+20260422  MooTyper_1474bt - MooTyper - Need a Hindi keyboard layout. Had an old ticket for
+    this keyboard layout, but closed it so starting this new one. Started development.
+    2026042301 Completed Hindi(HIV5) row-level validation and fixed shifted-key highlighting
+        for number row, QWERTY row, and home row cluster handling.
 
 
 === 5.0.0 === 2026032100
@@ -384,8 +498,6 @@ Moodle Versions
     deletedblo in the layouts.php file.
 
 === 4.2.8 === (Build: 2024032100)
-20231014 MooTyper_1100v - Need to revisit cron_task.php as it is not really needed. Commented
-    out as not currently needed.
 20240110 MooTyper_1164v - Completion does not work for, Require lesson completion,
     by itself. See ticket for current progress. Possibly still needs work.
 20240215 MooTyper_1207v - Lesson completion not staying checked. Changed the setting from just

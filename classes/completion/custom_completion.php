@@ -119,8 +119,10 @@ class custom_completion extends activity_custom_completion {
 
         if ($rule == 'completionexercise') {
             // 20240219 If the $mootyper->completionexercise is set to >0, check the status for completion.
-            if ($status = $mootyper->completionexercise <=
-                $DB->count_records_sql($finalexercisecompletesql, $params)) {
+            if (
+                $status = $mootyper->completionexercise <=
+                $DB->count_records_sql($finalexercisecompletesql, $params)
+            ) {
                 $status = $mootyper->completionexercise = 1;
             } else {
                 $status = $mootyper->completionexercise = 0;
@@ -129,14 +131,18 @@ class custom_completion extends activity_custom_completion {
                 $mootypergrade = $DB->get_record_sql($finalmootypergradesql, $params);
             if (($mootyper->isexam == 1) && ($mootypergrade)) {
                 $status = $mootyper->completionlesson = 1;
-            } else if (($status = $mootyper->completionexercise <=
-                    $DB->count_records_sql($finalexercisecompletesql, $params)) && ($mootyper->completionexercise <> 0)) {
+            } else if (
+                ($status = $mootyper->completionexercise <=
+                    $DB->count_records_sql($finalexercisecompletesql, $params)) && ($mootyper->completionexercise <> 0)
+            ) {
                 $status = $mootyper->completionlesson = 1;
             } else {
                 // 20240512 Set the status for completionlesson, where completionless is set and completionexercise is not set,
                 // and all exercises of the current lesson are complete.
-                if (($mootyper->completionlesson == 1) && ($mootyper->completionexercise == 0)
-                    && ($exercisecountforthislesson <= $DB->count_records_sql($finalexercisecompletesql, $params))) {
+                if (
+                    ($mootyper->completionlesson == 1) && ($mootyper->completionexercise == 0)
+                    && ($exercisecountforthislesson <= $DB->count_records_sql($finalexercisecompletesql, $params))
+                ) {
                     $status = $mootyper->completionlesson = 1;
                 } else {
                     $status = $mootyper->completionlesson = 0;

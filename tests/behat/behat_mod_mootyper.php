@@ -27,8 +27,8 @@
 
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given,
-Behat\Gherkin\Node\TableNode as TableNode;
+use Behat\Behat\Context\Step\Given,
+Behat\Gherkin\Node\TableNode;
 use Behat\Behat\Context\Step\Then;
 use Behat\Mink\Exception\ElementNotFoundException;
 
@@ -41,7 +41,6 @@ use Behat\Mink\Exception\ElementNotFoundException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_mod_mootyper extends behat_base {
-
     /** @var int Seeded mootyper id for delete-guard regression checks. */
     protected $seededmootyperid = 0;
 
@@ -53,6 +52,80 @@ class behat_mod_mootyper extends behat_base {
 
     /** @var int Newer seeded grade id. */
     protected $seedednewergradeid = 0;
+
+    /**
+     * Resolve the current MooTyper instance id from page state.
+     *
+     * @return int
+     */
+    protected function get_current_mootyper_id_from_page(): int {
+        $mootyperid = (int)$this->getSession()->evaluateScript(
+            "parseInt((document.querySelector('input[name=\"rpSityperId\"]') || {}).value || '0', 10);"
+        );
+        if (!empty($mootyperid)) {
+            return $mootyperid;
+        }
+
+        $url = $this->getSession()->getCurrentUrl();
+        $query = parse_url($url, PHP_URL_QUERY);
+        if (!empty($query)) {
+            parse_str($query, $params);
+            if (!empty($params['id'])) {
+                $cm = get_coursemodule_from_id('mootyper', (int)$params['id'], 0, false, MUST_EXIST);
+                return (int)$cm->instance;
+            }
+            if (!empty($params['n'])) {
+                return (int)$params['n'];
+            }
+        }
+
+        throw new \Exception('Unable to detect current MooTyper id from page state.');
+    }
+
+    /**
+     * Seed a tiny lesson and configure the current MooTyper to use it.
+     *
+     * @Given /^the current mootyper uses layout "([^"]*)" with a tiny lesson "([^"]*)" containing "([^"]*)"$/
+     * @param string $layoutname
+     * @param string $lessonname
+     * @param string $texttotype
+     */
+    public function thecurrentmootyperuseslayoutwithatinylessoncontaining($layoutname, $lessonname, $texttotype) {
+        global $DB, $USER;
+
+        $mootyperid = $this->get_current_mootyper_id_from_page();
+        $mootyper = $DB->get_record('mootyper', ['id' => $mootyperid], '*', MUST_EXIST);
+        $layout = $DB->get_record('mootyper_layouts', ['name' => $layoutname], '*', MUST_EXIST);
+
+        $lesson = new \stdClass();
+        $lesson->lessonname = $lessonname;
+        $lesson->authorid = !empty($USER->id) ? $USER->id : 0;
+        $lesson->visible = 0;
+        $lesson->editable = 2;
+        $lesson->courseid = $mootyper->course;
+        $lessonid = $DB->insert_record('mootyper_lessons', $lesson, true);
+
+        $exercise = new \stdClass();
+        $exercise->texttotype = str_replace(["\r\n", "\r", "\n"], '\\n', $texttotype);
+        $exercise->exercisename = 'Behat harness exercise';
+        $exercise->lesson = $lessonid;
+        $exercise->snumber = 1;
+        $DB->insert_record('mootyper_exercises', $exercise, true);
+
+        $update = new \stdClass();
+        $update->id = $mootyper->id;
+        $update->lesson = $lessonid;
+        $update->exercise = 0;
+        $update->layout = $layout->id;
+        $update->isexam = 0;
+        $update->showkeyboard = 1;
+        $update->continuoustype = 0;
+        $update->countmistypedspaces = 0;
+        $update->countmistakes = 0;
+        $update->completionexercise = 1;
+        $update->timemodified = time();
+        $DB->update_record('mootyper', $update);
+    }
 
     /**
      * Assert Continue gate behavior directly in the browser:
@@ -146,8 +219,8 @@ class behat_mod_mootyper extends behat_base {
             $pageuserid = (int)$this->getSession()->evaluateScript(
                 "parseInt((document.querySelector('input[name=\"rpUser\"]') || {}).value || '0', 10);"
             );
-            if (empty($mootyperid) || empty($pageuserid)) {
-                throw new \Exception('Unable to detect MooTyper id or page user id from current page context.');
+        if (empty($mootyperid) || empty($pageuserid)) {
+            throw new \Exception('Unable to detect MooTyper id or page user id from current page context.');
         }
 
         $mootyper = $DB->get_record('mootyper', ['id' => $mootyperid], '*', MUST_EXIST);
@@ -373,7 +446,7 @@ class behat_mod_mootyper extends behat_base {
      */
     public function themootyperexerciseinfoshouldcontain($expectedtext) {
         $lastseen = '';
-        $this->spin(function() use ($expectedtext, &$lastseen) {
+        $this->spin(function () use ($expectedtext, &$lastseen) {
             $text = $this->getSession()->evaluateScript(
                 'document.getElementById("mootyper-exerciseinfo") ? '
                 . 'document.getElementById("mootyper-exerciseinfo").textContent : "";'
@@ -399,7 +472,7 @@ class behat_mod_mootyper extends behat_base {
      */
     public function themootyperexerciseinfoshouldnotcontain($unexpectedtext) {
         $lastseen = '';
-        $this->spin(function() use ($unexpectedtext, &$lastseen) {
+        $this->spin(function () use ($unexpectedtext, &$lastseen) {
             $text = $this->getSession()->evaluateScript(
                 'document.getElementById("mootyper-exerciseinfo") ? '
                 . 'document.getElementById("mootyper-exerciseinfo").textContent : "";'
@@ -545,19 +618,29 @@ class behat_mod_mootyper extends behat_base {
         $selectfield = $this->getSession()->getPage()->findField($select);
 
         if (null === $selectfield) {
-            throw new \Exception(sprintf('The select "%s" was not found in the page %s',
-                $select, $this->getSession()->getCurrentUrl()));
+            throw new \Exception(sprintf(
+                'The select "%s" was not found in the page %s',
+                $select,
+                $this->getSession()->getCurrentUrl()
+            ));
         }
 
         $optionfield = $selectfield->find('xpath', "//option[@selected]");
         if (null === $optionfield) {
-            throw new \Exception(sprintf('No option is selected in the %s select in the page %s',
-                $select, $this->getSession()->getCurrentUrl()));
+            throw new \Exception(sprintf(
+                'No option is selected in the %s select in the page %s',
+                $select,
+                $this->getSession()->getCurrentUrl()
+            ));
         }
 
         if ($optionfield->getValue() != $optionvalue) {
-            throw new \Exception(sprintf('The option "%s" was not selected in the page %s, %s was selected',
-                $optionvalue, $this->getSession()->getCurrentUrl(), $optionfield->getValue()));
+            throw new \Exception(sprintf(
+                'The option "%s" was not selected in the page %s, %s was selected',
+                $optionvalue,
+                $this->getSession()->getCurrentUrl(),
+                $optionfield->getValue()
+            ));
         }
     }
 
@@ -568,45 +651,44 @@ class behat_mod_mootyper extends behat_base {
      * @param string $keyid
      */
     public function themootyperkeyshouldbehighlightedasnext($keyid) {
-        $script = "
-            (function() {
-                var el = document.getElementById('" . addslashes($keyid) . "');
-                if (!el) {
-                    return 'missing';
-                }
-
-                var cls = el.className || '';
-                if (cls.indexOf('next') === 0) {
-                    return cls;
-                }
-
-                // Initialize first-key guidance when page has not focused the input yet.
-                var input = document.getElementById('tb1');
-                if (input) {
-                    try {
-                        input.focus();
-                    } catch (e) {
-                        // Ignore focus errors and continue with fallback.
-                    }
-                }
-                if (typeof focusSet === 'function') {
-                    try {
-                        focusSet();
-                    } catch (e) {
-                        // Ignore and return the class after attempted initialization.
-                    }
-                }
-
-                return el.className || '';
-            })();
-        ";
-        $classname = $this->getSession()->evaluateScript($script);
-        if ($classname === 'missing') {
+        $page = $this->getSession()->getPage();
+        $selector = '#' . $keyid;
+        $keyel = $page->find('css', $selector);
+        if (!$keyel) {
             throw new \Exception('Key element not found: ' . $keyid);
         }
-        if (strpos($classname, 'next') !== 0) {
-            throw new \Exception('Expected key ' . $keyid . ' to be highlighted as next, current class is: ' . $classname);
+
+        $input = $page->find('css', '#tb1');
+        if ($input) {
+            $input->click();
         }
+
+        $classname = (string)$keyel->getAttribute('class');
+        if (strpos($classname, 'next') === 0) {
+            return;
+        }
+
+        // Retry briefly because focus/keyboard highlighting can lag in WebDriver runs.
+        for ($i = 0; $i < 20; $i++) {
+            $this->getSession()->executeScript(
+                "try { var input = document.getElementById('tb1'); if (input) { input.focus(); } } catch (e) {}"
+            );
+            $this->getSession()->executeScript(
+                "try { if (typeof focusSet === 'function') { focusSet(); } } catch (e) {}"
+            );
+            usleep(200000);
+
+            $keyel = $page->find('css', $selector);
+            if (!$keyel) {
+                break;
+            }
+            $classname = (string)$keyel->getAttribute('class');
+            if (strpos($classname, 'next') === 0) {
+                return;
+            }
+        }
+
+        throw new \Exception('Expected key ' . $keyid . ' to be highlighted as next, current class is: ' . $classname);
     }
 
     /**
@@ -805,6 +887,25 @@ class behat_mod_mootyper extends behat_base {
                         input.dispatchEvent(ev);
                     }
 
+                    function dispatchSequenceAwareComposition(ch) {
+                        if (typeof isCharSequence !== 'function' || typeof getSequence !== 'function') {
+                            return false;
+                        }
+                        if (!isCharSequence(ch)) {
+                            return false;
+                        }
+                        var seq = getSequence(ch);
+                        if (!Array.isArray(seq) || !seq.length) {
+                            return false;
+                        }
+                        dispatchComposition('compositionstart', '');
+                        seq.forEach(function(part) {
+                            dispatchComposition('compositionupdate', part);
+                        });
+                        dispatchComposition('compositionend', ch);
+                        return true;
+                    }
+
                     function dispatchViaKeyPressed(ch) {
                         if (typeof keyPressed !== 'function') {
                             return false;
@@ -844,6 +945,9 @@ class behat_mod_mootyper extends behat_base {
                     var syllable = /[\\uAC00-\\uD7A3]/;
 
                     chars.forEach(function(ch) {
+                        if (dispatchSequenceAwareComposition(ch)) {
+                            return;
+                        }
                         if (syllable.test(ch)) {
                             dispatchComposition('compositionstart', '');
                             dispatchComposition('compositionupdate', ch);

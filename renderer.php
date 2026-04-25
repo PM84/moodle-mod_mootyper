@@ -46,9 +46,9 @@ class mod_mootyper_renderer extends plugin_renderer_base {
         $activityname = format_string($mootyper->name, true);
 
         if (empty($extrapagetitle)) {
-            $title = $this->page->course->shortname.": ".$activityname;
+            $title = $this->page->course->shortname . ": " . $activityname;
         } else {
-            $title = $this->page->course->shortname.": ".$activityname.": ".$extrapagetitle;
+            $title = $this->page->course->shortname . ": " . $activityname . ": " . $extrapagetitle;
         }
 
         $context = context_module::instance($cm->id);
@@ -100,10 +100,10 @@ class mod_mootyper_renderer extends plugin_renderer_base {
         $output .= $this->output->box_start('center');
         $output .= (get_string('notavailable', 'mootyper'));
         $output .= $message;
-        $output .= $this->output->box('<a href="'.$CFG->wwwroot.'/course/view.php?id='
-                . $this->page->course->id .'">'
+        $output .= $this->output->box('<a href="' . $CFG->wwwroot . '/course/view.php?id='
+                . $this->page->course->id . '">'
                 . get_string('returnto', 'mootyper', format_string($this->page->course->fullname, true))
-                .'</a>', 'mootyperbutton standardbutton');
+                . '</a>', 'mootyperbutton standardbutton');
         $output .= $this->output->box_end();
         $output .= $this->output->box_end();
         return $output;
@@ -119,19 +119,19 @@ class mod_mootyper_renderer extends plugin_renderer_base {
         global $CFG;
         $output = $this->output->box_start('password-form');
         $output .= $this->output->box_start('generalbox boxaligncenter');
-        $output .= '<form id="password" method="post" action="'.$CFG->wwwroot.'/mod/mootyper/view.php" autocomplete="off">';
+        $output .= '<form id="password" method="post" action="' . $CFG->wwwroot . '/mod/mootyper/view.php" autocomplete="off">';
         $output .= '<fieldset class="invisiblefieldset center">';
-        $output .= '<input type="hidden" name="id" value="'. $this->page->cm->id .'" />';
-        $output .= '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        $output .= '<input type="hidden" name="id" value="' . $this->page->cm->id . '" />';
+        $output .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         if ($failedattempt) {
             $output .= $this->output->notification(get_string('loginfail', 'mootyper'));
         }
-        $output .= get_string('passwordprotectedlesson', 'mootyper', format_string($mootyper->name)).'<br /><br />';
-        $output .= get_string('enterpassword', 'mootyper')." <input type=\"password\" name=\"userpassword\" /><br /><br />";
+        $output .= get_string('passwordprotectedlesson', 'mootyper', format_string($mootyper->name)) . '<br /><br />';
+        $output .= get_string('enterpassword', 'mootyper') . " <input type=\"password\" name=\"userpassword\" /><br /><br />";
         $output .= "<div class='lessonbutton standardbutton submitbutton'><input type='submit' value='"
-                .get_string('continue', 'mootyper')."' /></div>";
+                . get_string('continue', 'mootyper') . "' /></div>";
         $output .= " <div class='lessonbutton standardbutton submitbutton'><input type='submit' name='backtocourse' value='"
-                .get_string('cancel', 'mootyper')."' /></div>";
+                . get_string('cancel', 'mootyper') . "' /></div>";
         $output .= '</fieldset></form>';
         $output .= $this->output->box_end();
         $output .= $this->output->box_end();

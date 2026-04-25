@@ -51,7 +51,6 @@ function xmldb_mootyper_upgrade($oldversion) {
     // First example, some fields were added to install.xml on 2007/04/01.
 
     if ($oldversion < 2007040100) {
-
         // Define field course to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
@@ -72,8 +71,16 @@ function xmldb_mootyper_upgrade($oldversion) {
 
         // Define field introformat to be added to mootyper.
         $table = new xmldb_table('mootyper');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'intro');
+        $field = new xmldb_field(
+            'introformat',
+            XMLDB_TYPE_INTEGER,
+            '4',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'intro'
+        );
 
         // Add field introformat.
         if (!$dbman->field_exists($table, $field)) {
@@ -89,11 +96,18 @@ function xmldb_mootyper_upgrade($oldversion) {
     // two more fields and one index were added to install.xml (note the micro increment
     // "01" in the last two digits of the version.
     if ($oldversion < 2007040101) {
-
         // Define field timecreated to be added to mootyper.
         $table = new xmldb_table('mootyper');
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'introformat');
+        $field = new xmldb_field(
+            'timecreated',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'introformat'
+        );
 
         // Add field timecreated.
         if (!$dbman->field_exists($table, $field)) {
@@ -102,8 +116,16 @@ function xmldb_mootyper_upgrade($oldversion) {
 
         // Define field timemodified to be added to mootyper.
         $table = new xmldb_table('mootyper');
-        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'timecreated');
+        $field = new xmldb_field(
+            'timemodified',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'timecreated'
+        );
 
         // Add field timemodified.
         if (!$dbman->field_exists($table, $field)) {
@@ -133,7 +155,6 @@ function xmldb_mootyper_upgrade($oldversion) {
     }
     // New field usepassword added after timeclose for version 3.1.2.
     if ($oldversion < 2016080700) {
-
         // Define field usepassword to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('usepassword', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'timeclose');
@@ -148,7 +169,6 @@ function xmldb_mootyper_upgrade($oldversion) {
     }
     // New field continuoustyping added after showkeyboard for version 3.1.4.
     if ($oldversion < 2017060400.2) {
-
         // Define field continuoustype to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('continuoustype', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'showkeyboard');
@@ -163,7 +183,6 @@ function xmldb_mootyper_upgrade($oldversion) {
     }
     // New field countmistypedspaces added after continuoustype for version 3.3.0.
     if ($oldversion < 2017090200) {
-
         // Define field countmistypedspaces to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('countmistypedspaces', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'continuoustype');
@@ -178,7 +197,6 @@ function xmldb_mootyper_upgrade($oldversion) {
     }
     // Three new fields added after countmistypedspaces for version 3.4.1.
     if ($oldversion < 2017120100) {
-
         // Define field statsbgc to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('statsbgc', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'countmistypedspaces');
@@ -208,7 +226,6 @@ function xmldb_mootyper_upgrade($oldversion) {
     }
     // One new field added after keybdbgc for version 3.4.3.
     if ($oldversion < 2018021100.5) {
-
         // Define field textalign to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('textalign', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'keybdbgc');
@@ -222,7 +239,6 @@ function xmldb_mootyper_upgrade($oldversion) {
     }
     // Four new fields added after textalign for version 3.5.0.
     if ($oldversion < 2018033000) {
-
         // Define field cursorcolor to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('cursorcolor', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'textalign');
@@ -264,7 +280,6 @@ function xmldb_mootyper_upgrade($oldversion) {
 
     // Three new fields added for version 3.8.2.
     if ($oldversion < 2019121400) {
-
         // Define field requiredwpm to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('requiredwpm', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'requiredgoal');
@@ -309,7 +324,6 @@ function xmldb_mootyper_upgrade($oldversion) {
     }
     // Five new fields added for version 3.9.1.
     if ($oldversion < 2020073100) {
-
         // Define field assessed to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('assessed', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'timeclose');
@@ -373,7 +387,6 @@ function xmldb_mootyper_upgrade($oldversion) {
     }
     // One new field added for v4.2.1.
     if ($oldversion < 2022081000) {
-
         // Define field completionlesson to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('completionlesson', XMLDB_TYPE_INTEGER, '2', null, null, null, '0', 'countmistakes');
@@ -388,7 +401,6 @@ function xmldb_mootyper_upgrade($oldversion) {
     }
     // New completion fields added for v4.2.4.
     if ($oldversion < 2023100500) {
-
         // Define field completionexercise to be added to mootyper.
         $table = new xmldb_table('mootyper');
         $field = new xmldb_field('completionexercise', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '1', 'countmistakes');
@@ -400,9 +412,16 @@ function xmldb_mootyper_upgrade($oldversion) {
 
         // Define field completionprecision to be added to mootyper.
         $table = new xmldb_table('mootyper');
-        $field = new xmldb_field('completionprecision',
-                                 XMLDB_TYPE_INTEGER, '2', null,
-                                 XMLDB_NOTNULL, null, '0', 'completionlesson');
+        $field = new xmldb_field(
+            'completionprecision',
+            XMLDB_TYPE_INTEGER,
+            '2',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'completionlesson'
+        );
 
         // Conditionally launch add field completionprecision.
         if (!$dbman->field_exists($table, $field)) {
@@ -420,9 +439,16 @@ function xmldb_mootyper_upgrade($oldversion) {
 
         // Define field completionmootyperpass to be added to mootyper.
         $table = new xmldb_table('mootyper');
-        $field = new xmldb_field('completionmootypergrade',
-                                 XMLDB_TYPE_INTEGER, '2', null,
-                                 XMLDB_NOTNULL, null, '0', 'completionwpm');
+        $field = new xmldb_field(
+            'completionmootypergrade',
+            XMLDB_TYPE_INTEGER,
+            '2',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'completionwpm'
+        );
 
         // Conditionally launch add field completionmootyperpass.
         if (!$dbman->field_exists($table, $field)) {

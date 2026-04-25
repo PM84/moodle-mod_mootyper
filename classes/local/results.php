@@ -34,23 +34,22 @@ defined('MOODLE_INTERNAL') || die(); // phpcs:ignore
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class results {
-
     /**
      * Get the last keystroke and check if correct.
      * @param int $mid
      */
     public static function get_last_check($mid) {
         global $USER, $DB, $CFG;
-        $sql = "SELECT * FROM ".$CFG->prefix."mootyper_checks".
-               " JOIN ".$CFG->prefix."mootyper_attempts ON "
-                       .$CFG->prefix."mootyper_attempts.id = "
-                       .$CFG->prefix."mootyper_checks.attemptid".
-               " WHERE ".$CFG->prefix."mootyper_attempts.mootyperid = "
-                        .$mid." AND "
-                        .$CFG->prefix."mootyper_attempts.userid = "
-                        .$USER->id.
-               " AND ".$CFG->prefix."mootyper_attempts.inprogress = 1".
-               " ORDER BY ".$CFG->prefix."mootyper_checks.checktime DESC LIMIT 1";
+        $sql = "SELECT * FROM " . $CFG->prefix . "mootyper_checks" .
+               " JOIN " . $CFG->prefix . "mootyper_attempts ON "
+                       . $CFG->prefix . "mootyper_attempts.id = "
+                       . $CFG->prefix . "mootyper_checks.attemptid" .
+               " WHERE " . $CFG->prefix . "mootyper_attempts.mootyperid = "
+                        . $mid . " AND "
+                        . $CFG->prefix . "mootyper_attempts.userid = "
+                        . $USER->id .
+               " AND " . $CFG->prefix . "mootyper_attempts.inprogress = 1" .
+               " ORDER BY " . $CFG->prefix . "mootyper_checks.checktime DESC LIMIT 1";
         if ($rec = $DB->get_record_sql($sql, [])) {
             return $rec;
         } else {
@@ -71,7 +70,7 @@ class results {
             return false;
         }
 
-        usort($checks, function($a, $b) {
+        usort($checks, function ($a, $b) {
             return (int)$a['checktime'] <=> (int)$b['checktime'];
         });
 
@@ -139,10 +138,12 @@ class results {
             $activecps = $typedchars > 0 ? ($typedchars / $activeelapsed) : 0;
             $activewpm = $activecps * 12;
             $idlesuspicionthreshold = max(120, (int)($timelimitseconds * 0.30));
-            if ($idletrailseconds >= $idlesuspicionthreshold
+            if (
+                $idletrailseconds >= $idlesuspicionthreshold
                 && $completionratio < 0.90
                 && $typedchars >= 120
-                && $activewpm >= 20) {
+                && $activewpm >= 20
+            ) {
                 return true;
             }
 
@@ -428,7 +429,7 @@ class results {
         if ($v <= 1) {
             $mode['precisionfield'] = get_string('nomode', 'mootyper');
         } else {
-            $mode['precisionfield'] = format_float($total).('%');
+            $mode['precisionfield'] = format_float($total) . ('%');
         }
 
         // Calculate mode for Time Completed.
@@ -519,7 +520,7 @@ class results {
         $minutes = floor($diff3 / 60);
         $diff4 = ($diff1 - ((60 * 60 * 24) * $days) - (60 * 60 * $hours) - (60 * $minutes));
         $seconds = floor($diff4 / 60);
-        $range['timetaken'] = $days.' d '.$hours.' h '.$minutes.' m ';
+        $range['timetaken'] = $days . ' d ' . $hours . ' h ' . $minutes . ' m ';
 
         $range['wpm'] = max($wpm) - min($wpm);
         $range['grade'] = max($grade) - min($grade);
@@ -713,11 +714,11 @@ class results {
      */
     public static function get_grade_entry($mootyper, $user, $exercise, $timetaken) {
         global $USER, $DB, $CFG;
-        $sql = "SELECT * FROM ".$CFG->prefix."mootyper_grades".
-               " WHERE mootyper = ".$mootyper
-                        ." AND userid = ".$user
-                        ." AND exercise = ".$exercise
-                        ." AND timetaken = ".$timetaken.
+        $sql = "SELECT * FROM " . $CFG->prefix . "mootyper_grades" .
+               " WHERE mootyper = " . $mootyper
+                        . " AND userid = " . $user
+                        . " AND exercise = " . $exercise
+                        . " AND timetaken = " . $timetaken .
                " ORDER BY timetaken";
 
         if ($rec = $DB->get_record_sql($sql, [])) {
