@@ -22,8 +22,9 @@
  * @copyright  2016 onwards AL Rachels (drachels@drachels.com)
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+// phpcs:disable Generic.Files.LineLength.TooLong
 
- require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+ require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
  require_login($course, true, $cm);
 ?>
 <div id="innerKeyboard" style="margin: 0px auto;display: inline-block;
@@ -48,24 +49,24 @@ echo (isset($displaynone) && ($displaynone == true)) ? 'display:none;' : '';
         <div id="jkey0" class="normal" style='text-align:left;'>)<br>0</div>                                                    
         <div id="jkeyminus" class="normal" style='text-align:left;'>_<br>-</div>                                                
         <div id="jkey=" class="normal" style='text-align:left;'>+<br>=</div>                                                    
-        <div id="jkeybackspace" class="normal"  style="width: 92px;">Backspace</div>                                        
-    </div>   
-        <div style="float: left;">                                                                                                  
-            <div class="mtrow" style='float: left; margin-left:5px; font-size: 15px !important; line-height: 15px'>                     
-                <div id="jkeytab" class="normal" style="width: 65px;">Tab</div>                                                         
-                <div id="jkeyq" class="normal" style='text-align:left;'>Q<br>ቅ</div>                                                    
-                <div id="jkeyw" class="normal" style='text-align:left;'>W<br>ው</div>                                                    
-                <div id="jkeye" class="normal" style='text-align:left;'>E<br>እ</div>                                                    
-                <div id="jkeyr" class="normal" style='text-align:left;'>R<br>ር</div>                                                   
-                <div id="jkeyt" class="normal" style='text-align:left;'>T<br>ት</div>                                                    
-                <div id="jkeyy" class="normal" style='text-align:left;'>Y<br>ይ</div>                                                    
-                <div id="jkeyu" class="normal" style='text-align:left;'>U<br>ኡ</div>                                                    
-                <div id="jkeyi" class="normal" style='text-align:left;'>I<br>ኢ</div>                                                    
-                <div id="jkeyo" class="normal" style='text-align:left;'>O<br>ኦ</div>                                                    
-                <div id="jkeyp" class="normal" style='text-align:left;'>P<br>ፕ</div>                                                    
-                <div id="jkey[" class="normal" style="text-align:left;">{<br>[</div>                                                    
-                    <div id="jkey]" class="normal" style="text-align:left;">}<br>]</div>                                                
-                </div>                                                                                                                  
+        <div id="jkeybackspace" class="normal"  style="width: 92px;">Backspace</div>
+    </div>
+        <div style="float: left;">
+            <div class="mtrow" style='float: left; margin-left:5px; font-size: 15px !important; line-height: 15px'>
+                <div id="jkeytab" class="normal" style="width: 65px;">Tab</div>
+                <div id="jkeyq" class="normal" style='text-align:left;'>Q<br>ቅ</div>
+                <div id="jkeyw" class="normal" style='text-align:left;'>W<br>ው</div>
+                <div id="jkeye" class="normal" style='text-align:left;'>E<br>እ</div>
+                <div id="jkeyr" class="normal" style='text-align:left;'>R<br>ር</div>
+                <div id="jkeyt" class="normal" style='text-align:left;'>T<br>ት</div>
+                <div id="jkeyy" class="normal" style='text-align:left;'>Y<br>ይ</div>
+                <div id="jkeyu" class="normal" style='text-align:left;'>U<br>ኡ</div>
+                <div id="jkeyi" class="normal" style='text-align:left;'>I<br>ኢ</div>
+                <div id="jkeyo" class="normal" style='text-align:left;'>O<br>ኦ</div>
+                <div id="jkeyp" class="normal" style='text-align:left;'>P<br>ፕ</div>
+                <div id="jkey[" class="normal" style="text-align:left;">{<br>[</div>
+                    <div id="jkey]" class="normal" style="text-align:left;">}<br>]</div>
+                </div>
                 <span id="jkeyenter" class="normal" style="width: 52px; margin-right:5px; float: right; height: 85px;">Enter</span>
             <div class="mtrow" style='float: left; margin-left:5px; font-size: 15px !important; line-height: 15px'>
                 <div id="jkeycaps" class="normal" style="width: 80px;">Caps Lock</div>
