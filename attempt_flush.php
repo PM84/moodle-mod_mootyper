@@ -26,7 +26,7 @@ require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 
 $id = required_param('id', PARAM_INT); // Course module ID.
-$scope = optional_param('scope', 'mine', PARAM_ALPHA); // mine|filtered.
+$scope = optional_param('scope', 'mine', PARAM_ALPHA); // Mine or filtered scope.
 $selecteduserid = optional_param('user', 0, PARAM_INT);
 $exerciseid = optional_param('exercise', 0, PARAM_INT);
 $jmode = optional_param('jmode', 0, PARAM_INT);
@@ -67,7 +67,8 @@ if ($scope === 'mine') {
 
     if ($selecteduserid > 0) {
         if ($groupmode != NOGROUPS && $currentgroup && !groups_is_member($currentgroup, $selecteduserid)) {
-            redirect(new moodle_url('/mod/mootyper/gview.php', ['id' => $cm->id, 'n' => $mootyper->id]), get_string('invalidaccess', 'mootyper'));
+            $gradeviewurl = new moodle_url('/mod/mootyper/gview.php', ['id' => $cm->id, 'n' => $mootyper->id]);
+            redirect($gradeviewurl, get_string('invalidaccess', 'mootyper'));
         }
         $userids = [$selecteduserid];
     } else if ($groupmode != NOGROUPS && $currentgroup) {
@@ -100,7 +101,7 @@ if (!empty($userids)) {
     ];
     $wheres = ['mootyper = :mootyperid'];
 
-    list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'uid');
+    [$usersql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'uid');
     $wheres[] = "userid $usersql";
     $params += $userparams;
 
@@ -109,7 +110,7 @@ if (!empty($userids)) {
         $params['exerciseid'] = $exerciseid;
     }
 
-    $sql = "SELECT id, userid, attemptid FROM {mootyper_grades} WHERE ".implode(' AND ', $wheres);
+    $sql = "SELECT id, userid, attemptid FROM {mootyper_grades} WHERE " . implode(' AND ', $wheres);
     $grades = $DB->get_records_sql($sql, $params);
 
     if ($grades) {
@@ -130,7 +131,7 @@ if (!empty($userids)) {
             $DB->delete_records_list('mootyper_attempts', 'id', $attemptids);
         }
 
-        require_once($CFG->dirroot.'/rating/lib.php');
+        require_once($CFG->dirroot . '/rating/lib.php');
         $rm = new rating_manager();
         foreach ($gradeids as $gradeid) {
             $delopt = new stdClass();
