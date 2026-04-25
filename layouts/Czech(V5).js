@@ -47,7 +47,7 @@ function keyboardElement(ltr) {
         // phpcs:ignore
         if (ltr.match(/[°12345QWERTASDFGYXCVB]/)) {
             this.shiftright = true;
-        // phpcs:ignore
+        // Phpcs:ignore
         } else if (ltr.match(/[67890%ˇZUIOP/('HJKL"!NM?:_]/)) {
             this.shiftleft = true;
         }
@@ -72,7 +72,7 @@ function keyboardElement(ltr) {
         }
     };
     this.turnOff = function() {
-        // phpcs:ignore
+        // Phpcs:ignore
             if (this.chr.match(/[asdfjklů]/i)) {
             document.getElementById(getKeyID(this.chr)).className = "finger" + thenFinger(this.chr.toLowerCase());
         } else {
